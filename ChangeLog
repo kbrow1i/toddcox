@@ -1,5 +1,11 @@
 2011-04-16  kbrown  <kbrown@cornell.edu>
 
+	* Makefile.cygwin: New file.
+	* Makefile: Ditto.
+	* Makefile.linux (toddcox): Ditto.
+
+2011-04-16  kbrown  <kbrown@cornell.edu>
+
 	* toddcox.cc: Delete file, split functionality into the following
 	separate files.  Change 'inv' from array to function.
 	* coset.cc: New file.
