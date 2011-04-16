@@ -2,7 +2,7 @@
 
 	* Makefile.cygwin: New file.
 	* Makefile: Ditto.
-	* Makefile.linux (toddcox): Ditto.
+	* Makefile.linux: Ditto.
 
 2011-04-16  kbrown  <kbrown@cornell.edu>
 
