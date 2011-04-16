@@ -1,98 +1,8 @@
-// This is a toy implementation of the HLT version of the
-// Todd--Coxeter procedure, based on Holt, Handbook of computational
-// group theory.  It assumes two generators and uses the alphabet
-// a,A,b,B.
-
+#include "cosettable.h"
+#include "gens_and_words.h"
 #include <iostream>
-#include <string>
-#include <vector>
-#include <queue>
-
-using namespace std;
-
-const int NGENS = 4;
-const int NOTAGEN = -1;
-enum { a, A, b, B };		// generators
-int inv[NGENS] = {A, a, B, b }; // inverses
-typedef vector<int> word;
-
-int
-char_to_gen (char c)
-{
-  if (c == 'a')
-    return a;
-  if (c == 'A')
-    return A;
-  if (c == 'b')
-    return b;
-  if (c == 'B')
-    return B;
-  return NOTAGEN;
-}
-
-char
-gen_to_char (int x)
-{
-  if (x == a)
-    return 'a';
-  if (x == A)
-    return 'A';
-  if (x == b)
-    return 'b';
-  if (x == B)
-    return 'B';
-}
-
-bool
-string_to_word (word& w, const string& s)
-{
-  for (int i = 0; i < s.size (); i++)
-    {
-      int x;
-      if ((x = char_to_gen (s[i])) == NOTAGEN)
-	return false;
-      w.push_back (x);
-    }
-  return true;
-}
-
-class Coset
-{
-public:
-  Coset ();
-  int get_act (int x) const { return row[x]; };
-  void set_act (int x, int k) { row[x] = k; return; } ;
-private:
-  int row[NGENS];		// row[x] is index of coset acted on by x
-};
 
 // Constructor
-Coset::Coset ()
-{
-  for (int i = 0; i < NGENS; i++)
-    row[i] = -1;		// all actions initially undefined
-}
-
-class CosetTable
-{
-public:
-  CosetTable ();
-  void define (int k, int x);
-  bool is_defined (int k, int x) const { return (tab[k].get_act (x) >= 0); };
-  void print () const;
-  void debug_print () const;
-  void scan_and_fill (int k, const word& w);
-  bool is_alive (int k) const { return (p[k] == k); };
-  int get_size () const { return tab.size (); };
-private:
-  vector<Coset> tab;
-  vector<int> p;		// for generating equivalence classes; p[k] <= k
-  queue<int> q;			// dead cosets to be processed
-  int rep (int c);
-  void merge (int k, int l);
-  void coincidence(int k, int l);
-};
-
 CosetTable::CosetTable ()
 {
   Coset c;
@@ -107,7 +17,7 @@ CosetTable::define (int k, int x)
   int l = tab.size ();		// index of new coset
   tab[k].set_act(x, l);
   Coset d;
-  d.set_act(inv[x], k);
+  d.set_act(inv (x), k);
   tab.push_back (d);
   p.push_back (l);		// p[l] = l
 }
@@ -193,11 +103,11 @@ CosetTable::coincidence (int k, int l)
 	  if (!is_defined (e, x))
 	    continue;
 	  int f = tab[e].get_act(x);	// x: e --> f, x^-1: f --> e
-	  tab[f].set_act(inv[x], -1);	// remove arrow f --> e
+	  tab[f].set_act(inv (x), -1);	// remove arrow f --> e
 	  int e1 = rep (e);
 	  int f1 = rep (f);
 	  // insert arrows x: e1 --> f1 and y: f1 --> e1, where...
-	  int y = inv[x];
+	  int y = inv (x);
 	  if (is_defined (e1, x))
 	    merge (f1, tab[e1].get_act (x));
 	  else if (is_defined (f1, y))
@@ -237,8 +147,8 @@ CosetTable::scan_and_fill (int k, const word& w)
 	  return;
 	}
       // Scan backward
-      while (j >= i && is_defined (b, inv[w[j]]))
-	b = tab[b].get_act (inv[w[j--]]);
+      while (j >= i && is_defined (b, inv (w[j])))
+	b = tab[b].get_act (inv (w[j--]));
       if (j < i)		// Scan completed with coincidence
 	{
 	  cout << "Coset table before coincidence:\n";
@@ -255,62 +165,11 @@ CosetTable::scan_and_fill (int k, const word& w)
 	{
 	  cout << "deduction  " << gen_to_char (w[i]) << ":" << f << "-->" << b << endl;
 	  tab[f].set_act (w[i], b);
-	  tab[b].set_act (inv[w[i]], f);
+	  tab[b].set_act (inv (w[i]), f);
 	  return;
 	}
       // Scan is incomplete; make a definition to allow it to get further.
       cout << "definition " << gen_to_char (w[i]) << ":" << f << "-->" << get_size () << endl;
       define (f, w[i]);
     }
-}
-		   
-int
-main (void)
-{
-  vector <word> gen_H;
-  for (;;)
-    {
-      string s; word w;
-      cout << "Enter a generator of H, or q when finished:\n";
-      cin >> s;
-      if (s == "Q" || s == "q")
-	break;
-      if (!string_to_word (w, s))
-	{
-	  cout << "Invalid entry: " << s << "\nUse alphabet a, A, b, B.\n";
-	  continue;
-	}
-      gen_H.push_back (w);
-    }
-  const int NGENS_H = gen_H.size ();
-  vector<word> rel;
-  for (;;)
-    {
-      string s; word w;
-      cout << "Enter a relator, or q when finished:\n";
-      cin >> s;
-      if (s == "Q" || s == "q")
-	break;
-      if (!string_to_word (w, s))
-	{
-	  cout << "Invalid entry: " << s << "\nUse alphabet a, A, b, B.\n";
-	  continue;
-	}
-      rel.push_back (w);
-    }
-  const int NRELS = rel.size ();
-  CosetTable C;
-  for (int i = 0; i < NGENS_H; i++)
-    C.scan_and_fill (0, gen_H[i]);
-  for (int k = 0; k < C.get_size (); k++)
-    {
-      for (int i = 0; i < NRELS && C.is_alive (k); i++)
-	C.scan_and_fill (k, rel[i]);
-      if (C.is_alive (k))
-	for (int x = 0; x < NGENS; x++)
-	  if (!C.is_defined (k, x))
-	    C.define (k, x);
-    }
-  C.print ();
-  return 0;
 }

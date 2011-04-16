@@ -1,0 +1,11 @@
+2011-04-16  kbrown  <kbrown@cornell.edu>
+
+	* toddcox.cc: Delete file, split functionality into the following
+	separate files.  Change 'inv' from array to function.
+	* coset.cc: New file.
+	* coset.h: Ditto.
+	* cosettable.cc: Ditto.
+	* cosettable.h: Ditto.
+	* gens_and_words.cc: Ditto.
+	* gens_and_words.h: Ditto.
+	* main.cc: Ditto.
