@@ -11,11 +11,37 @@
 
 using namespace std;
 
+void getgroup (vector<word>& rel, vector<word>& gen_H);
 
 int
 main (void)
 {
-  vector <word> gen_H;
+  vector<word> rel;
+  vector<word> gen_H;
+  getgroup (rel, gen_H);
+  CosetTable C (rel, gen_H);
+  C.hlt ();
+  C.debug_print ();
+  return 0;
+}
+
+void
+getgroup (vector<word>& rel, vector<word>& gen_H)
+{
+  for (;;)
+    {
+      string s; word w;
+      cout << "Enter a defining relator for G, or q when finished:\n";
+      cin >> s;
+      if (s == "Q" || s == "q")
+	break;
+      if (!string_to_word (w, s))
+	{
+	  cout << "Invalid entry: " << s << "\nUse alphabet a, A, b, B.\n";
+	  continue;
+	}
+      rel.push_back (w);
+    }
   for (;;)
     {
       string s; word w;
@@ -30,35 +56,4 @@ main (void)
 	}
       gen_H.push_back (w);
     }
-  const int NGENS_H = gen_H.size ();
-  vector<word> rel;
-  for (;;)
-    {
-      string s; word w;
-      cout << "Enter a relator, or q when finished:\n";
-      cin >> s;
-      if (s == "Q" || s == "q")
-	break;
-      if (!string_to_word (w, s))
-	{
-	  cout << "Invalid entry: " << s << "\nUse alphabet a, A, b, B.\n";
-	  continue;
-	}
-      rel.push_back (w);
-    }
-  const int NRELS = rel.size ();
-  CosetTable C;
-  for (int i = 0; i < NGENS_H; i++)
-    C.scan_and_fill (0, gen_H[i]);
-  for (int k = 0; k < C.get_size (); k++)
-    {
-      for (int i = 0; i < NRELS && C.is_alive (k); i++)
-	C.scan_and_fill (k, rel[i]);
-      if (C.is_alive (k))
-	for (int x = 0; x < NGENS; x++)
-	  if (!C.is_defined (k, x))
-	    C.define (k, x);
-    }
-  C.print ();
-  return 0;
 }

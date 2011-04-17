@@ -3,7 +3,8 @@
 #include <iostream>
 
 // Constructor
-CosetTable::CosetTable ()
+CosetTable::CosetTable (vector<word> rel, vector<word> gen_H) :
+  relator (rel), generator_of_H (gen_H)
 {
   Coset c;
   tab.push_back (c);
@@ -171,5 +172,24 @@ CosetTable::scan_and_fill (int k, const word& w)
       // Scan is incomplete; make a definition to allow it to get further.
       cout << "definition " << gen_to_char (w[i]) << ":" << f << "-->" << get_size () << endl;
       define (f, w[i]);
+    }
+}
+
+// HLT algorithm
+void
+CosetTable::hlt ()
+{
+  const int NGENS_H = generator_of_H.size ();
+  const int NRELS = relator.size ();
+  for (int i = 0; i < NGENS_H; i++)
+    scan_and_fill (0, generator_of_H[i]);
+  for (int k = 0; k < get_size (); k++)
+    {
+      for (int i = 0; i < NRELS && is_alive (k); i++)
+	scan_and_fill (k, relator[i]);
+      if (is_alive (k))
+	for (int x = 0; x < NGENS; x++)
+	  if (!is_defined (k, x))
+	    define (k, x);
     }
 }

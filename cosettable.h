@@ -9,7 +9,7 @@
 class CosetTable
 {
 public:
-  CosetTable ();
+  CosetTable (vector<word> rel, vector<word> gen_H);
   void define (int k, int x);
   bool is_defined (int k, int x) const { return (tab[k].get_act (x) >= 0); };
   void print () const;
@@ -17,6 +17,7 @@ public:
   void scan_and_fill (int k, const word& w);
   bool is_alive (int k) const { return (p[k] == k); };
   int get_size () const { return tab.size (); };
+  void hlt ();
 private:
   vector<Coset> tab;
   vector<int> p;		// for generating equivalence classes; p[k] <= k
@@ -24,6 +25,8 @@ private:
   int rep (int c);
   void merge (int k, int l);
   void coincidence(int k, int l);
+  vector<word> relator;
+  vector<word> generator_of_H;
 };
 
 

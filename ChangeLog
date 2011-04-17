@@ -1,3 +1,15 @@
+2011-04-17  kbrown  <kbrown@cornell.edu>
+
+	* Makefile (main.o, cosettable.o): Add dependency on coset.h.
+	* Makefile.cygwin (main.o, cosettable.o): Ditto.
+	* Makefile.linux (main.o, cosettable.o): Ditto.
+	* main.cc (main): Move main functionality into two new functions...
+	(getgroup):  New function.
+	* cosettable.h (hlt): New function.
+	(relator, generator_of_H): New members.
+	* cosettable.cc (hlt): New function.
+	(CosetTable): Initialize 'relator' and 'generator_of_H'.
+
 2011-04-16  kbrown  <kbrown@cornell.edu>
 
 	* Makefile.cygwin: New file.
