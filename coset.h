@@ -9,6 +9,7 @@ public:
   Coset ();
   int get_act (int x) const { return row[x]; };
   void set_act (int x, int k) { row[x] = k; return; } ;
+  void print () const;
 private:
   int row[NGENS];		// row[x] is index of coset acted on by x
 };

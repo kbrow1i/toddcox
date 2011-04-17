@@ -18,6 +18,7 @@ public:
   bool is_alive (int k) const { return (p[k] == k); };
   int get_size () const { return tab.size (); };
   void hlt ();
+  int get_nlive () const;
 private:
   vector<Coset> tab;
   vector<int> p;		// for generating equivalence classes; p[k] <= k

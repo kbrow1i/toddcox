@@ -1,5 +1,16 @@
 2011-04-17  kbrown  <kbrown@cornell.edu>
 
+	* main.cc (main): Clean up output.
+	* cosettable.cc (scan_and_fill): Remove debugging output.
+	(print) Use new print method of Coset class.
+	(debug_print): Ditto.
+	(get_nlive): New function.
+	* cosettable.h (get_nlive): New function.
+	* coset.cc (print): New function.
+	* coset.h (print): New function.
+
+2011-04-17  kbrown  <kbrown@cornell.edu>
+
 	* Makefile (main.o, cosettable.o): Add dependency on coset.h.
 	* Makefile.cygwin (main.o, cosettable.o): Ditto.
 	* Makefile.linux (main.o, cosettable.o): Ditto.

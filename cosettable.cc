@@ -29,9 +29,8 @@ CosetTable::print () const
   for (int k = 0; k < tab.size (); k++)
     if (is_alive (k))
 	  {
-	    cout << k + 1 << ":";	// Make coset numbering start at 1.
-	    for (int x = 0; x < NGENS; x++)
-	      cout << " " << tab[k].get_act (x) + 1;
+	    cout << k << ": ";
+	    tab[k].print ();
 	    cout << endl;
 	  }
 }
@@ -42,8 +41,7 @@ CosetTable::debug_print () const
   for (int k = 0; k < tab.size (); k++)
     {
       cout << k << ", " << p[k] << ": ";
-      for (int x = 0; x < NGENS; x++)
-	cout << " " << tab[k].get_act (x);
+      tab[k].print ();
       cout << endl;
     }
 }
@@ -136,13 +134,13 @@ CosetTable::scan_and_fill (int k, const word& w)
 	{
 	  if (f != b)
 	    {
-	      cout << "Coset table before coincidence:\n";
-	      debug_print ();
+	      // cout << "Coset table before coincidence:\n";
+	      // debug_print ();
 	      // print ();
-	      cout << "\ncoincidence (" << f << ", " << b << ")\n\n";
+	      // cout << "\ncoincidence (" << f << ", " << b << ")\n\n";
 	      coincidence (f, b);
-	      cout << "Coset table after coincidence:\n";
-	      debug_print ();
+	      // cout << "Coset table after coincidence:\n";
+	      // debug_print ();
 	      // print ();
 	    }
 	  return;
@@ -152,25 +150,25 @@ CosetTable::scan_and_fill (int k, const word& w)
 	b = tab[b].get_act (inv (w[j--]));
       if (j < i)		// Scan completed with coincidence
 	{
-	  cout << "Coset table before coincidence:\n";
-	  debug_print ();
+	  // cout << "Coset table before coincidence:\n";
+	  // debug_print ();
 	  // print ();
-	  cout << "coincidence (" << f << ", " << b << ")\n";
+	  // cout << "coincidence (" << f << ", " << b << ")\n";
 	  coincidence (f, b);
-	  cout << "Coset table after coincidence:\n";
-	  debug_print ();
+	  // cout << "Coset table after coincidence:\n";
+	  // debug_print ();
 	  // print ();
 	  return;
 	}
       if (j == i)		// Scan completed with deduction
 	{
-	  cout << "deduction  " << gen_to_char (w[i]) << ":" << f << "-->" << b << endl;
+	  // cout << "deduction  " << gen_to_char (w[i]) << ":" << f << "-->" << b << endl;
 	  tab[f].set_act (w[i], b);
 	  tab[b].set_act (inv (w[i]), f);
 	  return;
 	}
       // Scan is incomplete; make a definition to allow it to get further.
-      cout << "definition " << gen_to_char (w[i]) << ":" << f << "-->" << get_size () << endl;
+      // cout << "definition " << gen_to_char (w[i]) << ":" << f << "-->" << get_size () << endl;
       define (f, w[i]);
     }
 }
@@ -192,4 +190,14 @@ CosetTable::hlt ()
 	  if (!is_defined (k, x))
 	    define (k, x);
     }
+}
+
+int
+CosetTable::get_nlive () const
+{
+  int count = 0;
+  for (int k = 0; k < get_size (); k++)
+    if (is_alive (k))
+      count++;
+  return count;
 }
