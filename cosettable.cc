@@ -209,37 +209,6 @@ CosetTable::scan (int k, const word& w)
   return;
 }
 
-// void
-// CosetTable::hlt ()
-// {
-//   for (int i = 0; i < generator_of_H.size (); i++)
-//     scan_and_fill (0, generator_of_H[i]);
-//   for (;;)
-//     for (int k = 0; k < get_size (); k++)
-//       {
-// 	for (int i = 0; i < relator.size () && is_alive (k); i++)
-// 	  scan_and_fill (k, relator[i]);
-// 	if (is_alive (k))
-// 	  for (int x = 0; x < NGENS; x++)
-// 	    if (!is_defined (k, x))
-// 	      define (k, x);
-// 	cout << "\nk = " << k << endl;
-// 	debug_print ();
-// 	int N = get_size ();
-// 	compress ();
-// 	cout << endl << "\nAfter compression:\n";
-// 	debug_print ();
-// 	if (get_size () < N)
-// 	  {
-// 	    cout << "\nTable got smaller.  Restarting...\n";
-// 	    break;
-// 	  }
-// 	if (k == N - 1)
-// 	  return;
-//       }
-// }
-
-
 // HLT algorithm
 void
 CosetTable::hlt ()
@@ -255,6 +224,44 @@ CosetTable::hlt ()
 	  if (!is_defined (k, x))
 	    define (k, x);
     }
+}
+
+// HLT algorithm with lookahead
+bool
+CosetTable::hlt_plus (int threshold)
+{
+  const int t = threshold;
+  for (int i = 0; i < generator_of_H.size (); i++)
+    scan_and_fill (0, generator_of_H[i]);
+  int count_live = 0;	      // number of live cosets processed in main loop
+  for (int k = 0; k < get_size (); k++)
+    {
+      if (get_size () > t)
+	{
+	  cout << "\nThreshold exceeded.  Trying to recover memory...";
+	  lookahead ();
+	  compress ();
+	  if (tab.size () > t)
+	    {
+	      cout << "failed.\n";
+	      return false;
+	    }
+	  cout << "OK.  Continuing...\n";
+	  k = count_live;
+	  if (k >= tab.size ())
+	    return true;
+	}
+      for (int i = 0; i < relator.size () && is_alive (k); i++)
+	scan_and_fill (k, relator[i]);
+      if (is_alive (k))
+	{
+	  for (int x = 0; x < NGENS; x++)
+	    if (!is_defined (k, x))
+	      define (k, x);
+	  count_live++;
+	}
+    }
+  return true;
 }
 
 int

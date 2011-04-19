@@ -24,8 +24,21 @@ main (void)
   vector<word> rel;
   vector<word> gen_H;
   getgroup (rel, gen_H);
+  int threshold;
+  cout << "Enter threshold for HLT with lookahead, or 0 to use ordinary HLT: ";
+  cin >> threshold;
   CosetTable C (rel, gen_H);
-  C.hlt ();
+  bool res = true;
+  if (threshold == 0)
+    C.hlt ();
+  else
+    res = C.hlt_plus (threshold);
+  if (!res)
+    {
+      cout << "Sorry, please try again with a bigger threshold.\n\n";
+      C.print ();
+      return 1;
+    }
   cout << "\nThe index of H in G is " << C.get_nlive ()
        << ".\nThere were " << C.get_size () << " cosets defined.\n\n"
        << "Coset table:\n\n";

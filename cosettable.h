@@ -19,6 +19,7 @@ public:
   bool is_alive (int k) const { return (p[k] == k); };
   int get_size () const { return tab.size (); };
   void hlt ();
+  bool hlt_plus (int threshold);
   void lookahead ();
   int get_nlive () const;
   void compress ();

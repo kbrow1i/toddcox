@@ -1,5 +1,11 @@
 2011-04-19  Ken Brown  <kbrown@cornell.edu>
 
+	* cosettable.h (hlt_plus): Declare new function.
+	* cosettable.cc (hlt_plus): Implement.
+	* main.cc (main): Give user the option to use hlt_plus().
+
+2011-04-19  Ken Brown  <kbrown@cornell.edu>
+
 	* cosettable.h (scan, lookahead, compress): Declare new functions.
 	* cosettable.cc (scan, lookahead, compress): Implement.
 	* main.cc (main): Compress coset table.
