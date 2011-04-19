@@ -1,5 +1,11 @@
 2011-04-19  Ken Brown  <kbrown@cornell.edu>
 
+	* cosettable.h (standardize): Declare new function.
+	* cosettable.cc (standardize): Implement.
+	* main.cc (main): Standardize final coset table.
+
+2011-04-19  Ken Brown  <kbrown@cornell.edu>
+
 	* cosettable.h (hlt_plus): Declare new function.
 	* cosettable.cc (hlt_plus): Implement.
 	* main.cc (main): Give user the option to use hlt_plus().

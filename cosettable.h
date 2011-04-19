@@ -23,6 +23,7 @@ public:
   void lookahead ();
   int get_nlive () const;
   void compress ();
+  void standardize ();
 private:
   vector<Coset> tab;
   vector<int> p;		// for generating equivalence classes; p[k] <= k
@@ -32,6 +33,7 @@ private:
   void coincidence(int k, int l);
   vector<word> relator;
   vector<word> generator_of_H;
+  void swap (int k, int l);
 };
 
 

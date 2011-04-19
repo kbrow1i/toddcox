@@ -46,6 +46,9 @@ main (void)
   C.compress ();
   cout << "\nAfter compression:\n\n";
   C.print ();
+  C.standardize ();
+  cout << "\nAfter standardization:\n\n";
+  C.print ();
   return 0;
 }
 

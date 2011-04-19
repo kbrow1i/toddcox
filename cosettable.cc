@@ -316,3 +316,46 @@ CosetTable::compress ()
   return;
 }
       
+// Swap two distinct live rows of the coset table
+void
+CosetTable::swap (int k, int l)
+{
+  for (int x = 0; x < NGENS; x++)
+    {
+      int temp = tab[k].get_act (x);
+      tab[k].set_act (x, tab[l].get_act (x));
+      tab[l].set_act (x, temp);
+      for (int m = 0; m < tab.size (); m++)
+	{
+	  if (!is_alive (m))
+	    continue;
+	  if (tab[m].get_act (x) == k)
+	    tab[m].set_act (x, l);
+	  else if (tab[m].get_act (x) == l)
+	    tab[m].set_act (x, k);
+	}
+    }
+}
+
+// Standardize a complete compressed coset table
+void
+CosetTable::standardize ()
+{
+  int N = tab.size ();
+  if (N <= 2)
+    return;
+  int goal = 1;			// next number we want to find in the table
+  for (int k = 0; k < N; k++)
+    for (int x = 0; x < NGENS; x++)
+      {
+	int l = tab[k].get_act (x);
+	if (l >= goal)
+	  {
+	    if (l > goal)
+	      swap (l, goal);
+	    goal++;
+	    if (goal == N - 1)
+	      return;
+	  }
+      }
+}
