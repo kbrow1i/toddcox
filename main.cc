@@ -27,8 +27,11 @@ main (void)
   CosetTable C (rel, gen_H);
   C.hlt ();
   cout << "\nThe index of H in G is " << C.get_nlive ()
-       << ".\nThere were " << C.get_size () + 1 << " cosets defined.\n\n"
+       << ".\nThere were " << C.get_size () << " cosets defined.\n\n"
        << "Coset table:\n\n";
+  C.print ();
+  C.compress ();
+  cout << "\nAfter compression:\n\n";
   C.print ();
   return 0;
 }
@@ -39,13 +42,13 @@ getgroup (vector<word>& rel, vector<word>& gen_H)
   for (;;)
     {
       string s; word w;
-      cout << "Enter a defining relator for G, or q when finished:\n";
+      cout << "Enter a defining relator for G, or q when finished:\n> ";
       cin >> s;
       if (s == "Q" || s == "q")
 	break;
       if (!string_to_word (w, s))
 	{
-	  cout << "Invalid entry: " << s << "\nUse alphabet a, A, b, B.\n";
+	  cout << "Invalid entry: " << s << "\nUse alphabet a, A, b, B.\n> ";
 	  continue;
 	}
       rel.push_back (w);
@@ -53,13 +56,13 @@ getgroup (vector<word>& rel, vector<word>& gen_H)
   for (;;)
     {
       string s; word w;
-      cout << "Enter a generator of H, or q when finished:\n";
+      cout << "Enter a generator of H, or q when finished:\n> ";
       cin >> s;
       if (s == "Q" || s == "q")
 	break;
       if (!string_to_word (w, s))
 	{
-	  cout << "Invalid entry: " << s << "\nUse alphabet a, A, b, B.\n";
+	  cout << "Invalid entry: " << s << "\nUse alphabet a, A, b, B.\n> ";
 	  continue;
 	}
       gen_H.push_back (w);

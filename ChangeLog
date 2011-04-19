@@ -1,33 +1,39 @@
-2011-04-17  kbrown  <kbrown@cornell.edu>
+2011-04-19  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.h (scan, lookahead, compress): Declare new functions.
+	* cosettable.cc (scan, lookahead, compress): Implement.
+	* main.cc (main): Compress coset table.
+
+2011-04-17  Ken Brown  <kbrown@cornell.edu>
 
 	* main.cc (main): Clean up output.
+	* cosettable.h (get_nlive): Declare new function.
 	* cosettable.cc (scan_and_fill): Remove debugging output.
 	(print) Use new print method of Coset class.
 	(debug_print): Ditto.
-	(get_nlive): New function.
-	* cosettable.h (get_nlive): New function.
-	* coset.cc (print): New function.
-	* coset.h (print): New function.
+	(get_nlive): Implement.
+	* coset.h (print): Declare new function.
+	* coset.cc (print): Implement.
 
-2011-04-17  kbrown  <kbrown@cornell.edu>
+2011-04-17  Ken Brown  <kbrown@cornell.edu>
 
 	* Makefile (main.o, cosettable.o): Add dependency on coset.h.
 	* Makefile.cygwin (main.o, cosettable.o): Ditto.
 	* Makefile.linux (main.o, cosettable.o): Ditto.
 	* main.cc (main): Move main functionality into two new functions...
 	(getgroup):  New function.
-	* cosettable.h (hlt): New function.
-	(relator, generator_of_H): New members.
-	* cosettable.cc (hlt): New function.
+	* cosettable.h (hlt): Declare new function.
+	(relator, generator_of_H): Declare new members.
+	* cosettable.cc (hlt): Implement.
 	(CosetTable): Initialize 'relator' and 'generator_of_H'.
 
-2011-04-16  kbrown  <kbrown@cornell.edu>
+2011-04-16  Ken Brown  <kbrown@cornell.edu>
 
 	* Makefile.cygwin: New file.
 	* Makefile: Ditto.
 	* Makefile.linux: Ditto.
 
-2011-04-16  kbrown  <kbrown@cornell.edu>
+2011-04-16  Ken Brown  <kbrown@cornell.edu>
 
 	* toddcox.cc: Delete file, split functionality into the following
 	separate files.  Change 'inv' from array to function.

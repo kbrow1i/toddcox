@@ -28,11 +28,12 @@ CosetTable::print () const
 {
   for (int k = 0; k < tab.size (); k++)
     if (is_alive (k))
-	  {
-	    cout << k << ": ";
-	    tab[k].print ();
-	    cout << endl;
-	  }
+      {
+	cout << k << ": ";
+	tab[k].print ();
+	cout << endl;
+      }
+  return;
 }
 
 void
@@ -44,6 +45,7 @@ CosetTable::debug_print () const
       tab[k].print ();
       cout << endl;
     }
+  return;
 }
 
 // Return minimal element of equivalence class, simplify p along the way
@@ -173,17 +175,80 @@ CosetTable::scan_and_fill (int k, const word& w)
     }
 }
 
+void
+CosetTable::scan (int k, const word& w)
+{
+  int i = 0, j = w.size () - 1;	// Starting pos for forward and backward scans
+  int f = k, b = k;		// Starting coset indices for scans
+  // Scan forward
+  while (i <= j && is_defined (f, w[i]))
+    f = tab[f].get_act(w[i++]);
+  if (i > j)		// Scan completed, possibly with coincidence
+    {
+      if (f != b)
+	{
+	  coincidence (f, b);
+	}
+      return;
+    }
+  // Scan backward
+  while (j >= i && is_defined (b, inv (w[j])))
+    b = tab[b].get_act (inv (w[j--]));
+  if (j < i)		// Scan completed with coincidence
+    {
+      coincidence (f, b);
+      return;
+    }
+  if (j == i)		// Scan completed with deduction
+    {
+      tab[f].set_act (w[i], b);
+      tab[b].set_act (inv (w[i]), f);
+      return;
+    }
+  // Scan is incomplete and yields no information
+  return;
+}
+
+// void
+// CosetTable::hlt ()
+// {
+//   for (int i = 0; i < generator_of_H.size (); i++)
+//     scan_and_fill (0, generator_of_H[i]);
+//   for (;;)
+//     for (int k = 0; k < get_size (); k++)
+//       {
+// 	for (int i = 0; i < relator.size () && is_alive (k); i++)
+// 	  scan_and_fill (k, relator[i]);
+// 	if (is_alive (k))
+// 	  for (int x = 0; x < NGENS; x++)
+// 	    if (!is_defined (k, x))
+// 	      define (k, x);
+// 	cout << "\nk = " << k << endl;
+// 	debug_print ();
+// 	int N = get_size ();
+// 	compress ();
+// 	cout << endl << "\nAfter compression:\n";
+// 	debug_print ();
+// 	if (get_size () < N)
+// 	  {
+// 	    cout << "\nTable got smaller.  Restarting...\n";
+// 	    break;
+// 	  }
+// 	if (k == N - 1)
+// 	  return;
+//       }
+// }
+
+
 // HLT algorithm
 void
 CosetTable::hlt ()
 {
-  const int NGENS_H = generator_of_H.size ();
-  const int NRELS = relator.size ();
-  for (int i = 0; i < NGENS_H; i++)
+  for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i]);
   for (int k = 0; k < get_size (); k++)
     {
-      for (int i = 0; i < NRELS && is_alive (k); i++)
+      for (int i = 0; i < relator.size () && is_alive (k); i++)
 	scan_and_fill (k, relator[i]);
       if (is_alive (k))
 	for (int x = 0; x < NGENS; x++)
@@ -201,3 +266,46 @@ CosetTable::get_nlive () const
       count++;
   return count;
 }
+
+void
+CosetTable::lookahead ()
+{
+  for (int k = 0; k < get_size (); k++)
+    for (int i = 0; i < relator.size () && is_alive (k); i++)
+      scan (k, relator[i]);
+  return;
+}
+
+void
+CosetTable::compress ()
+{
+  int l = 0, N = get_size ();
+  for (int k = 0; k < N; k++)
+    if (is_alive (k))
+      {
+	if (k > l)		// Replace k by l in table
+	  {
+	    for (int x = 0; x < NGENS; x++)
+	      {
+		int m = tab[k].get_act (x);
+		if (m == k)
+		  tab[l].set_act (x, l);
+		else
+		  {
+		    tab[l].set_act (x, m);
+		    if (m >= 0)
+		      tab[m].set_act(inv (x), l);
+		  }
+	      }
+	    p[l] = l;
+	  }
+	l++;
+      }
+  if (l < N)
+    {
+      tab.erase (tab.begin () + l, tab.end ());
+      p.erase (p.begin () + l, p.end ());
+    }
+  return;
+}
+      

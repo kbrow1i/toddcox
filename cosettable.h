@@ -15,10 +15,13 @@ public:
   void print () const;
   void debug_print () const;
   void scan_and_fill (int k, const word& w);
+  void scan (int k, const word& w);
   bool is_alive (int k) const { return (p[k] == k); };
   int get_size () const { return tab.size (); };
   void hlt ();
+  void lookahead ();
   int get_nlive () const;
+  void compress ();
 private:
   vector<Coset> tab;
   vector<int> p;		// for generating equivalence classes; p[k] <= k
