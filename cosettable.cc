@@ -1,6 +1,7 @@
 #include "cosettable.h"
 #include "gens_and_words.h"
 #include <iostream>
+#include <iomanip>
 
 // Constructor
 CosetTable::CosetTable (vector<word> rel, vector<word> gen_H) :
@@ -24,13 +25,14 @@ CosetTable::define (int k, int x)
 }
 
 void
-CosetTable::print () const
+CosetTable::print (bool standard) const
 {
+  cout << "       a   A   b   B\n";
   for (int k = 0; k < tab.size (); k++)
     if (is_alive (k))
       {
-	cout << k << ": ";
-	tab[k].print ();
+	cout << setw (2) << (standard ? k + 1 : k) << ": ";
+	tab[k].print (standard);
 	cout << endl;
       }
   return;
@@ -39,10 +41,11 @@ CosetTable::print () const
 void
 CosetTable::debug_print () const
 {
+  cout << "          a   A   b   B\n";
   for (int k = 0; k < tab.size (); k++)
     {
-      cout << k << ", " << p[k] << ": ";
-      tab[k].print ();
+      cout << setw (2) << k << setw (3) << p[k] << ": ";
+      tab[k].print (false);	// Don't standardize coset numbering
       cout << endl;
     }
   return;

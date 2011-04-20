@@ -1,6 +1,7 @@
 #include "coset.h"
 #include "gens_and_words.h"
 #include <iostream>
+#include <iomanip>
 
 // Constructor
 Coset::Coset ()
@@ -10,9 +11,8 @@ Coset::Coset ()
 }
 
 void
-Coset::print () const
+Coset::print (bool standard) const
 {
-  cout << row[0];
-  for (int x = 1; x < NGENS; x++)
-    cout << " " << row[x];
+  for (int x = 0; x < NGENS; x++)
+    cout << setw (4) << (standard ? row[x] + 1 : row[x]);
 }

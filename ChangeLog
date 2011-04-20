@@ -1,3 +1,13 @@
+2011-04-20  Ken Brown  <kbrown@cornell.edu>
+
+	* main.cc (main): Remove unnecessary printing.
+	* coset.cc (print): Add optional argument for standard printing
+	[numbered from 1 instead of 0].  Improve formatting.
+	* coset.h (print): Declare optional argument.
+	* cosettable.h (print): Declare similar optional argument.
+	* cosettable.cc (print, debug_print): Use standard printing except
+	in debug_print().  Improve formatting.
+
 2011-04-19  Ken Brown  <kbrown@cornell.edu>
 
 	* cosettable.h (standardize): Declare new function.

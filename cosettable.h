@@ -12,7 +12,7 @@ public:
   CosetTable (vector<word> rel, vector<word> gen_H);
   void define (int k, int x);
   bool is_defined (int k, int x) const { return (tab[k].get_act (x) >= 0); };
-  void print () const;
+  void print (bool standard = true) const;
   void debug_print () const;
   void scan_and_fill (int k, const word& w);
   void scan (int k, const word& w);

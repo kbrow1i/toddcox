@@ -36,18 +36,13 @@ main (void)
   if (!res)
     {
       cout << "Sorry, please try again with a bigger threshold.\n\n";
-      C.print ();
       return 1;
     }
   cout << "\nThe index of H in G is " << C.get_nlive ()
-       << ".\nThere were " << C.get_size () << " cosets defined.\n\n"
-       << "Coset table:\n\n";
-  C.print ();
+       << ".\nThe coset table has size " << C.get_size () << " before compression.\n\n"
+       << "Compressed and standardized coset table:\n\n";
   C.compress ();
-  cout << "\nAfter compression:\n\n";
-  C.print ();
   C.standardize ();
-  cout << "\nAfter standardization:\n\n";
   C.print ();
   return 0;
 }
