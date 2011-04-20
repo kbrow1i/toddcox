@@ -1,4 +1,14 @@
 2011-04-20  Ken Brown  <kbrown@cornell.edu>
+	* COPYING: New file.
+	* coset.cc: Add copyright and licensing information.
+	* coset.h: Ditto.
+	* cosettable.cc: Ditto.
+	* cosettable.h: Ditto.
+	* gens_and_words.cc: Ditto.
+	* gens_and_words.h: Ditto.
+	* main.cc: Ditto.
+
+2011-04-20  Ken Brown  <kbrown@cornell.edu>
 
 	* main.cc (main): Remove unnecessary printing.
 	* coset.cc (print): Add optional argument for standard printing
