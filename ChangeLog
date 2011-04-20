@@ -1,4 +1,10 @@
 2011-04-20  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.h (CosetTable): Rearrange members.
+	* TODO: New file.
+
+2011-04-20  Ken Brown  <kbrown@cornell.edu>
+
 	* COPYING: New file.
 	* coset.cc: Add copyright and licensing information.
 	* coset.h: Ditto.
