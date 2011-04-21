@@ -23,12 +23,15 @@
 #include "gens_and_words.h"
 #include <iostream>
 #include <iomanip>
+#include <vector>
 
 // Constructor
-Coset::Coset ()
+Coset::Coset (int NG) : NGENS (NG)
 {
+  vector<int> r (NG);
   for (int i = 0; i < NGENS; i++)
-    row[i] = -1;		// all actions initially undefined
+    r[i] = -1;		// all actions initially undefined
+  row = r;
 }
 
 void

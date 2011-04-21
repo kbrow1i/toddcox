@@ -1,4 +1,4 @@
-/* cosettabe.h: declarations for the CosetTable class.
+/* cosettable.h: declarations for the CosetTable class.
 
    Copyright 2011 Kenneth S. Brown.
 
@@ -30,7 +30,7 @@
 class CosetTable
 {
 public:
-  CosetTable (vector<word> rel, vector<word> gen_H);
+  CosetTable (int NG, vector<word> rel, vector<word> gen_H);
   void hlt ();			/* HLT algorithm... */
   bool hlt_plus (int threshold); /* ...with lookahead */
   void compress ();
@@ -40,6 +40,7 @@ public:
   void print (bool standard = true) const;
   void debug_print () const;
 private:
+  int NGENS;
   vector<Coset> tab;
   vector<int> p;		// for generating equivalence classes; p[k] <= k
   queue<int> q;			// dead cosets to be processed

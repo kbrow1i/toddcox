@@ -1,3 +1,20 @@
+2011-04-21  Ken Brown  <kbrown@cornell.edu>
+
+	* main.cc (getgroup): Prompt for number of generators.
+	(main): Only print coset table if it's small.  Fix output.
+	* gens_and_words.h: Remove gen_to_char.  Remove global constant
+	NGENS.  Accommodate throughout.
+	* gens_and_words.cc: Remove gen_to_char.  Allow arbitrary number
+	of generators.
+	* cosettable.h (CosetTable): New member NGENS.
+	* cosettable.cc (CosetTable): Adapt constructor to changes to
+	Coset and CosetTable.
+	(print): Allow arbitrary number of generators.
+	(debug_print): Ditto.
+	* coset.h (Coset): New member NGENS.  Change 'row' from array to
+	vector.
+	* coset.cc (Coset): Adapt constructor to changes.
+
 2011-04-20  Ken Brown  <kbrown@cornell.edu>
 
 	* cosettable.h (CosetTable): Rearrange members.

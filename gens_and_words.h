@@ -27,15 +27,17 @@
 
 using namespace std;
 
-const int NGENS = 4;
 const int NOTAGEN = -1;
-enum { a, A, b, B };		/* generators */
-int inv (int x);		/* inverses */
+
+/* generators (including inverses); they will be represented
+   internally by their index in the string gen */
+const string gen = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
+
+int inv (int x);
 typedef vector<int> word;
 
-int char_to_gen (char c);
-char gen_to_char (int x);
-bool string_to_word (word& w, const string& s);
+int char_to_gen (char c, int NGENS);
+bool string_to_word (word& w, const string& s, int NGENS = 4);
 
 
 

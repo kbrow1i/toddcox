@@ -24,51 +24,33 @@
 int
 inv (int x)
 {
-  if (x == a)
-    return A;
-  if (x == A)
-    return a;
-  if (x == b)
-    return B;
-  if (x == B)
-    return b;
-  return NOTAGEN;
+  return x % 2 == 0 ? x + 1 : x - 1;
 }
 
+// NGENS is the number of allowed generators, including inverses.
 int
-char_to_gen (char c)
+char_to_gen (char c, int NGENS = 4)
 {
-  if (c == 'a')
-    return a;
-  if (c == 'A')
-    return A;
-  if (c == 'b')
-    return b;
-  if (c == 'B')
-    return B;
-  return NOTAGEN;
+  size_t found = gen.find_first_of (c);
+  if (found != string::npos && found < NGENS)
+    return found;
+  else
+    return NOTAGEN;
 }
 
-char
-gen_to_char (int x)
-{
-  if (x == a)
-    return 'a';
-  if (x == A)
-    return 'A';
-  if (x == b)
-    return 'b';
-  if (x == B)
-    return 'B';
-}
+// char
+// gen_to_char (int x)
+// {
+//   return gen[x];
+// }
 
 bool
-string_to_word (word& w, const string& s)
+string_to_word (word& w, const string& s, int NGENS)
 {
   for (int i = 0; i < s.size (); i++)
     {
       int x;
-      if ((x = char_to_gen (s[i])) == NOTAGEN)
+      if ((x = char_to_gen (s[i], NGENS)) == NOTAGEN)
 	return false;
       w.push_back (x);
     }

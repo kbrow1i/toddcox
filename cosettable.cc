@@ -1,4 +1,4 @@
-/* cosettabe.cc: the CosetTable class.
+/* cosettable.cc: the CosetTable class.
 
    Copyright 2011 Kenneth S. Brown.
 
@@ -25,10 +25,10 @@
 #include <iomanip>
 
 // Constructor
-CosetTable::CosetTable (vector<word> rel, vector<word> gen_H) :
-  relator (rel), generator_of_H (gen_H)
+CosetTable::CosetTable (int NG, vector<word> rel, vector<word> gen_H) :
+  NGENS (NG), relator (rel), generator_of_H (gen_H)
 {
-  Coset c;
+  Coset c (NG);
   tab.push_back (c);
   p.push_back (0);		// p[0] = 0
 }
@@ -39,7 +39,7 @@ CosetTable::define (int k, int x)
 {
   int l = tab.size ();		// index of new coset
   tab[k].set_act(x, l);
-  Coset d;
+  Coset d (NGENS);
   d.set_act(inv (x), k);
   tab.push_back (d);
   p.push_back (l);		// p[l] = l
@@ -48,7 +48,10 @@ CosetTable::define (int k, int x)
 void
 CosetTable::print (bool standard) const
 {
-  cout << "       a   A   b   B\n";
+  cout << "    ";
+  for (int x = 0; x < NGENS; x++)
+    cout << setw (4) << gen[x];
+  cout << endl;
   for (int k = 0; k < tab.size (); k++)
     if (is_alive (k))
       {
@@ -62,8 +65,11 @@ CosetTable::print (bool standard) const
 void
 CosetTable::debug_print () const
 {
-  cout << "          a   A   b   B\n";
-  for (int k = 0; k < tab.size (); k++)
+  cout << "       ";
+  for (int x = 0; x < NGENS; x++)
+    cout << setw (4) << gen[x];
+  cout << endl;
+   for (int k = 0; k < tab.size (); k++)
     {
       cout << setw (2) << k << setw (3) << p[k] << ": ";
       tab[k].print (false);	// Don't standardize coset numbering
