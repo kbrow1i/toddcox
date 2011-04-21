@@ -1,5 +1,9 @@
 2011-04-21  Ken Brown  <kbrown@cornell.edu>
 
+	* examples/M12.in: New file.
+
+2011-04-21  Ken Brown  <kbrown@cornell.edu>
+
 	* main.cc (getgroup): Prompt for number of generators.
 	(main): Only print coset table if it's small.  Fix output.
 	* gens_and_words.h: Remove gen_to_char.  Remove global constant
