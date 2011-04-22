@@ -1,5 +1,11 @@
 2011-04-22  Ken Brown  <kbrown@cornell.edu>
 
+	* TODO: Update.
+	* main.cc (main): Fix test for whether to print table.
+	* main+.cc (main): Ditto.
+
+2011-04-22  Ken Brown  <kbrown@cornell.edu>
+
 	* coset.cc: Tweak license info.
 	* coset.h: Ditto.
 	* cosettable.cc: Ditto.

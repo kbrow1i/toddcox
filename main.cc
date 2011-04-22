@@ -49,9 +49,9 @@ main (void)
   CosetTable C (NGENS, rel, gen_H);
   C.hlt ();
   cout << "\nThe index of H in G is " << C.get_nlive ()
-       << ".\nThe coset table has size " << C.get_size ()
+       << ".\nThe coset table had size " << C.get_size ()
        << " before compression.\n\n";
-  if (C.get_size () < 100)
+  if (C.get_nlive () < 100)
     {
       C.compress ();
       C.standardize ();
