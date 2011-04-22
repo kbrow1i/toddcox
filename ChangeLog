@@ -1,6 +1,19 @@
-2011-04-21  Ken Brown  <kbrown@cornell.edu>
+2011-04-22  Ken Brown  <kbrown@cornell.edu>
 
+	* coset.cc: Tweak license info.
+	* coset.h: Ditto.
+	* cosettable.cc: Ditto.
+	* cosettable.h: Ditto.
+	* gens_and_words.cc: Ditto.
+	* gens_and_words.h: Ditto.
+	* main.cc (main): Tweak copyright and license info.  Remove
+	lookahead option and put it in...
+	* main+.cc: New file.
+	* Makefile.cygwin: Make both tc and tc+ (for HLT plus lookahead).
+	Add copyright and license info.
+	* Makefile.linux: Ditto.
 	* examples/M12.in: New file.
+	* TODO: Update and add copyright and license.
 
 2011-04-21  Ken Brown  <kbrown@cornell.edu>
 
