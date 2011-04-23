@@ -1,5 +1,9 @@
 2011-04-23  Ken Brown  <kbrown@cornell.edu>
 
+	* Version 0.1 released.
+
+2011-04-23  Ken Brown  <kbrown@cornell.edu>
+
 	* README: New file.
 	* INSTALL: Ditto.
 	* main.cc (main): Tweak output.
