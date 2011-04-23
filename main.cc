@@ -37,8 +37,8 @@ void getgroup (int& N, vector<word>& rel, vector<word>& gen_H);
 int
 main (void)
 {
-  cout << "\nThis program uses the HLT version of the Todd-Coxeter procedure\n"
-       << "to compute the index in a finitely presented group G of a subgroup H.\n"
+  cout << "\nThis program uses the HLT version of the Todd-Coxeter procedure to\n"
+       << "compute the index in a finitely presented group G of a subgroup H.\n"
        << "You will be prompted to enter the number of generators of G, the\n"
        << "defining relators of G, and the generators of H.  Use a,b,... for\n"
        << "the generators of G and A,B,... for their inverses.\n\n";

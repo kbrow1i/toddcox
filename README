@@ -1,0 +1,67 @@
+Copyright 2011 Kenneth S. Brown.
+See the end of the file for license conditions.
+
+If you have obtained prebuilt executables for your system, you can
+skip the first item and proceed directly to "Running the programs".
+
+* Building Toddcox
+
+See the INSTALL file in the source distribution for instructions.
+After following the instructions, you should have two executables, tc
+and tc+ (possibly with .exe appended).  The first program uses the HLT
+coset enumeration method.  The second uses HLT+lookahead.
+
+* Running the programs
+
+Type 'tc' (or 'tc+') at a command prompt.  Depending on how your path
+is set up, you may have to include a path specification.  On a typical
+unix-like system, for example, you would type
+
+  ./tc
+
+if the tc program is contained in your current directory.
+
+The programs will prompt you to enter the necessary information.  See
+<http://www.math.cornell.edu/~kbrown/toddcox/run.html> for a sample
+run of each program.
+
+* Running from a script
+
+Instead of responding to all the prompts interactively, you can enter
+them into a file and redirect standard input to that file.  The
+Toddcox distribution contains a sample input file.  To use it, issue
+the following command:
+
+  ./tc < examples/M12.in
+
+* Questions and comments
+
+The project website is
+
+  <http://www.math.cornell.edu/~kbrown/toddcox/>
+
+Questions and comments should be sent to
+
+  Ken Brown <kbrown@cornell.edu>
+
+
+This file is part of Toddcox.
+
+Toddcox is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version (GPLv3+).
+
+Toddcox is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License
+along with Toddcox.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:

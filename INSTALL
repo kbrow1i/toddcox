@@ -1,0 +1,64 @@
+Copyright 2011 Kenneth S. Brown.
+See the end of the file for license conditions.
+
+* Unix-like systems
+
+Toddcox should build easily on any Unix-like system.  Here are some
+specifics:
+
+** Linux
+
+Type 'make' at a shell prompt.  This should yield two executable
+programs, tc and tc+, in the current directory.  You can optionally
+type 'make install' to create stripped executables in the 'bin'
+subdirectory.
+
+** Cygwin
+
+Install the 'make' package and a package containing a C++ compiler,
+such as 'gcc4-g++'.  Then issue the following commands at a Cygwin
+shell prompt:
+
+  cp Makefile.cygwin Makefile
+  make
+
+This should yield two executable programs, tc.exe and tc+.exe, in the
+current directory.  You can optionally type 'make install' to create
+stripped executables in the 'bin' subdirectory.
+
+** Other Unix-like systems
+
+The Linux instructions may very well work without change.  If not, you
+might have to make minor changes to the Makefile to specify your
+compiler, for instance.  If anyone who makes such a change sends me
+the resulting Makefile, I will include it in future releases.  I am
+also happy to distribute prebuilt executables for other systems.
+
+* Windows
+
+Windows users can either install Cygwin and follow the instructions
+above or else install any C++ compiler and use it.  If anyone does
+this and sends me detailed instructions, I will include them in future
+releases.  I am also happy to distribute prebuilt Windows executables.
+
+
+This file is part of Toddcox.
+
+Toddcox is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version (GPLv3+).
+
+Toddcox is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License
+along with Toddcox.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:

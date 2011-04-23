@@ -1,12 +1,8 @@
-Toddcox TODO list                                                 -*-outline-*-
+Toddcox TODO list
 
-Copyright (C) 2011 Kenneth S. Brown.
+Copyright 2011 Kenneth S. Brown.
 See the end of the file for license conditions.
 
-
-* README
-
-* INSTALL
 
 * Documentation
 
@@ -14,9 +10,9 @@ See the end of the file for license conditions.
 
 * Rewrite the beamer version.
 
-* Make web page for distribution.
-
 * Announce to group pub.
+
+* Allow user to specify an output file for the coset table.
 
 
 This file is part of Toddcox.
@@ -33,3 +29,8 @@ for more details.
 
 You should have received a copy of the GNU General Public License
 along with Toddcox.  If not, see <http://www.gnu.org/licenses/>.
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:
