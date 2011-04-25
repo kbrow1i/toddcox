@@ -165,16 +165,7 @@ CosetTable::scan_and_fill (int k, const word& w)
       if (i > j)		// Scan completed, possibly with coincidence
 	{
 	  if (f != b)
-	    {
-	      // cout << "Coset table before coincidence:\n";
-	      // debug_print ();
-	      // print ();
-	      // cout << "\ncoincidence (" << f << ", " << b << ")\n\n";
-	      coincidence (f, b);
-	      // cout << "Coset table after coincidence:\n";
-	      // debug_print ();
-	      // print ();
-	    }
+	    coincidence (f, b);
 	  return;
 	}
       // Scan backward
@@ -182,25 +173,16 @@ CosetTable::scan_and_fill (int k, const word& w)
 	b = tab[b].get_act (inv (w[j--]));
       if (j < i)		// Scan completed with coincidence
 	{
-	  // cout << "Coset table before coincidence:\n";
-	  // debug_print ();
-	  // print ();
-	  // cout << "coincidence (" << f << ", " << b << ")\n";
 	  coincidence (f, b);
-	  // cout << "Coset table after coincidence:\n";
-	  // debug_print ();
-	  // print ();
 	  return;
 	}
       if (j == i)		// Scan completed with deduction
 	{
-	  // cout << "deduction  " << gen_to_char (w[i]) << ":" << f << "-->" << b << endl;
 	  tab[f].set_act (w[i], b);
 	  tab[b].set_act (inv (w[i]), f);
 	  return;
 	}
       // Scan is incomplete; make a definition to allow it to get further.
-      // cout << "definition " << gen_to_char (w[i]) << ":" << f << "-->" << get_size () << endl;
       define (f, w[i]);
     }
 }
@@ -297,17 +279,22 @@ CosetTable::hlt_plus (int threshold)
 int
 CosetTable::get_nlive () const
 {
-  int count = 0;
-  for (int k = 0; k < get_size (); k++)
+  int count = 0, n = get_size ();
+  for (int k = 0; k < n; k++)
     if (is_alive (k))
       count++;
   return count;
 }
 
+// FIXME??  There's no need to start at the beginning of the coset
+// table.  We could add an argument that says where to start.  But
+// probably won't make noticeable difference, since lookahead doesn't
+// seem to take much time anyway.
 void
 CosetTable::lookahead ()
 {
-  for (int k = 0; k < get_size (); k++)
+  int n = get_size ();
+  for (int k = 0; k < n; k++)
     for (int i = 0; i < relator.size () && is_alive (k); i++)
       scan (k, relator[i]);
   return;
@@ -316,8 +303,8 @@ CosetTable::lookahead ()
 void
 CosetTable::compress ()
 {
-  int l = 0, N = get_size ();
-  for (int k = 0; k < N; k++)
+  int l = 0, n = get_size ();
+  for (int k = 0; k < n; k++)
     if (is_alive (k))
       {
 	if (k > l)		// Replace k by l in table
@@ -338,7 +325,7 @@ CosetTable::compress ()
 	  }
 	l++;
       }
-  if (l < N)
+  if (l < n)
     {
       tab.erase (tab.begin () + l, tab.end ());
       p.erase (p.begin () + l, p.end ());
@@ -371,11 +358,11 @@ CosetTable::swap (int k, int l)
 void
 CosetTable::standardize ()
 {
-  int N = tab.size ();
-  if (N <= 2)
+  int n = tab.size ();
+  if (n <= 2)
     return;
   int goal = 1;			// next number we want to find in the table
-  for (int k = 0; k < N; k++)
+  for (int k = 0; k < n; k++)
     for (int x = 0; x < NGENS; x++)
       {
 	int l = tab[k].get_act (x);
@@ -384,7 +371,7 @@ CosetTable::standardize ()
 	    if (l > goal)
 	      swap (l, goal);
 	    goal++;
-	    if (goal == N - 1)
+	    if (goal == n - 1)
 	      return;
 	  }
       }

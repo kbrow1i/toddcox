@@ -1,3 +1,9 @@
+2011-04-25  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc: Clean up some comments.
+	(get_nlive, lookahead): Compute get_size() before starting loop.
+	* TODO: Update.
+
 2011-04-23  Ken Brown  <kbrown@cornell.edu>
 
 	* Version 0.1 released.
