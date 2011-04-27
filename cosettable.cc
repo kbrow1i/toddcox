@@ -286,10 +286,6 @@ CosetTable::get_nlive () const
   return count;
 }
 
-// FIXME??  There's no need to start at the beginning of the coset
-// table.  We could add an argument that says where to start.  But
-// probably won't make noticeable difference, since lookahead doesn't
-// seem to take much time anyway.
 void
 CosetTable::lookahead ()
 {

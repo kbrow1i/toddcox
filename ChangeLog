@@ -1,3 +1,7 @@
+2011-04-27  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc (lookahead): Remove comment.
+
 2011-04-25  Ken Brown  <kbrown@cornell.edu>
 
 	* cosettable.cc: Clean up some comments.
