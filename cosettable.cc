@@ -21,28 +21,37 @@
 
 #include "cosettable.h"
 #include "gens_and_words.h"
+#include "stack.h"
 #include <iostream>
 #include <iomanip>
 
 // Constructor
-CosetTable::CosetTable (int NG, vector<word> rel, vector<word> gen_H) :
+CosetTable::CosetTable (int NG, vector<word> rel, vector<word> gen_H, bool grouped) :
   NGENS (NG), relator (rel), generator_of_H (gen_H)
 {
   Coset c (NG);
   tab.push_back (c);
   p.push_back (0);		// p[0] = 0
+  if (grouped)
+    for (int i = 0; i < rel.size (); i++)
+      relator_grouped[rel[i][0]].push_back (rel[i]);
 }
 
 // Define coset k acted on by x to be new coset.
 void
-CosetTable::define (int k, int x)
+CosetTable::define (int k, int x, bool save)
 {
   int l = tab.size ();		// index of new coset
   tab[k].set_act(x, l);
-  Coset d (NGENS);
-  d.set_act(inv (x), k);
-  tab.push_back (d);
+  Coset c (NGENS);
+  c.set_act(inv (x), k);
+  tab.push_back (c);
   p.push_back (l);		// p[l] = l
+  if (save)
+    {
+      deduction d = {k, x};
+      deduction_stack.push (d);
+    }
 }
 
 void
@@ -121,7 +130,7 @@ CosetTable::merge(int k, int l)
 }
 
 void
-CosetTable::coincidence (int k, int l)
+CosetTable::coincidence (int k, int l, bool save)
 {
   merge (k, l);
   while (!q.empty ())
@@ -147,13 +156,18 @@ CosetTable::coincidence (int k, int l)
 	    {
 	      tab[e1].set_act (x, f1);
 	      tab[f1].set_act (y, e1);
+	      if (save)
+		{
+		  deduction d = {e1, x};
+		  deduction_stack.push (d);
+		}
 	    }
 	}
     }
 }
 
 void
-CosetTable::scan_and_fill (int k, const word& w)
+CosetTable::scan_and_fill (int k, const word& w, bool save)
 {
   int i = 0, j = w.size () - 1;	// Starting pos for forward and backward scans
   int f = k, b = k;		// Starting coset indices for scans
@@ -165,7 +179,7 @@ CosetTable::scan_and_fill (int k, const word& w)
       if (i > j)		// Scan completed, possibly with coincidence
 	{
 	  if (f != b)
-	    coincidence (f, b);
+	    coincidence (f, b, save);
 	  return;
 	}
       // Scan backward
@@ -173,22 +187,27 @@ CosetTable::scan_and_fill (int k, const word& w)
 	b = tab[b].get_act (inv (w[j--]));
       if (j < i)		// Scan completed with coincidence
 	{
-	  coincidence (f, b);
+	  coincidence (f, b, save);
 	  return;
 	}
       if (j == i)		// Scan completed with deduction
 	{
 	  tab[f].set_act (w[i], b);
 	  tab[b].set_act (inv (w[i]), f);
+	  if (save)
+	    {
+	      deduction d = {f, w[i]};
+	      deduction_stack.push (d);
+	    }
 	  return;
 	}
       // Scan is incomplete; make a definition to allow it to get further.
-      define (f, w[i]);
+      define (f, w[i], save);
     }
 }
 
 void
-CosetTable::scan (int k, const word& w)
+CosetTable::scan (int k, const word& w, bool save)
 {
   int i = 0, j = w.size () - 1;	// Starting pos for forward and backward scans
   int f = k, b = k;		// Starting coset indices for scans
@@ -199,7 +218,7 @@ CosetTable::scan (int k, const word& w)
     {
       if (f != b)
 	{
-	  coincidence (f, b);
+	  coincidence (f, b, save);
 	}
       return;
     }
@@ -208,13 +227,18 @@ CosetTable::scan (int k, const word& w)
     b = tab[b].get_act (inv (w[j--]));
   if (j < i)		// Scan completed with coincidence
     {
-      coincidence (f, b);
+      coincidence (f, b, save);
       return;
     }
   if (j == i)		// Scan completed with deduction
     {
       tab[f].set_act (w[i], b);
       tab[b].set_act (inv (w[i]), f);
+      if (save)
+	{
+	  deduction d = {f, w[i]};
+	  deduction_stack.push (d);
+	}
       return;
     }
   // Scan is incomplete and yields no information
@@ -274,6 +298,55 @@ CosetTable::hlt_plus (int threshold)
 	}
     }
   return true;
+}
+
+// Felsch algorithm
+void
+CosetTable::felsch ()
+{
+  for (int i = 0; i < generator_of_H.size (); i++)
+    scan_and_fill (0, generator_of_H[i], true);
+  // for (int i = 0; i < relator.size (); i++)
+  //   scan_and_fill (0, relator[i], true);
+  process_deductions ();
+  cout << "\nCoset table after initialization:\n\n";
+  print ();
+  for (int k = 0; k < get_size (); k++)
+    {
+      for (int x = 0; x < NGENS && is_alive (k); x++)
+	if (!is_defined (k, x))
+	  {
+	    define (k, x, true);
+	    process_deductions ();
+	  }
+    }
+}
+
+void
+CosetTable::process_deductions ()
+{
+  while (!deduction_stack.is_empty ())
+    {
+      if (deduction_stack.is_full ())
+	{
+	  lookahead ();
+	  deduction_stack.erase ();
+	  return;
+	}
+      deduction d;
+      deduction_stack.pop (d);
+      int k = d.coset;
+      int x = d.gen;
+      vector<word> relx = relator_grouped[x];
+      int n = relx.size ();
+      for (int i = 0; i < n && is_alive (k); i++)
+	scan (k, relx[i], true);
+      k = tab[k].get_act (x);
+      x = inv (x);
+      relx = relator_grouped[x];
+      for (int i = 0; i < n && is_alive (k); i++)
+	scan (k, relx[i], true);
+    }
 }
 
 int

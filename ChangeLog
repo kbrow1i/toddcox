@@ -1,3 +1,22 @@
+2011-04-28  Ken Brown  <kbrown@cornell.edu>
+
+	* examples/M12.in: Fix whitespace.
+	* examples/M12+.in: New file; input for tc+.
+	* tcf.cc: New file (for Felsch).
+	* cosettable.h (CosetTable): Add member 'relator_grouped', used by
+	Felsch algorithm.  Add corresponding parameter to constructor.
+	* cosettable.cc: Adapt constructor to change above.
+	* stack.cc: New file; implementation of deduction stack for
+	Felsch.
+	* stack.h: New file; declarations for deduction stack.
+	* main.cc: Rename to...
+	* tc.cc: New file.
+	* main+.cc: Rename to...
+	* tc+.cc: New file.
+	* Makefile.cygwin: Adapt to name changes; add rules for tcf and
+	stack.
+	* Makefile.linux: Ditto.
+
 2011-04-27  Ken Brown  <kbrown@cornell.edu>
 
 	* cosettable.cc (lookahead): Remove comment.

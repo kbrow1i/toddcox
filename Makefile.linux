@@ -1,5 +1,4 @@
-# -*-makefile-gmake-*-
-# Makefile.linux
+# Makefile.linux      -*-makefile-gmake-*-
 
 #    Copyright 2011 Kenneth S. Brown.
 
@@ -24,25 +23,34 @@ EXEEXT =
 
 .PHONY: all
 
-all: tc$(EXEEXT) tc+$(EXEEXT)
+all: tc$(EXEEXT) tc+$(EXEEXT) tcf$(EXEEXT)
 
-tc$(EXEEXT): main.o coset.o cosettable.o gens_and_words.o
-	g++ -o tc$(EXEEXT) main.o coset.o cosettable.o gens_and_words.o
+tc$(EXEEXT): tc.o coset.o cosettable.o gens_and_words.o stack.o
+	g++ -o tc$(EXEEXT) tc.o coset.o cosettable.o gens_and_words.o stack.o
 
-tc+$(EXEEXT): main+.o coset.o cosettable.o gens_and_words.o
-	g++ -o tc+$(EXEEXT) main+.o coset.o cosettable.o gens_and_words.o
+tc+$(EXEEXT): tc+.o coset.o cosettable.o gens_and_words.o
+	g++ -o tc+$(EXEEXT) tc+.o coset.o cosettable.o gens_and_words.o stack.o
 
-main.o: main.cc cosettable.h gens_and_words.h coset.h
-	g++ -c main.cc
+tcf$(EXEEXT): tcf.o coset.o cosettable.o gens_and_words.o stack.o
+	g++ -o tcf$(EXEEXT) tcf.o coset.o cosettable.o gens_and_words.o stack.o
 
-main+.o: main+.cc cosettable.h gens_and_words.h coset.h
-	g++ -c main+.cc
+tc.o: tc.cc cosettable.h gens_and_words.h coset.h
+	g++ -c tc.cc
+
+tc+.o: tc+.cc cosettable.h gens_and_words.h coset.h
+	g++ -c tc+.cc
+
+tcf.o: tcf.cc cosettable.h gens_and_words.h coset.h stack.h
+	g++ -c tcf.cc
 
 coset.o: coset.cc coset.h gens_and_words.h
 	g++ -c coset.cc
 
-cosettable.o: cosettable.cc cosettable.h gens_and_words.h coset.h
+cosettable.o: cosettable.cc cosettable.h gens_and_words.h coset.h stack.h
 	g++ -c cosettable.cc
+
+stack.o: stack.cc stack.h
+	g++ -c stack.cc
 
 gens_and_words.o: gens_and_words.cc gens_and_words.h
 	g++ -c gens_and_words.cc

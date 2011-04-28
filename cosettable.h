@@ -24,15 +24,21 @@
 
 #include "coset.h"
 #include "gens_and_words.h"
+#include "stack.h"
 #include <vector>
 #include <queue>
+#include <map>
+
+using namespace std;
 
 class CosetTable
 {
 public:
-  CosetTable (int NG, vector<word> rel, vector<word> gen_H);
+  /* 'grouped' means group by first letter for Felsch */
+  CosetTable (int NG, vector<word> rel, vector<word> gen_H, bool grouped = false);
   void hlt ();			/* HLT algorithm... */
   bool hlt_plus (int threshold); /* ...with lookahead */
+  void felsch ();		 /* Felsch algorithm */
   void compress ();
   void standardize ();
   int get_nlive () const;
@@ -42,19 +48,22 @@ public:
 private:
   int NGENS;
   vector<Coset> tab;
-  vector<int> p;		// for generating equivalence classes; p[k] <= k
-  queue<int> q;			// dead cosets to be processed
+  vector<int> p;	/* for generating equivalence classes; p[k] <= k */
+  queue<int> q;			/* dead cosets to be processed */
+  Stack deduction_stack;
   vector<word> relator;
   vector<word> generator_of_H;
+  map< int, vector<word> > relator_grouped; /* for Felsch */
   void lookahead ();
-  void scan_and_fill (int k, const word& w);
-  void scan (int k, const word& w);
+  void process_deductions ();
+  void scan_and_fill (int k, const word& w, bool save = false);
+  void scan (int k, const word& w, bool save = false);
   bool is_alive (int k) const { return (p[k] == k); };
-  void define (int k, int x);
+  void define (int k, int x, bool save = false);
   bool is_defined (int k, int x) const { return (tab[k].get_act (x) >= 0); };
   int rep (int c);
   void merge (int k, int l);
-  void coincidence(int k, int l);
+  void coincidence(int k, int l, bool save = false);
   void swap (int k, int l);
 };
 

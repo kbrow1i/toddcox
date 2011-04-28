@@ -1,4 +1,4 @@
-/* main.cc: A driver for the Todd-Coxeter (HLT) routines.
+/* tc+.cc: A driver for the Todd-Coxeter (HLT plus lookahead) routines.
 
    Copyright 2011 Kenneth S. Brown.
 
@@ -19,9 +19,9 @@
 
    Written by Ken Brown <kbrown@cornell.edu>. */
 
-// This is a toy implementation of the HLT version of the
-// Todd--Coxeter procedure, based on Holt, Handbook of computational
-// group theory.
+// This is a toy implementation of the HLT (plus lookahead) version of
+// the Todd--Coxeter procedure, based on Holt, Handbook of
+// computational group theory.
 
 #include "cosettable.h"
 #include "gens_and_words.h"
@@ -37,17 +37,32 @@ void getgroup (int& N, vector<word>& rel, vector<word>& gen_H);
 int
 main (void)
 {
-  cout << "\nThis program uses the HLT version of the Todd-Coxeter procedure to\n"
-       << "compute the index in a finitely presented group G of a subgroup H.\n"
-       << "You will be prompted to enter the number of generators of G, the\n"
-       << "defining relators of G, and the generators of H.  Use a,b,... for\n"
-       << "the generators of G and A,B,... for their inverses.\n\n";
+  cout << "\nThis program uses the HLT+lookahead version of the Todd-Coxeter\n"
+       << "procedure to compute the index in a finitely presented group G of\n"
+       << "a subgroup H.  You will be prompted to enter the number of\n"
+       << "generators of G, the defining relators of G, and the generators\n"
+       << "of H.  Use a,b,... for the generators of G and A,B,... for their\n"
+       << "inverses.  You will also be prompted to enter a threshold.  If an\n"
+       << "HLT step causes the size of the coset table to exceed the threshold,\n"
+       << "the program will use lookahead to try to shrink the table.\n\n";
   int NGENS;
   vector<word> rel;
   vector<word> gen_H;
   getgroup (NGENS, rel, gen_H);
+  int threshold;
+  cout << "Enter threshold for HLT with lookahead, or 0 to use ordinary HLT: ";
+  cin >> threshold;
   CosetTable C (NGENS, rel, gen_H);
-  C.hlt ();
+  bool res = true;
+  if (threshold == 0)
+    C.hlt ();
+  else
+    res = C.hlt_plus (threshold);
+  if (!res)
+    {
+      cout << "Sorry, please try again with a bigger threshold.\n\n";
+      return 1;
+    }
   cout << "\nThe index of H in G is " << C.get_nlive ()
        << ".\nThe coset table had size " << C.get_size ()
        << " before compression.\n\n";
