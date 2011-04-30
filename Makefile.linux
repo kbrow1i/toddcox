@@ -21,7 +21,7 @@
 
 EXEEXT = 
 
-.PHONY: all
+.PHONY: all clean
 
 all: tc$(EXEEXT) tc+$(EXEEXT) tcf$(EXEEXT)
 
@@ -54,3 +54,9 @@ stack.o: stack.cc stack.h
 
 gens_and_words.o: gens_and_words.cc gens_and_words.h
 	g++ -c gens_and_words.cc
+
+clean:
+	-rm -f *.o
+	-rm -f tc$(EXEEXT)
+	-rm -f tc+$(EXEEXT)
+	-rm -f tcf$(EXEEXT)

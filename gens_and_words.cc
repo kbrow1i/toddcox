@@ -56,3 +56,9 @@ string_to_word (word& w, const string& s, int NGENS)
     }
   return true;
 }
+
+void
+rotate (string& s)
+{
+  s = s.substr (1) + s[0];
+}

@@ -24,17 +24,51 @@
 #include "stack.h"
 #include <iostream>
 #include <iomanip>
+#include <set>
 
 // Constructor
-CosetTable::CosetTable (int NG, vector<word> rel, vector<word> gen_H, bool grouped) :
-  NGENS (NG), relator (rel), generator_of_H (gen_H)
+CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
+			bool felsch) : NGENS (NG)
 {
-  Coset c (NG);
+  Coset c (NGENS);
   tab.push_back (c);
   p.push_back (0);		// p[0] = 0
-  if (grouped)
-    for (int i = 0; i < rel.size (); i++)
-      relator_grouped[rel[i][0]].push_back (rel[i]);
+  for (int i = 0; i < gen_H.size (); i++)
+    {
+      word w;
+      string_to_word (w, gen_H[i], NGENS); // Assume strings are valid
+      generator_of_H.push_back (w);
+    }
+  set<string> S;
+  for (int i = 0; i < rel.size (); i++)
+    {
+      word w;
+      string s = rel[i];
+      string_to_word (w, s, NGENS); // Assume strings are valid
+      relator.push_back (w);
+      if (felsch)
+	{
+	  generator_of_H.push_back (w);
+	  // Accumulate s, s^{-1}, and all cyclic conjugates
+	  string sinv;
+	  for (int i = s.size (); i > 0; i--)
+	    sinv += gen[inv (w[i - 1])];
+	  for (int i = 0; i < s.size (); i++)
+	    {
+	      S.insert (s);
+	      S.insert (sinv);
+	      rotate (s);
+	      rotate (sinv);
+	    }
+	}
+    }
+  // Group elements of S according to first letter
+  for (set<string>::iterator it = S.begin (); it != S.end (); it++)
+    {
+      word w;
+      string_to_word (w, *it, NGENS);
+      relator_grouped[w[0]].push_back (w);
+    }
 }
 
 // Define coset k acted on by x to be new coset.
@@ -306,11 +340,7 @@ CosetTable::felsch ()
 {
   for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i], true);
-  // for (int i = 0; i < relator.size (); i++)
-  //   scan_and_fill (0, relator[i], true);
   process_deductions ();
-  cout << "\nCoset table after initialization:\n\n";
-  print ();
   for (int k = 0; k < get_size (); k++)
     {
       for (int x = 0; x < NGENS && is_alive (k); x++)

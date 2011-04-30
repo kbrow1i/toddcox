@@ -1,3 +1,20 @@
+2011-04-30  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: Add 'clean' target.
+	* Makefile.linux: Ditto.
+	* TODO: Update.
+	* cosettable.h: Change constructor parameters to vectors of
+	strings instead of words.
+	* cossettable.cc: Change constructor accordingly.  Move string
+	manipulations for Felsch to here from tcf.cc.  For Felsch, add
+	[original] relators to generators of H.
+	* tcf.cc:  Move 'rotate' from here to gens_and_words.
+	(getgroup): Remove string manipulations.
+	* gens_and_words.cc: Move 'rotate' here.
+	* gens_and_words.h: Declare it.
+	* tc.cc: Accommodate changed CosetTable constructor.
+	* tc+.cc: Ditto.
+
 2011-04-28  Ken Brown  <kbrown@cornell.edu>
 
 	* examples/M12.in: Fix whitespace.

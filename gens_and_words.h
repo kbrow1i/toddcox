@@ -37,7 +37,9 @@ int inv (int x);
 typedef vector<int> word;
 
 int char_to_gen (char c, int NGENS);
-bool string_to_word (word& w, const string& s, int NGENS = 4);
+bool string_to_word (word& w, const string& s, int NGENS);
+
+void rotate (string& s);
 
 
 

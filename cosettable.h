@@ -34,8 +34,7 @@ using namespace std;
 class CosetTable
 {
 public:
-  /* 'grouped' means group by first letter for Felsch */
-  CosetTable (int NG, vector<word> rel, vector<word> gen_H, bool grouped = false);
+  CosetTable (int NG, vector<string> rel, vector<string> gen_H, bool felsch = false);
   void hlt ();			/* HLT algorithm... */
   bool hlt_plus (int threshold); /* ...with lookahead */
   void felsch ();		 /* Felsch algorithm */

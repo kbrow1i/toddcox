@@ -6,9 +6,15 @@ See the end of the file for license conditions.
 
 * Rewrite the beamer version.
 
+* Update web pages for Felsch.
+
 * Allow user to specify an output file for the coset table.
 
 * See if there are obvious places to speed up the code.  Profile?
+
+* Allow input from file for non-interactive use.
+
+Might be needed for profiling.
 
 
 This file is part of Toddcox.

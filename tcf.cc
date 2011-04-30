@@ -29,12 +29,10 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
-#include <set>
 
 using namespace std;
 
-void getgroup (int& N, vector<word>& rel, vector<word>& gen_H);
-void rotate (string& s);
+void getgroup (int& N, vector<string>& rel, vector<string>& gen_H);
 
 int
 main (void)
@@ -45,8 +43,8 @@ main (void)
        << "defining relators of G, and the generators of H.  Use a,b,... for\n"
        << "the generators of G and A,B,... for their inverses.\n\n";
   int NGENS;
-  vector<word> rel;
-  vector<word> gen_H;
+  vector<string> rel;
+  vector<string> gen_H;
   getgroup (NGENS, rel, gen_H);
   CosetTable C (NGENS, rel, gen_H, true);
   C.felsch ();
@@ -66,9 +64,8 @@ main (void)
 // Prompt for number of generators (including inverses) and group and
 // subgroup info.
 void
-getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
+getgroup (int& N, vector<string>& rel, vector<string>& gen_H)
 {
-  // Get number of generators
   cout << "Enter the number of generators:\n> ";
   for (;;)
     {
@@ -84,8 +81,6 @@ getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
       N = 2 * n;
       break;
     }
-  // Get relators and cyclic conjugates as set of strings
-  set<string> S;
   for (;;)
     {
       string s; word w;
@@ -101,26 +96,8 @@ getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
 	  cout << gen[N - 1] << ".\n";
 	  continue;
 	}
-      // Accumulate s and s^{-1} and cyclic conjugates in S
-      string sinv;
-      for (int i = s.size (); i > 0; i--)
-	sinv += gen[inv (w[i - 1])];
-      for (int i = 0; i < s.size (); i++)
-	{
-	  S.insert (s);
-	  S.insert (sinv);
-	  rotate (s);
-	  rotate (sinv);
-	}
+      rel.push_back (s);
     }
-  // Convert set of relators to vector
-  for (set<string>::iterator it = S.begin (); it != S.end (); it++)
-    {
-      word w;
-      string_to_word (w, *it, N);
-      rel.push_back (w);
-    }
-  // Get generators of H
   for (;;)
     {
       string s; word w;
@@ -136,12 +113,6 @@ getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
 	  cout << gen[N - 1] << ".\n";
 	  continue;
 	}
-      gen_H.push_back (w);
+      gen_H.push_back (s);
     }
-}
-
-void
-rotate (string& s)
-{
-  s = s.substr (1) + s[0];
 }

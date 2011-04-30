@@ -32,7 +32,7 @@
 
 using namespace std;
 
-void getgroup (int& N, vector<word>& rel, vector<word>& gen_H);
+void getgroup (int& N, vector<string>& rel, vector<string>& gen_H);
 
 int
 main (void)
@@ -46,8 +46,8 @@ main (void)
        << "HLT step causes the size of the coset table to exceed the threshold,\n"
        << "the program will use lookahead to try to shrink the table.\n\n";
   int NGENS;
-  vector<word> rel;
-  vector<word> gen_H;
+  vector<string> rel;
+  vector<string> gen_H;
   getgroup (NGENS, rel, gen_H);
   int threshold;
   cout << "Enter threshold for HLT with lookahead, or 0 to use ordinary HLT: ";
@@ -79,7 +79,7 @@ main (void)
 // Prompt for number of generators (including inverses) and group and
 // subgroup info.
 void
-getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
+getgroup (int& N, vector<string>& rel, vector<string>& gen_H)
 {
   cout << "Enter the number of generators:\n> ";
   for (;;)
@@ -111,7 +111,7 @@ getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
 	  cout << gen[N - 1] << ".\n";
 	  continue;
 	}
-      rel.push_back (w);
+      rel.push_back (s);
     }
   for (;;)
     {
@@ -128,7 +128,6 @@ getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
 	  cout << gen[N - 1] << ".\n";
 	  continue;
 	}
-      gen_H.push_back (w);
+      gen_H.push_back (s);
     }
-  return;
 }

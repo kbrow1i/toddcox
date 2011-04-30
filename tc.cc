@@ -32,7 +32,7 @@
 
 using namespace std;
 
-void getgroup (int& N, vector<word>& rel, vector<word>& gen_H);
+void getgroup (int& N, vector<string>& rel, vector<string>& gen_H);
 
 int
 main (void)
@@ -43,8 +43,8 @@ main (void)
        << "defining relators of G, and the generators of H.  Use a,b,... for\n"
        << "the generators of G and A,B,... for their inverses.\n\n";
   int NGENS;
-  vector<word> rel;
-  vector<word> gen_H;
+  vector<string> rel;
+  vector<string> gen_H;
   getgroup (NGENS, rel, gen_H);
   CosetTable C (NGENS, rel, gen_H);
   C.hlt ();
@@ -64,7 +64,7 @@ main (void)
 // Prompt for number of generators (including inverses) and group and
 // subgroup info.
 void
-getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
+getgroup (int& N, vector<string>& rel, vector<string>& gen_H)
 {
   cout << "Enter the number of generators:\n> ";
   for (;;)
@@ -96,7 +96,7 @@ getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
 	  cout << gen[N - 1] << ".\n";
 	  continue;
 	}
-      rel.push_back (w);
+      rel.push_back (s);
     }
   for (;;)
     {
@@ -113,7 +113,6 @@ getgroup (int& N, vector<word>& rel, vector<word>& gen_H)
 	  cout << gen[N - 1] << ".\n";
 	  continue;
 	}
-      gen_H.push_back (w);
+      gen_H.push_back (s);
     }
-  return;
 }
