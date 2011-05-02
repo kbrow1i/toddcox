@@ -46,7 +46,7 @@ main (void)
   vector<string> rel;
   vector<string> gen_H;
   getgroup (NGENS, rel, gen_H);
-  CosetTable C (NGENS, rel, gen_H, true);
+  CosetTable C (NGENS, rel, gen_H, 0, true);
   C.felsch ();
   cout << "\nThe index of H in G is " << C.get_nlive ()
        << ".\nThe coset table had size " << C.get_size ()

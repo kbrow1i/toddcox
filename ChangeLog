@@ -1,3 +1,11 @@
+2011-05-02  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.h (CosetTable): Declare new member 'threshold'.
+	* cosettable.cc (CosetTable): Change constructor accordingly;
+	reserve space in cosettable.
+	* tc+.cc: Adapt to changed constructor.
+	* tcf.cc: Ditto.
+
 2011-04-30  Ken Brown  <kbrown@cornell.edu>
 
 	* Makefile.cygwin: Add 'clean' target.

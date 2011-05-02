@@ -28,11 +28,13 @@
 
 // Constructor
 CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
-			bool felsch) : NGENS (NG)
+			int t, bool felsch) : NGENS (NG), threshold (t)
 {
   Coset c (NGENS);
   tab.push_back (c);
   p.push_back (0);		// p[0] = 0
+  if (t > 0)
+    tab.reserve (1.1 * t);
   for (int i = 0; i < gen_H.size (); i++)
     {
       word w;
@@ -298,20 +300,19 @@ CosetTable::hlt ()
 
 // HLT algorithm with lookahead
 bool
-CosetTable::hlt_plus (int threshold)
+CosetTable::hlt_plus ()
 {
-  const int t = threshold;
   for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i]);
   int count_live = 0;	      // number of live cosets processed in main loop
   for (int k = 0; k < get_size (); k++)
     {
-      if (get_size () > t)
+      if (get_size () > threshold)
 	{
 	  cout << "\nThreshold exceeded.  Trying to recover memory...";
 	  lookahead ();
 	  compress ();
-	  if (tab.size () > t)
+	  if (tab.size () > threshold)
 	    {
 	      cout << "failed.\n";
 	      return false;

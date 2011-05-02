@@ -34,9 +34,10 @@ using namespace std;
 class CosetTable
 {
 public:
-  CosetTable (int NG, vector<string> rel, vector<string> gen_H, bool felsch = false);
+  CosetTable (int NG, vector<string> rel, vector<string> gen_H,
+	      int t = 0, bool felsch = false);
   void hlt ();			/* HLT algorithm... */
-  bool hlt_plus (int threshold); /* ...with lookahead */
+  bool hlt_plus (); /* ...with lookahead */
   void felsch ();		 /* Felsch algorithm */
   void compress ();
   void standardize ();
@@ -49,10 +50,11 @@ private:
   vector<Coset> tab;
   vector<int> p;	/* for generating equivalence classes; p[k] <= k */
   queue<int> q;			/* dead cosets to be processed */
-  Stack deduction_stack;
   vector<word> relator;
   vector<word> generator_of_H;
+  int threshold;			    /* for hlt+ */
   map< int, vector<word> > relator_grouped; /* for Felsch */
+  Stack deduction_stack;		    /* ditto */
   void lookahead ();
   void process_deductions ();
   void scan_and_fill (int k, const word& w, bool save = false);
