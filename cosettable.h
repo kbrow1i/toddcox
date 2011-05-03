@@ -39,7 +39,7 @@ public:
   void hlt ();			/* HLT algorithm... */
   bool hlt_plus (); /* ...with lookahead */
   void felsch ();		 /* Felsch algorithm */
-  void compress ();
+  int compress (int current = -1);
   void standardize ();
   int get_nlive () const;
   int get_size () const { return tab.size (); };
@@ -55,7 +55,7 @@ private:
   int threshold;			    /* for hlt+ */
   map< int, vector<word> > relator_grouped; /* for Felsch */
   Stack deduction_stack;		    /* ditto */
-  void lookahead ();
+  void lookahead (int start = 0);
   void process_deductions ();
   void scan_and_fill (int k, const word& w, bool save = false);
   void scan (int k, const word& w, bool save = false);

@@ -304,33 +304,35 @@ CosetTable::hlt_plus ()
 {
   for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i]);
-  int count_live = 0;	      // number of live cosets processed in main loop
   for (int k = 0; k < get_size (); k++)
     {
+      if (!is_alive (k))
+	continue;
       if (get_size () > threshold)
 	{
-	  cout << "\nThreshold exceeded.  Trying to recover memory...";
-	  lookahead ();
-	  compress ();
+	  int n = get_size ();
+	  cout << "\nThreshold exceeded; table size is " << n << ".  Looking ahead...\n";
+	  lookahead (k);
+	  // Move to next live coset, in case k died
+	  while (k < n && !is_alive (k))
+	    k++;
+	  if (k == n)
+	    return true;
+	  k = compress (k);
+	  cout << "Table size is now " << tab.size () << ".";
 	  if (tab.size () > threshold)
 	    {
-	      cout << "failed.\n";
+	      cout << endl;
 	      return false;
 	    }
-	  cout << "OK.  Continuing...\n";
-	  k = count_live;
-	  if (k >= tab.size ())
-	    return true;
+	  cout << "  Continuing.\n";
 	}
       for (int i = 0; i < relator.size () && is_alive (k); i++)
 	scan_and_fill (k, relator[i]);
       if (is_alive (k))
-	{
-	  for (int x = 0; x < NGENS; x++)
-	    if (!is_defined (k, x))
-	      define (k, x);
-	  count_live++;
-	}
+	for (int x = 0; x < NGENS; x++)
+	  if (!is_defined (k, x))
+	    define (k, x);
     }
   return true;
 }
@@ -391,22 +393,29 @@ CosetTable::get_nlive () const
 }
 
 void
-CosetTable::lookahead ()
+CosetTable::lookahead (int start)
 {
   int n = get_size ();
-  for (int k = 0; k < n; k++)
+  for (int k = start; k < n; k++)
     for (int i = 0; i < relator.size () && is_alive (k); i++)
       scan (k, relator[i]);
   return;
 }
 
-void
-CosetTable::compress ()
+// When compress is called after lookahead in hlt_plus, we have some
+// current (live) coset that we are about to process.  After
+// compression, we need to resume processing at the same coset, which
+// may have been renumbered; compress returns the new number (or -1 if
+// a current live coset wasn't specified).
+int
+CosetTable::compress (int current)
 {
-  int l = 0, n = get_size ();
+  int l = 0, n = get_size (), ret = -1;
   for (int k = 0; k < n; k++)
     if (is_alive (k))
       {
+	if (k == current)
+	  ret = l;
 	if (k > l)		// Replace k by l in table
 	  {
 	    for (int x = 0; x < NGENS; x++)
@@ -430,7 +439,7 @@ CosetTable::compress ()
       tab.erase (tab.begin () + l, tab.end ());
       p.erase (p.begin () + l, p.end ());
     }
-  return;
+  return ret;
 }
       
 // Swap two distinct live rows of the coset table

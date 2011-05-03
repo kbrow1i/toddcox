@@ -1,3 +1,17 @@
+2011-05-03  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc (hlt_plus): Fix bug in which processing cosets
+	resumed at the wrong place after lookahead.
+	(lookahead): Add parameter 'start'.
+	(compress): Add parameter 'current'; make function return 'int'.
+	* cosettable.h: Adapt declarations to changes above.
+	* examples/HNO_1.in: New file.
+	* examples/HNO_1+.in: Ditto.
+	* examples/HNO_8.in: Ditto.
+	* examples/HNO_8+.in: Ditto.
+	* examples/SL2_13.in: Ditto.
+	* examples/SL2_13+.in: Ditto.
+
 2011-05-02  Ken Brown  <kbrown@cornell.edu>
 
 	* cosettable.h (CosetTable): Declare new member 'threshold'.
