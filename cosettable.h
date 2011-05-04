@@ -36,15 +36,16 @@ class CosetTable
 public:
   CosetTable (int NG, vector<string> rel, vector<string> gen_H,
 	      int t = 0, bool felsch = false);
-  void hlt ();			/* HLT algorithm... */
+  bool hlt ();			/* HLT algorithm... */
   bool hlt_plus (); /* ...with lookahead */
-  void felsch ();		 /* Felsch algorithm */
+  bool felsch ();		 /* Felsch algorithm */
   int compress (int current = -1);
   void standardize ();
   int get_nlive () const;
   int get_size () const { return tab.size (); };
   void print (bool standard = true) const;
   void debug_print () const;
+  bool threshold_is_bad () const { return threshold < 0; };
 private:
   int NGENS;
   vector<Coset> tab;
@@ -57,10 +58,10 @@ private:
   Stack deduction_stack;		    /* ditto */
   void lookahead (int start = 0);
   void process_deductions ();
-  void scan_and_fill (int k, const word& w, bool save = false);
+  bool scan_and_fill (int k, const word& w, bool save = false);
   void scan (int k, const word& w, bool save = false);
   bool is_alive (int k) const { return (p[k] == k); };
-  void define (int k, int x, bool save = false);
+  bool define (int k, int x, bool save = false);
   bool is_defined (int k, int x) const { return (tab[k].get_act (x) >= 0); };
   int rep (int c);
   void merge (int k, int l);

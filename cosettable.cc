@@ -25,6 +25,7 @@
 #include <iostream>
 #include <iomanip>
 #include <set>
+#include <exception>
 
 // Constructor
 CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
@@ -34,7 +35,16 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
   tab.push_back (c);
   p.push_back (0);		// p[0] = 0
   if (t > 0)
-    tab.reserve (1.1 * t);
+    {
+      try
+	{
+	  tab.reserve (1.1 * t);
+	}
+      catch (exception& e)
+	{
+	  threshold = -1;
+	}
+    }
   for (int i = 0; i < gen_H.size (); i++)
     {
       word w;
@@ -73,21 +83,31 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
     }
 }
 
-// Define coset k acted on by x to be new coset.
-void
+// Define coset k acted on by x to be new coset; return false if out
+// of memory.
+bool
 CosetTable::define (int k, int x, bool save)
 {
   int l = tab.size ();		// index of new coset
   tab[k].set_act(x, l);
   Coset c (NGENS);
   c.set_act(inv (x), k);
-  tab.push_back (c);
-  p.push_back (l);		// p[l] = l
+  try
+    {
+      tab.push_back (c);
+      p.push_back (l);		// p[l] = l
+    }
+  catch (exception& e)
+    {
+      cout << "Coset table has size " << get_size () << "; out of memory.\n";
+      return false;
+    }
   if (save)
     {
       deduction d = {k, x};
       deduction_stack.push (d);
     }
+  return true;
 }
 
 void
@@ -202,7 +222,8 @@ CosetTable::coincidence (int k, int l, bool save)
     }
 }
 
-void
+// Return false if out of memory
+bool
 CosetTable::scan_and_fill (int k, const word& w, bool save)
 {
   int i = 0, j = w.size () - 1;	// Starting pos for forward and backward scans
@@ -216,7 +237,7 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 	{
 	  if (f != b)
 	    coincidence (f, b, save);
-	  return;
+	  return true;
 	}
       // Scan backward
       while (j >= i && is_defined (b, inv (w[j])))
@@ -224,7 +245,7 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
       if (j < i)		// Scan completed with coincidence
 	{
 	  coincidence (f, b, save);
-	  return;
+	  return true;
 	}
       if (j == i)		// Scan completed with deduction
 	{
@@ -235,10 +256,11 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 	      deduction d = {f, w[i]};
 	      deduction_stack.push (d);
 	    }
-	  return;
+	  return true;
 	}
       // Scan is incomplete; make a definition to allow it to get further.
-      define (f, w[i], save);
+      if (!define (f, w[i], save))
+	return false;
     }
 }
 
@@ -281,8 +303,8 @@ CosetTable::scan (int k, const word& w, bool save)
   return;
 }
 
-// HLT algorithm
-void
+// HLT algorithm; return false if run out of memory.
+bool
 CosetTable::hlt ()
 {
   for (int i = 0; i < generator_of_H.size (); i++)
@@ -294,8 +316,10 @@ CosetTable::hlt ()
       if (is_alive (k))
 	for (int x = 0; x < NGENS; x++)
 	  if (!is_defined (k, x))
-	    define (k, x);
+	    if (!define (k, x))
+	      return false;
     }
+  return true;
 }
 
 // HLT algorithm with lookahead
@@ -332,13 +356,13 @@ CosetTable::hlt_plus ()
       if (is_alive (k))
 	for (int x = 0; x < NGENS; x++)
 	  if (!is_defined (k, x))
-	    define (k, x);
+	    define (k, x);	// Threshold means we won't run out of memory.
     }
   return true;
 }
 
-// Felsch algorithm
-void
+// Felsch algorithm; return false if run out of memory.
+bool
 CosetTable::felsch ()
 {
   for (int i = 0; i < generator_of_H.size (); i++)
@@ -349,10 +373,12 @@ CosetTable::felsch ()
       for (int x = 0; x < NGENS && is_alive (k); x++)
 	if (!is_defined (k, x))
 	  {
-	    define (k, x, true);
+	    if (!define (k, x, true))
+	      return false;
 	    process_deductions ();
 	  }
     }
+  return true;
 }
 
 void

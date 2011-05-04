@@ -47,7 +47,8 @@ main (void)
   vector<string> gen_H;
   getgroup (NGENS, rel, gen_H);
   CosetTable C (NGENS, rel, gen_H);
-  C.hlt ();
+  if (!C.hlt ())
+    return 1;
   cout << "\nThe index of H in G is " << C.get_nlive ()
        << ".\nThe coset table had size " << C.get_size ()
        << " before compression.\n\n";

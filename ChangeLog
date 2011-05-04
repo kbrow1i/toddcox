@@ -1,5 +1,24 @@
 2011-05-03  Ken Brown  <kbrown@cornell.edu>
 
+	* cosettable.cc (CosetTable): Catch bad_alloc exception if
+	threshold is too big.
+	(define): Change return type to boolean; catch bad_alloc exception
+	if can't make a new definition.
+	(scan_and_fill, hlt, felsch): Change return type to boolean;
+	return false if can't make a new definition.
+	* cosettable.h: Declare new return types.
+	(threshold_is_bad): New public function.
+	* tc.cc: Adapt to changes above.
+	* tcf.cc: Ditto.
+	* tc+.cc: Ditto.
+	* TODO: Update.
+	* examples/F27.in: New file.
+	* examples/F27+.in: Ditto.
+	* examples/G8723.in: Ditto.
+	* examples/G8723+.in: Ditto.
+
+2011-05-03  Ken Brown  <kbrown@cornell.edu>
+
 	* cosettable.cc (hlt_plus): Fix bug in which processing cosets
 	resumed at the wrong place after lookahead.
 	(lookahead): Add parameter 'start'.

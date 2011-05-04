@@ -53,6 +53,11 @@ main (void)
   cout << "Enter threshold for HLT with lookahead, or 0 to use ordinary HLT: ";
   cin >> threshold;
   CosetTable C (NGENS, rel, gen_H, threshold);
+  if (C.threshold_is_bad ())
+    {
+      cout << "\nSorry, threshold too big; please try again.\n";
+      return 2;
+    }
   bool res = true;
   if (threshold == 0)
     C.hlt ();

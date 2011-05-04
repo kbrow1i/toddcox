@@ -4,17 +4,17 @@ Copyright 2011 Kenneth S. Brown.
 See the end of the file for license conditions.
 
 
-* Rewrite the beamer version.
+* Rewrite the beamer version of handout.
 
 * Update web pages for Felsch.
 
 * Allow user to specify an output file for the coset table.
 
-* See if there are obvious places to speed up the code.  Profile?
-
 * Allow input from file for non-interactive use.
 
-Might be needed for profiling.
+* Improve commenting both in headers and code.
+
+* Add README to examples.
 
 
 This file is part of Toddcox.
