@@ -1,3 +1,12 @@
+2011-05-04  Ken Brown  <kbrown@cornell.edu>
+
+	* TODO: Update.
+	* cosettable.cc (define): Tweak output.
+	(scan_and_fill, felsch): Make code more readable.
+	(hlt): Ditto.  Also, add check for allocation failure after
+	scan_and_fill.
+	* examples/README: New file.
+
 2011-05-03  Ken Brown  <kbrown@cornell.edu>
 
 	* cosettable.cc (CosetTable): Catch bad_alloc exception if

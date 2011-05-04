@@ -99,7 +99,7 @@ CosetTable::define (int k, int x, bool save)
     }
   catch (exception& e)
     {
-      cout << "Coset table has size " << get_size () << "; out of memory.\n";
+      cout << "\n\nCoset table has size " << get_size () << "; can't allocate more memory.\n";
       return false;
     }
   if (save)
@@ -259,7 +259,8 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 	  return true;
 	}
       // Scan is incomplete; make a definition to allow it to get further.
-      if (!define (f, w[i], save))
+      bool alloc = define (f, w[i], save);
+      if (!alloc)
 	return false;
     }
 }
@@ -312,12 +313,19 @@ CosetTable::hlt ()
   for (int k = 0; k < get_size (); k++)
     {
       for (int i = 0; i < relator.size () && is_alive (k); i++)
-	scan_and_fill (k, relator[i]);
+	{
+	  bool alloc = scan_and_fill (k, relator[i]);
+	  if (!alloc)
+	    return false;
+	}
       if (is_alive (k))
 	for (int x = 0; x < NGENS; x++)
 	  if (!is_defined (k, x))
-	    if (!define (k, x))
-	      return false;
+	    {
+	      bool alloc = define (k, x);
+	      if (!alloc)
+		return false;
+	    }
     }
   return true;
 }
@@ -373,7 +381,8 @@ CosetTable::felsch ()
       for (int x = 0; x < NGENS && is_alive (k); x++)
 	if (!is_defined (k, x))
 	  {
-	    if (!define (k, x, true))
+	    bool alloc = define (k, x, true);
+	    if (!alloc)
 	      return false;
 	    process_deductions ();
 	  }
