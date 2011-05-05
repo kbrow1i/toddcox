@@ -1,4 +1,4 @@
-# Makefile.cygwin         -*-makefile-gmake-*-
+# Makefile.cygwin-mingw         -*-makefile-gmake-*-
 
 #    Copyright 2011 Kenneth S. Brown.
 
@@ -21,9 +21,10 @@
 
 EXEEXT = .exe
 OBJEXT = o
-CXX = g++
-STRIP = strip
-bin = bin/cygwin
+# CXX = g++-3 -mno-cygwin
+CXX = i686-pc-mingw32-g++ -static
+STRIP = i686-pc-mingw32-strip
+bin = bin/windows
 
 .PHONY: all clean install
 

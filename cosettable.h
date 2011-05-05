@@ -31,13 +31,19 @@
 
 using namespace std;
 
+/* The CosetTable class provides a toy implementation of the HLT,
+   HLT+lookahead, and Felsch algorithms for coset enumeration.  I have
+   followed fairly closely the pseudocode in Holt's book, Handbook of
+   Computational Group Theory, except that cosets are numbered
+   starting from 0. */
+
 class CosetTable
 {
 public:
   CosetTable (int NG, vector<string> rel, vector<string> gen_H,
 	      int t = 0, bool felsch = false);
   bool hlt ();			/* HLT algorithm... */
-  bool hlt_plus (); /* ...with lookahead */
+  bool hlt_plus ();		/* ...with lookahead */
   bool felsch ();		 /* Felsch algorithm */
   int compress (int current = -1);
   void standardize ();

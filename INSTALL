@@ -8,38 +8,46 @@ specifics:
 
 ** Linux
 
-Type 'make' at a shell prompt.  This should yield two executable
-programs, tc and tc+, in the current directory.  You can optionally
-type 'make install' to create stripped executables in the 'bin'
-subdirectory.
+Type 'make' at a shell prompt.  This should yield three executable
+programs, tc, tc+, and tcf, in the current directory.  You can
+optionally type 'make install' to create stripped executables in the
+'bin/linux' subdirectory.
 
 ** Cygwin
 
 Install the 'make' package and a package containing a C++ compiler,
-such as 'gcc4-g++'.  Then issue the following commands at a Cygwin
+such as 'gcc4-g++'.  Then issue the following command at a Cygwin
 shell prompt:
 
-  cp Makefile.cygwin Makefile
-  make
+  make -f Makefile.cygwin
 
-This should yield two executable programs, tc.exe and tc+.exe, in the
-current directory.  You can optionally type 'make install' to create
-stripped executables in the 'bin' subdirectory.
+This should yield three executable programs, tc.exe, tc+.exe, and
+tcf.exe, in the current directory.  You can optionally type 'make -f
+Makefile.cygwin install' to create stripped executables in the
+'bin/cygwin' subdirectory.
 
 ** Other Unix-like systems
 
 The Linux instructions may very well work without change.  If not, you
-might have to make minor changes to the Makefile to specify your
-compiler, for instance.  If anyone who makes such a change sends me
-the resulting Makefile, I will include it in future releases.  I am
-also happy to distribute prebuilt executables for other systems.
+might have to make minor changes at the beginning of the Makefile to
+specify your compiler, for instance.  If anyone who makes such a
+change sends me the resulting Makefile, I will include it in future
+releases.  I am also happy to distribute prebuilt executables for
+other systems.
 
 * Windows
 
-Windows users can either install Cygwin and follow the instructions
-above or else install any C++ compiler and use it.  If anyone does
-this and sends me detailed instructions, I will include them in future
-releases.  I am also happy to distribute prebuilt Windows executables.
+The build procedure on Windows is similar if one has a suitable build
+environment that includes a C++ compiler.  For example, one can build
+native Windows executables in the Cygwin environment by using the
+cygwin-mingw cross compiler provided by Cygwin's mingw-gcc-g++
+package.  To do this, issue the following command at a Cygwin shell
+prompt:
+
+  make -f Makefile.cygwin-mingw
+
+You can optionally type 'make -f Makefile.cygwin-mingw install' to
+create stripped executables in the 'bin/windows' subdirectory.
 
 
 This file is part of Toddcox.

@@ -7,15 +7,16 @@ skip the first item and proceed directly to "Running the programs".
 * Building Toddcox
 
 See the INSTALL file in the source distribution for instructions.
-After following the instructions, you should have two executables, tc
-and tc+ (possibly with .exe appended).  The first program uses the HLT
-coset enumeration method.  The second uses HLT+lookahead.
+After following the instructions, you should have three executables:
+tc, tc+, and tcf (possibly with .exe appended).  The first program
+uses the HLT coset enumeration method, the second uses HLT+lookahead,
+and the third uses the Felsch method.
 
 * Running the programs
 
-Type 'tc' (or 'tc+') at a command prompt.  Depending on how your path
-is set up, you may have to include a path specification.  On a typical
-unix-like system, for example, you would type
+Type 'tc' (or 'tc+' or 'tcf') at a command prompt.  Depending on how
+your path is set up, you may have to include a path specification.  On
+a typical unix-like system, for example, you would type
 
   ./tc
 
@@ -29,10 +30,15 @@ run of each program.
 
 Instead of responding to all the prompts interactively, you can enter
 them into a file and redirect standard input to that file.  The
-Toddcox distribution contains a sample input file.  To use it, issue
-the following command:
+Toddcox source distribution contains several sample input files in the
+'examples' directory.  See the README file in that directory for a
+description of the examples.  To run 'tc' on the M12 example, for
+instance, issue the following command:
 
   ./tc < examples/M12.in
+
+This assumes that the 'tc' executable is in the top-level directory of
+the Toddcox source distribution.
 
 * Questions and comments
 

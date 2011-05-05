@@ -1,3 +1,16 @@
+2011-05-05  Ken Brown  <kbrown@cornell.edu>
+
+	* examples/M12+.in: Change threshold.
+	* Makefile.cygwin: Add 'install' target.  Improve portability.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: New file
+	* TODO: Update.
+	* README: Ditto.
+	* INSTALL: Ditto.
+	* cosettable.cc: Add/change some comments.
+	* cosettable.h: Ditto.
+	* coset.h (Coset): Trivial change.
+
 2011-05-04  Ken Brown  <kbrown@cornell.edu>
 
 	* TODO: Update.

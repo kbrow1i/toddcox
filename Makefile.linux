@@ -20,43 +20,52 @@
 #    Written by Ken Brown <kbrown@cornell.edu>.
 
 EXEEXT = 
+OBJEXT = o
+CXX = g++
+STRIP = strip
+bin = bin/linux
 
-.PHONY: all clean
+.PHONY: all clean install
 
 all: tc$(EXEEXT) tc+$(EXEEXT) tcf$(EXEEXT)
 
-tc$(EXEEXT): tc.o coset.o cosettable.o gens_and_words.o stack.o
-	g++ -o tc$(EXEEXT) tc.o coset.o cosettable.o gens_and_words.o stack.o
+tc$(EXEEXT): tc.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
+	$(CXX) -o tc$(EXEEXT) tc.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
 
-tc+$(EXEEXT): tc+.o coset.o cosettable.o gens_and_words.o
-	g++ -o tc+$(EXEEXT) tc+.o coset.o cosettable.o gens_and_words.o stack.o
+tc+$(EXEEXT): tc+.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT)
+	$(CXX) -o tc+$(EXEEXT) tc+.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
 
-tcf$(EXEEXT): tcf.o coset.o cosettable.o gens_and_words.o stack.o
-	g++ -o tcf$(EXEEXT) tcf.o coset.o cosettable.o gens_and_words.o stack.o
+tcf$(EXEEXT): tcf.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
+	$(CXX) -o tcf$(EXEEXT) tcf.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
 
-tc.o: tc.cc cosettable.h gens_and_words.h coset.h
-	g++ -c tc.cc
+tc.$(OBJEXT): tc.cc cosettable.h gens_and_words.h coset.h
+	$(CXX) -c tc.cc
 
-tc+.o: tc+.cc cosettable.h gens_and_words.h coset.h
-	g++ -c tc+.cc
+tc+.$(OBJEXT): tc+.cc cosettable.h gens_and_words.h coset.h
+	$(CXX) -c tc+.cc
 
-tcf.o: tcf.cc cosettable.h gens_and_words.h coset.h stack.h
-	g++ -c tcf.cc
+tcf.$(OBJEXT): tcf.cc cosettable.h gens_and_words.h coset.h stack.h
+	$(CXX) -c tcf.cc
 
-coset.o: coset.cc coset.h gens_and_words.h
-	g++ -c coset.cc
+coset.$(OBJEXT): coset.cc coset.h gens_and_words.h
+	$(CXX) -c coset.cc
 
-cosettable.o: cosettable.cc cosettable.h gens_and_words.h coset.h stack.h
-	g++ -c cosettable.cc
+cosettable.$(OBJEXT): cosettable.cc cosettable.h gens_and_words.h coset.h stack.h
+	$(CXX) -c cosettable.cc
 
-stack.o: stack.cc stack.h
-	g++ -c stack.cc
+stack.$(OBJEXT): stack.cc stack.h
+	$(CXX) -c stack.cc
 
-gens_and_words.o: gens_and_words.cc gens_and_words.h
-	g++ -c gens_and_words.cc
+gens_and_words.$(OBJEXT): gens_and_words.cc gens_and_words.h
+	$(CXX) -c gens_and_words.cc
 
 clean:
-	-rm -f *.o
+	-rm -f *.$(OBJEXT)
 	-rm -f tc$(EXEEXT)
 	-rm -f tc+$(EXEEXT)
 	-rm -f tcf$(EXEEXT)
+install:
+	cp tc$(EXEEXT) tc+$(EXEEXT) tcf$(EXEEXT) $(bin)
+	cd $(bin)
+	$(STRIP) tc$(EXEEXT) tc+$(EXEEXT) tcf$(EXEEXT)
+	cd ../..

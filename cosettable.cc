@@ -48,7 +48,8 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
   for (int i = 0; i < gen_H.size (); i++)
     {
       word w;
-      string_to_word (w, gen_H[i], NGENS); // Assume strings are valid
+      // Caller should check that strings are valid.
+      string_to_word (w, gen_H[i], NGENS);
       generator_of_H.push_back (w);
     }
   set<string> S;
@@ -56,7 +57,7 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
     {
       word w;
       string s = rel[i];
-      string_to_word (w, s, NGENS); // Assume strings are valid
+      string_to_word (w, s, NGENS);
       relator.push_back (w);
       if (felsch)
 	{
@@ -83,8 +84,8 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
     }
 }
 
-// Define coset k acted on by x to be new coset; return false if out
-// of memory.
+// Define coset k acted on by x to be new coset; return false if can't
+// allocate memory.
 bool
 CosetTable::define (int k, int x, bool save)
 {
@@ -222,7 +223,7 @@ CosetTable::coincidence (int k, int l, bool save)
     }
 }
 
-// Return false if out of memory
+// Return false if can't allocate memory for definitions.
 bool
 CosetTable::scan_and_fill (int k, const word& w, bool save)
 {
@@ -304,7 +305,7 @@ CosetTable::scan (int k, const word& w, bool save)
   return;
 }
 
-// HLT algorithm; return false if run out of memory.
+// HLT algorithm; return false if can't allocate enough memory.
 bool
 CosetTable::hlt ()
 {
@@ -369,7 +370,7 @@ CosetTable::hlt_plus ()
   return true;
 }
 
-// Felsch algorithm; return false if run out of memory.
+// Felsch algorithm; return false if can't allocate enough memory.
 bool
 CosetTable::felsch ()
 {

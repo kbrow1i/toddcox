@@ -10,10 +10,6 @@ See the end of the file for license conditions.
 
 * Allow user to specify an output file for the coset table.
 
-* Allow input from file for non-interactive use.
-
-* Improve commenting both in headers and code.
-
 
 This file is part of Toddcox.
 
