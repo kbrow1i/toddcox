@@ -28,6 +28,7 @@
 #include <vector>
 #include <queue>
 #include <map>
+#include <iostream>
 
 using namespace std;
 
@@ -49,8 +50,7 @@ public:
   void standardize ();
   int get_nlive () const;
   int get_size () const { return tab.size (); };
-  void print (bool standard = true) const;
-  void debug_print () const;
+  void print (ostream& fout = cout) const;
   bool threshold_is_bad () const { return threshold < 0; };
 private:
   int NGENS;

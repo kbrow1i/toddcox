@@ -24,6 +24,7 @@
 
 #include "gens_and_words.h"
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -33,7 +34,7 @@ public:
   Coset (int NG);
   int get_act (int x) const { return row[x]; };
   void set_act (int x, int k) { row[x] = k; } ;
-  void print (bool standard = true) const;
+  void print (ostream& fout = cout) const;
 private:
   vector<int> row;		/* row[x] is index of coset acted on by x */
   int NGENS;			/* including inverses */

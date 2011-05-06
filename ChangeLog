@@ -1,5 +1,31 @@
 2011-05-05  Ken Brown  <kbrown@cornell.edu>
 
+	* TODO: Update.
+	* tc.cc (main): Offer to write coset table to a file if too big
+	for screen.
+	(getfout): New function.
+	* tc+.cc (main): Ditto.
+	* tcf.cc (main): Ditto.
+	* coset.h: Remove parameter 'standard' from print().  Declare
+	parameter 'fout'.
+	* coset.cc (print): Adapt to parameter changes.
+	* cosettable.h (CosetTable): Remove method debug_print().  Remove
+	parameter 'standard' from print().  Declare parameter 'fout'.
+	* cosettable.cc (print): Adapt to parameter changes.
+	(debug_print): Comment out.
+	* examples/M12.in: Add final . to suppress printing coset table.
+	* examples/M12+.in: Ditto.
+	* examples/SL2_13.in: Ditto.
+	* examples/SL2_13+.in: Ditto.
+	* examples/HNO_1.in: Ditto.
+	* examples/HNO_1+.in: Ditto.
+	* examples/HNO_8.in: Ditto.
+	* examples/HNO_8+.in: Ditto.
+	* examples/G8723.in: Ditto.
+	* examples/G8723+.in: Ditto.
+
+2011-05-05  Ken Brown  <kbrown@cornell.edu>
+
 	* examples/M12+.in: Change threshold.
 	* Makefile.cygwin: Add 'install' target.  Improve portability.
 	* Makefile.linux: Ditto.

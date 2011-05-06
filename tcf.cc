@@ -26,6 +26,7 @@
 #include "cosettable.h"
 #include "gens_and_words.h"
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <cstdlib>
@@ -33,6 +34,7 @@
 using namespace std;
 
 void getgroup (int& N, vector<string>& rel, vector<string>& gen_H);
+bool getfout (ofstream& fout);
 
 int
 main (void)
@@ -52,12 +54,21 @@ main (void)
   cout << "\nThe index of H in G is " << C.get_nlive ()
        << ".\nThe coset table had size " << C.get_size ()
        << " before compression.\n\n";
-  if (C.get_nlive () < 100)
+  if (C.get_nlive () < 50)
     {
-      C.compress ();
-      C.standardize ();
       cout << "Compressed and standardized coset table:\n\n";
       C.print ();
+    }
+  else				// Offer to print table to file
+    {
+      ofstream fout;
+      if (getfout (fout))
+	{
+	  C.compress ();
+	  C.standardize ();
+	  C.print (fout);
+	  fout.close ();
+	}
     }
   return 0;
 }
@@ -115,5 +126,23 @@ getgroup (int& N, vector<string>& rel, vector<string>& gen_H)
 	  continue;
 	}
       gen_H.push_back (s);
+    }
+}
+
+bool
+getfout (ofstream& fout)
+{
+  for (;;)
+    {
+      string s;
+      cout << "\nEnter file name for output or . to exit:\n> ";
+      cin >> s;
+      if (s == ".")
+	return false;
+      fout.open (s.c_str ());
+      if (fout.is_open ())
+	return true;
+      else
+	cout << "Unable to open " << s << "; please try again.\n";
     }
 }

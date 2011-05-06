@@ -35,8 +35,8 @@ Coset::Coset (int NG) : NGENS (NG)
 }
 
 void
-Coset::print (bool standard) const
+Coset::print (ostream& fout) const
 {
   for (int x = 0; x < NGENS; x++)
-    cout << setw (4) << (standard ? row[x] + 1 : row[x]);
+    fout << setw (4) << row[x] + 1;
 }

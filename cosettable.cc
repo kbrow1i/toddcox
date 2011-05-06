@@ -112,22 +112,23 @@ CosetTable::define (int k, int x, bool save)
 }
 
 void
-CosetTable::print (bool standard) const
+CosetTable::print (ostream& fout) const
 {
-  cout << "    ";
+  fout << "    ";
   for (int x = 0; x < NGENS; x++)
-    cout << setw (4) << gen[x];
-  cout << endl;
+    fout << setw (4) << gen[x];
+  fout << endl;
   for (int k = 0; k < tab.size (); k++)
     if (is_alive (k))
       {
-	cout << setw (2) << (standard ? k + 1 : k) << ": ";
-	tab[k].print (standard);
-	cout << endl;
+	fout << setw (2) << k + 1 << ": ";
+	tab[k].print (fout);
+	fout << endl;
       }
   return;
 }
 
+#if 0
 void
 CosetTable::debug_print () const
 {
@@ -143,6 +144,7 @@ CosetTable::debug_print () const
     }
   return;
 }
+#endif
 
 // Return minimal element of equivalence class, simplify p along the way
 int
