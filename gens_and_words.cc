@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cstdlib>
 
 using namespace std;
 
@@ -78,61 +79,90 @@ getnum (const string errprompt)
   return n;
 }
 
-// Read a string representing a valid word from standard input into s
-// and return true, or read the exit string and return false.
+// Read a string representing a valid word from fin into s and return
+// true, or read the exit string and return false.
 bool
-getstringword (string& s, int NGENS, const string exit_string)
+getstringword (string& s, int NGENS, const string exit_string, istream& fin)
 {
-  bool gotstring = false;
-  while (!gotstring)
+  fin >> s;
+  if (s == exit_string)
+    return false;
+  word w;
+  bool gotword = string_to_word (w, s, NGENS);
+  if (gotword)
+    return true;
+  // s is invalid; give up if not interactive
+  if (fin != cin)
     {
+      cerr << "Invalid word: " << s << endl;
+      exit (EXIT_FAILURE);
+    }
+  // We're working interactively; retry.  
+  while (!gotword)
+    {
+      cout << "Invalid word; use alphabet ";
+      for (int x = 0; x < NGENS - 1; x++)
+	cout << gen[x] << ",";
+      cout << gen[NGENS - 1] << ".\n> ";
       cin >> s;
-      if (s == exit_string)
-	return false;
-      word w;
-      gotstring = string_to_word (w, s, NGENS);
-      if (!gotstring)
-	{
-	  cout << "Invalid word; use alphabet ";
-	  for (int x = 0; x < NGENS - 1; x++)
-	    cout << gen[x] << ",";
-	  cout << gen[NGENS - 1] << ".\n> ";
-	}
+      gotword = string_to_word (w, s, NGENS);
     }
   return true;
 }
 
-// Accumulate valid strings from standard input in a vector.
+// Accumulate valid strings from fin in a vector.
 void
-getvecstringword (vector<string>& v, int NGENS, const string exit_string)
+getvecstringword (vector<string>& v, int NGENS, const string exit_string,
+		  istream& fin = cin)
 {
   string s;
-  while (getstringword (s, NGENS, exit_string))
+  while (getstringword (s, NGENS, exit_string, fin))
     {
       v.push_back (s);
-      cout << "> ";
+      if (fin == cin)
+	cout << "> ";
     }
 }
 
 // Prompt for number of generators and group and subgroup info.
 void
-getgroup (int& NGENS, vector<string>& rel, vector<string>& gen_H)
+getgroup (int& NGENS, vector<string>& rel, vector<string>& gen_H, istream& fin)
 {
-  cout << "Number of generators: ";
-  int n; bool gotngens = false;
-  while (!gotngens)
+  int n;
+  if (fin != cin)
     {
-      string errprompt = "Please enter an integer between 1 and 26: ";
-      n = getnum (errprompt);
-      gotngens = (n >= 1 && n <= 26);
-      if (!gotngens)
-	cout << errprompt;
+      if (!(fin >> n) || n < 1 || n > 26)
+	{
+	  cerr << "Number of generators must be an integer between 1 and 26.\n";
+	  exit (EXIT_FAILURE);
+	}
+    }
+  else
+    {
+      cout << "Number of generators: ";
+      bool gotngens = false;
+      while (!gotngens)
+	{
+	  string errprompt = "Please enter an integer between 1 and 26: ";
+	  n = getnum (errprompt);
+	  gotngens = (n >= 1 && n <= 26);
+	  if (!gotngens)
+	    cout << errprompt;
+	}
     }
   NGENS = 2 * n;
-  cout << "Enter the relators for G, one per line, or . when finished:\n> ";
-  getvecstringword (rel, NGENS, ".");
-  cout << "Enter the generators of H, one per line, or . when finished:\n> ";
-  getvecstringword (gen_H, NGENS, ".");
+  if (fin != cin)
+    {
+      getvecstringword (rel, NGENS, ".", fin);
+      getvecstringword (gen_H, NGENS, ".", fin);
+    }
+  else
+    {
+      cout << "Enter the relators for G, one per line, or . when finished:\n> ";
+      getvecstringword (rel, NGENS, ".");
+      cout << "Enter the generators of H, one per line, or . when finished:\n> ";
+      getvecstringword (gen_H, NGENS, ".");
+    }
 }
 
 // Get a valid filename for output and return true, or return false if

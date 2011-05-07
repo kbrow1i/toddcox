@@ -29,13 +29,13 @@ run of each program.
 * Running from a script
 
 Instead of responding to all the prompts interactively, you can enter
-them into a file and redirect standard input to that file.  The
-Toddcox source distribution contains several sample input files in the
-'examples' directory.  See the README file in that directory for a
+them into a file and give the filename as a command-line argument.
+The Toddcox source distribution contains several sample input files in
+the 'examples' directory.  See the README file in that directory for a
 description of the examples.  To run 'tc' on the M12 example, for
 instance, issue the following command:
 
-  ./tc < examples/M12.in
+  ./tc examples/M12.in
 
 This assumes that the 'tc' executable is in the top-level directory of
 the Toddcox source distribution.

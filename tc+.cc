@@ -34,19 +34,48 @@
 using namespace std;
 
 int
-main (void)
+main (int argc, char * argv[])
 {
-  cout << "\nThis program uses the HLT+lookahead version of the Todd-Coxeter\n"
-       << "procedure to compute the index in a finitely presented group G of\n"
-       << "a subgroup H.  You will be prompted to enter the number of\n"
-       << "generators of G, the defining relators of G, and the generators\n"
-       << "of H.  Use a,b,... for the generators of G and A,B,... for their\n"
-       << "inverses.  You will also be prompted to enter a threshold.  If an\n"
-       << "HLT step causes the size of the coset table to exceed the threshold,\n"
-       << "the program will use lookahead to try to shrink the table.\n\n";
+  // If there's a command line argument, it should be the name of a
+  // file containing the group info; otherwise prompt the user for the
+  // group info.
+  bool interactive = (argc == 1);
+  ifstream fin;
+  if (!interactive)
+    {
+      if (argc != 2)
+	{
+	  cerr << "Too many arguments.  Usage: " << argv[0] << " [filename]\n";
+	  exit (EXIT_FAILURE);
+	}
+      fin.open (argv[1]);
+      if (!fin.is_open ())
+	{
+	  cerr << "unable to open " << argv[1] << endl;
+	  exit (EXIT_FAILURE);
+	}
+    }
+  const string instruct =
+    "\nThis program uses the HLT+lookahead version of the Todd-Coxeter\n"
+    "procedure to compute the index in a finitely presented group G of\n"
+    "a subgroup H.  You will be prompted to enter the number of\n"
+    "generators of G, the defining relators of G, and the generators\n"
+    "of H.  Use a,b,... for the generators of G and A,B,... for their\n"
+    "inverses.  You will also be prompted to enter a threshold.  If an\n"
+    "HLT step causes the size of the coset table to exceed the threshold,\n"
+    "the program will use lookahead to try to shrink the table.\n\n";
   int NGENS;
   vector<string> rel, gen_H;
-  getgroup (NGENS, rel, gen_H);
+  if (!interactive)
+    {
+      getgroup (NGENS, rel, gen_H, fin);
+      fin.close ();
+    }
+  else
+    {
+      cout << instruct;
+      getgroup (NGENS, rel, gen_H);
+    }
   cout << "Enter threshold for HLT with lookahead, or 0 to use ordinary HLT: ";
   int threshold; bool gotthresh = false;
   while (!gotthresh)

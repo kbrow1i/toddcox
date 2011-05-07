@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -39,7 +40,8 @@ typedef vector<int> word;
 int char_to_gen (char c, int NGENS);
 bool string_to_word (word& w, const string& s, int NGENS);
 int getnum (const string errprompt);
-void getgroup (int& NGENS, vector<string>& rel, vector<string>& gen_H);
+void getgroup (int& NGENS, vector<string>& rel,
+	       vector<string>& gen_H, istream& fin = cin);
 bool getfout (ofstream& fout);
 
 void rotate (string& s);

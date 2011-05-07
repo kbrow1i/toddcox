@@ -34,16 +34,45 @@
 using namespace std;
 
 int
-main (void)
+main (int argc, char * argv[])
 {
-  cout << "\nThis program uses the Felsch version of the Todd-Coxeter procedure to\n"
-       << "compute the index in a finitely presented group G of a subgroup H.\n"
-       << "You will be prompted to enter the number of generators of G, the\n"
-       << "defining relators of G, and the generators of H.  Use a,b,... for\n"
-       << "the generators of G and A,B,... for their inverses.\n\n";
+  // If there's a command line argument, it should be the name of a
+  // file containing the group info; otherwise prompt the user for the
+  // group info.
+  bool interactive = (argc == 1);
+  ifstream fin;
+  if (!interactive)
+    {
+      if (argc != 2)
+	{
+	  cerr << "Too many arguments.  Usage: " << argv[0] << " [filename]\n";
+	  exit (EXIT_FAILURE);
+	}
+      fin.open (argv[1]);
+      if (!fin.is_open ())
+	{
+	  cerr << "unable to open " << argv[1] << endl;
+	  exit (EXIT_FAILURE);
+	}
+    }
+  const string instruct =
+    "\nThis program uses the Felsch version of the Todd-Coxeter procedure to\n"
+    "compute the index in a finitely presented group G of a subgroup H.\n"
+    "You will be prompted to enter the number of generators of G, the\n"
+    "defining relators of G, and the generators of H.  Use a,b,... for\n"
+    "the generators of G and A,B,... for their inverses.\n\n";
   int NGENS;
   vector<string> rel, gen_H;
-  getgroup (NGENS, rel, gen_H);
+  if (!interactive)
+    {
+      getgroup (NGENS, rel, gen_H, fin);
+      fin.close ();
+    }
+  else
+    {
+      cout << instruct;
+      getgroup (NGENS, rel, gen_H);
+    }
   CosetTable C (NGENS, rel, gen_H, 0, true);
   if (!C.felsch ())
     return 1;

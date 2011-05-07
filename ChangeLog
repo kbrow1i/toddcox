@@ -1,3 +1,27 @@
+2011-05-07  Ken Brown  <kbrown@cornell.edu>
+
+	* tc.cc (main): Allow input file to be specified as command-line
+	argument.
+	* tc+.cc (main): Ditto.
+	* tcf.cc (main): Ditto.
+	* gens_and_words.cc (getstringword, getvecstringword, getgroup):
+	New parameter 'fin'.
+	* gens_and_words.h: Declare new parameter in getgroup.
+	* examples/README: Update.
+	* README: Ditto.
+	* TODO: Ditto.
+	* examples/M12.in: Remove final dot.
+	* examples/SL2_13.in: Ditto.
+	* examples/HNO_8.in: Ditto.
+	* examples/HNO_1.in: Ditto.
+	* examples/G8723.in: Ditto.
+	* examples/F27+.in: Delete.
+	* examples/G8723+.in: Ditto.
+	* examples/HNO_1+.in: Ditto.
+	* examples/HNO_8+.in: Ditto.
+	* examples/M12+.in: Ditto.
+	* examples/SL2_13+.in: Ditto.
+
 2011-05-06  Ken Brown  <kbrown@cornell.edu>
 
 	* Makefile.cygwin: Fix 'install' target.

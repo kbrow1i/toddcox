@@ -2,11 +2,10 @@ Copyright 2011 Kenneth S. Brown.
 See the end of the file for license conditions.
 
 The files in this directory can be used as input files for the
-programs 'tc', 'tc+', and 'tcf'.  Those with '+' in their names are
-for 'tc+'.  Assuming, for example, that the executables are in the
-parent directory, one could give the command
+programs 'tc', 'tc+', and 'tcf'.  Assuming, for example, that the
+executables are in the parent directory, one could give the command
 
-  ../tc+ < F27+.in
+  ../tc+ F27.in
 
 * F27.in and F27+.in
 
