@@ -32,17 +32,16 @@ The Linux instructions may very well work without change.  If not, you
 might have to make minor changes at the beginning of the Makefile to
 specify your compiler, for instance.  If anyone who makes such a
 change sends me the resulting Makefile, I will include it in future
-releases.  I am also happy to distribute prebuilt executables for
-other systems.
+releases.
 
 * Windows
 
-The build procedure on Windows is similar if one has a suitable build
-environment that includes a C++ compiler.  For example, one can build
-native Windows executables in the Cygwin environment by using the
-cygwin-mingw cross compiler provided by Cygwin's mingw-gcc-g++
-package.  To do this, issue the following command at a Cygwin shell
-prompt:
+The build procedure on Windows is similar to the build on Unix-like
+systems, provided one has a suitable build environment that includes a
+C++ compiler.  For example, one can build native Windows executables
+in the Cygwin environment by using the cygwin-mingw cross compiler
+provided by Cygwin's mingw-gcc-g++ package.  To do this, issue the
+following command at a Cygwin shell prompt:
 
   make -f Makefile.cygwin-mingw
 

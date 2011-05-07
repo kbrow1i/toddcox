@@ -1,5 +1,11 @@
 2011-05-07  Ken Brown  <kbrown@cornell.edu>
 
+	* Version 0.2 released.
+	* examples/README: Update.
+	* INSTALL: Ditto.
+
+2011-05-07  Ken Brown  <kbrown@cornell.edu>
+
 	* tc.cc (main): Allow input file to be specified as command-line
 	argument.
 	* tc+.cc (main): Ditto.
