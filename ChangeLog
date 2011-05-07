@@ -1,3 +1,17 @@
+2011-05-06  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: Fix 'install' target.
+	* Makefile.cygwin-mingw: Ditto.
+	* Makefile.linux: Ditto.
+	* tc.cc (getgroup, getfout): Move from here...
+	* gens_and_words.cc: ...to here.  Use new helper functions...
+	(getnum, getstringword, getvecstringword): New helper functions.
+	* gens_and_words.h: Declare getgroup and getfout.
+	* tcf.cc (getgroup, getfout): Remove.
+	* tc+.cc (getgroup, getfout): Ditto.
+	(main): Use getnum to get threshold.
+	* TODO: Update.
+
 2011-05-05  Ken Brown  <kbrown@cornell.edu>
 
 	* TODO: Update.

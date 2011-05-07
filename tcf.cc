@@ -33,9 +33,6 @@
 
 using namespace std;
 
-void getgroup (int& N, vector<string>& rel, vector<string>& gen_H);
-bool getfout (ofstream& fout);
-
 int
 main (void)
 {
@@ -45,8 +42,7 @@ main (void)
        << "defining relators of G, and the generators of H.  Use a,b,... for\n"
        << "the generators of G and A,B,... for their inverses.\n\n";
   int NGENS;
-  vector<string> rel;
-  vector<string> gen_H;
+  vector<string> rel, gen_H;
   getgroup (NGENS, rel, gen_H);
   CosetTable C (NGENS, rel, gen_H, 0, true);
   if (!C.felsch ())
@@ -71,78 +67,4 @@ main (void)
 	}
     }
   return 0;
-}
-
-// Prompt for number of generators (including inverses) and group and
-// subgroup info.
-void
-getgroup (int& N, vector<string>& rel, vector<string>& gen_H)
-{
-  cout << "Enter the number of generators:\n> ";
-  for (;;)
-    {
-      string s;
-      cin >> s;
-      const char * str = s.c_str ();
-      int n = atoi (str);
-      if (n < 1 || n > 26)
-	{
-	  cout << "Invalid entry.  Please enter an integer between 1 and 26.\n> ";
-	  continue;
-	}
-      N = 2 * n;
-      break;
-    }
-  for (;;)
-    {
-      string s; word w;
-      cout << "Enter a defining relator for G, or . when finished:\n> ";
-      cin >> s;
-      if (s == ".")
-	break;
-      if (!string_to_word (w, s, N))
-	{
-	  cout << "Invalid entry; use alphabet ";
-	  for (int x = 0; x < N - 1; x++)
-	    cout << gen[x] << ",";
-	  cout << gen[N - 1] << ".\n";
-	  continue;
-	}
-      rel.push_back (s);
-    }
-  for (;;)
-    {
-      string s; word w;
-      cout << "Enter a generator of H, or . when finished:\n> ";
-      cin >> s;
-      if (s == ".")
-	break;
-      if (!string_to_word (w, s, N))
-	{
-	  cout << "Invalid entry; use alphabet ";
-	  for (int x = 0; x < N - 1; x++)
-	    cout << gen[x] << ",";
-	  cout << gen[N - 1] << ".\n";
-	  continue;
-	}
-      gen_H.push_back (s);
-    }
-}
-
-bool
-getfout (ofstream& fout)
-{
-  for (;;)
-    {
-      string s;
-      cout << "\nEnter file name for output or . to exit:\n> ";
-      cin >> s;
-      if (s == ".")
-	return false;
-      fout.open (s.c_str ());
-      if (fout.is_open ())
-	return true;
-      else
-	cout << "Unable to open " << s << "; please try again.\n";
-    }
 }

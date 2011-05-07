@@ -20,6 +20,11 @@
    Written by Ken Brown <kbrown@cornell.edu>. */
 
 #include "gens_and_words.h"
+#include <iostream>
+#include <fstream>
+#include <vector>
+
+using namespace std;
 
 int
 inv (int x)
@@ -53,6 +58,100 @@ string_to_word (word& w, const string& s, int NGENS)
       if ((x = char_to_gen (s[i], NGENS)) == NOTAGEN)
 	return false;
       w.push_back (x);
+    }
+  return true;
+}
+
+// Get an integer from standard input, prompting with errprompt if
+// something other than an integer is entered.
+int
+getnum (const string errprompt)
+{
+  int n;
+  while (!(cin >> n))		// reset cin
+    {
+      cin.clear ();
+      while (cin.get () != '\n')
+	;
+      cout << errprompt;
+    }
+  return n;
+}
+
+// Read a string representing a valid word from standard input into s
+// and return true, or read the exit string and return false.
+bool
+getstringword (string& s, int NGENS, const string exit_string)
+{
+  bool gotstring = false;
+  while (!gotstring)
+    {
+      cin >> s;
+      if (s == exit_string)
+	return false;
+      word w;
+      gotstring = string_to_word (w, s, NGENS);
+      if (!gotstring)
+	{
+	  cout << "Invalid word; use alphabet ";
+	  for (int x = 0; x < NGENS - 1; x++)
+	    cout << gen[x] << ",";
+	  cout << gen[NGENS - 1] << ".\n> ";
+	}
+    }
+  return true;
+}
+
+// Accumulate valid strings from standard input in a vector.
+void
+getvecstringword (vector<string>& v, int NGENS, const string exit_string)
+{
+  string s;
+  while (getstringword (s, NGENS, exit_string))
+    {
+      v.push_back (s);
+      cout << "> ";
+    }
+}
+
+// Prompt for number of generators and group and subgroup info.
+void
+getgroup (int& NGENS, vector<string>& rel, vector<string>& gen_H)
+{
+  cout << "Number of generators: ";
+  int n; bool gotngens = false;
+  while (!gotngens)
+    {
+      string errprompt = "Please enter an integer between 1 and 26: ";
+      n = getnum (errprompt);
+      gotngens = (n >= 1 && n <= 26);
+      if (!gotngens)
+	cout << errprompt;
+    }
+  NGENS = 2 * n;
+  cout << "Enter the relators for G, one per line, or . when finished:\n> ";
+  getvecstringword (rel, NGENS, ".");
+  cout << "Enter the generators of H, one per line, or . when finished:\n> ";
+  getvecstringword (gen_H, NGENS, ".");
+}
+
+// Get a valid filename for output and return true, or return false if
+// user enters ".".
+bool
+getfout (ofstream& fout)
+{
+  cout << "Enter file name for output or . to exit:\n> ";
+  bool gotfout = false;
+  while (!gotfout)
+    {
+      string s;
+      cin >> s;
+      if (s == ".")
+	return false;
+      fout.open (s.c_str ());
+      gotfout = fout.is_open ();
+      if (!gotfout)
+	cout << "Unable to open " << s << "; please try again.\n> ";
     }
   return true;
 }

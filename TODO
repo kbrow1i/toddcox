@@ -3,6 +3,9 @@ Toddcox TODO list
 Copyright 2011 Kenneth S. Brown.
 See the end of the file for license conditions.
 
+* Suppress garbage output when input has been redirected to a file.
+
+Why not allow input file as argument.
 
 
 This file is part of Toddcox.
