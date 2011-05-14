@@ -29,13 +29,13 @@ VERSION = 0.2
 
 .PHONY: all clean install
 
-all: tc$(EXEEXT)
+all: toddcox$(EXEEXT)
 
-tc$(EXEEXT): tc.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
-	$(CXX) -o tc$(EXEEXT) tc.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
+toddcox$(EXEEXT): toddcox.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
+	$(CXX) -o toddcox$(EXEEXT) toddcox.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
 
-tc.$(OBJEXT): tc.cc cosettable.h gens_and_words.h coset.h
-	$(CXX) -c tc.cc
+toddcox.$(OBJEXT): toddcox.cc cosettable.h gens_and_words.h coset.h
+	$(CXX) -c toddcox.cc
 
 coset.$(OBJEXT): coset.cc coset.h gens_and_words.h
 	$(CXX) -c coset.cc
@@ -51,9 +51,9 @@ gens_and_words.$(OBJEXT): gens_and_words.cc gens_and_words.h
 
 clean:
 	-rm -f *.$(OBJEXT)
-	-rm -f tc$(EXEEXT)
+	-rm -f toddcox$(EXEEXT)
 
 install:
 	mkdir -p $(BIN)
-	cp tc$(EXEEXT) $(BIN)
-	$(STRIP) $(BIN)/tc$(EXEEXT)
+	cp toddcox$(EXEEXT) $(BIN)
+	$(STRIP) $(BIN)/toddcox$(EXEEXT)

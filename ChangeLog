@@ -1,5 +1,14 @@
 2011-05-14  Ken Brown  <kbrown@cornell.edu>
 
+	* tc.cc: Rename to...
+	* toddcox.cc: New file.
+	(main): Fix use of set_threshold.
+	* Makefile.cygwin: Adjust to name change.
+	* Makefile.cygwin-mingw: Ditto.
+	* Makefile.linux: Ditto.
+
+2011-05-14  Ken Brown  <kbrown@cornell.edu>
+
 	* tc.cc (main): Move functionality of tc+ and tcf here.  Use blank
 	line instead of . in all input routines.
 	(get_method): New function.

@@ -81,12 +81,6 @@ const string instruct =
   int t = getmethod ();
   bool felsch = (t == -1);
   CosetTable C (NGENS, rel, gen_H, felsch);
-  if (t > 0)
-    if (!C.set_threshold (t))
-      {
-	cout << "\nSorry, threshold is too big; please try again.\n";
-	return 2;
-      }
   if (felsch)
     {
       if (!C.felsch ())
@@ -94,6 +88,7 @@ const string instruct =
     }
   else if (t > 0)		// HLT+lookahead
     {
+      C.set_threshold (t);
       if (!C.hlt_plus ())
 	{
 	  cout << "Sorry, please try again with a bigger threshold.\n\n";
