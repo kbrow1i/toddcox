@@ -25,6 +25,8 @@
 #include <iomanip>
 #include <vector>
 
+using namespace std;
+
 // Constructor
 Coset::Coset (int NG) : NGENS (NG)
 {

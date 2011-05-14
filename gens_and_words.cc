@@ -64,32 +64,34 @@ string_to_word (word& w, const string& s, int NGENS)
 }
 
 // Get an integer from standard input, prompting with errprompt if
-// something other than an integer is entered.
+// something other than an integer is entered.  Read newline.
 int
 getnum (const string errprompt)
 {
-  int n;
-  while (!(cin >> n))		// reset cin
+  int n; bool gotnum = false;
+  while (!gotnum)
     {
+      gotnum = (cin >> n);
+      // Read newline after resetting cin (in case there was an error).
       cin.clear ();
       while (cin.get () != '\n')
 	;
-      cout << errprompt;
+      if (!gotnum)
+	cout << errprompt;
     }
   return n;
 }
 
 // Read a string representing a valid word from fin into s and return
-// true, or read the exit string and return false.
+// true, or read an empty line and return false.  Always read the
+// terminating newline.
 bool
-getstringword (string& s, int NGENS, const string exit_string, istream& fin)
+getstringword (string& s, int NGENS, istream& fin)
 {
-  fin >> s;
-  if (s == exit_string)
+  if (!getline (fin, s) || s.empty ())
     return false;
   word w;
-  bool gotword = string_to_word (w, s, NGENS);
-  if (gotword)
+  if (string_to_word (w, s, NGENS))
     return true;
   // s is invalid; give up if not interactive
   if (fin != cin)
@@ -98,25 +100,26 @@ getstringword (string& s, int NGENS, const string exit_string, istream& fin)
       exit (EXIT_FAILURE);
     }
   // We're working interactively; retry.  
-  while (!gotword)
+  do
     {
       cout << "Invalid word; use alphabet ";
       for (int x = 0; x < NGENS - 1; x++)
 	cout << gen[x] << ",";
       cout << gen[NGENS - 1] << ".\n> ";
-      cin >> s;
-      gotword = string_to_word (w, s, NGENS);
+      getline (cin, s);
+      if (s.empty ())
+	return false;
     }
+  while (!string_to_word (w, s, NGENS));
   return true;
 }
 
-// Accumulate valid strings from fin in a vector.
+// Accumulate valid strings from fin, one per line, in a vector.
 void
-getvecstringword (vector<string>& v, int NGENS, const string exit_string,
-		  istream& fin = cin)
+getvecstringword (vector<string>& v, int NGENS, istream& fin = cin)
 {
   string s;
-  while (getstringword (s, NGENS, exit_string, fin))
+  while (getstringword (s, NGENS, fin))
     {
       v.push_back (s);
       if (fin == cin)
@@ -124,59 +127,63 @@ getvecstringword (vector<string>& v, int NGENS, const string exit_string,
     }
 }
 
+// Read an integer between 1 and 26 from fin; read newline.
+int
+getngens (istream& fin)
+{
+  int n;
+  if (fin == cin)
+    cout << "Number of generators: ";    
+  if (fin >> n && n >=1 && n <= 26) // Got valid n, move past newline.
+    {
+      while (fin.get () != '\n')
+	;
+      return n;
+    }
+  // n is invalid; give up if not interactive.
+  if (fin != cin)
+    {
+      cerr << "Number of generators must be an integer between 1 and 26.\n";
+      exit (EXIT_FAILURE);
+    }
+  // We're working interactively; retry.
+  string errprompt = "Please enter an integer between 1 and 26: ";
+  do
+    {
+      cout << errprompt;
+      n = getnum (errprompt);
+    }
+  while (n < 1 || n > 26);
+  return n;
+}
+
 // Prompt for number of generators and group and subgroup info.
 void
 getgroup (int& NGENS, vector<string>& rel, vector<string>& gen_H, istream& fin)
 {
-  int n;
-  if (fin != cin)
-    {
-      if (!(fin >> n) || n < 1 || n > 26)
-	{
-	  cerr << "Number of generators must be an integer between 1 and 26.\n";
-	  exit (EXIT_FAILURE);
-	}
-    }
-  else
-    {
-      cout << "Number of generators: ";
-      bool gotngens = false;
-      while (!gotngens)
-	{
-	  string errprompt = "Please enter an integer between 1 and 26: ";
-	  n = getnum (errprompt);
-	  gotngens = (n >= 1 && n <= 26);
-	  if (!gotngens)
-	    cout << errprompt;
-	}
-    }
-  NGENS = 2 * n;
-  if (fin != cin)
-    {
-      getvecstringword (rel, NGENS, ".", fin);
-      getvecstringword (gen_H, NGENS, ".", fin);
-    }
-  else
-    {
-      cout << "Enter the relators for G, one per line, or . when finished:\n> ";
-      getvecstringword (rel, NGENS, ".");
-      cout << "Enter the generators of H, one per line, or . when finished:\n> ";
-      getvecstringword (gen_H, NGENS, ".");
-    }
+  NGENS = 2 * getngens (fin);		// NGENS counts inverses
+  if (fin == cin)
+    cout <<
+      "Enter the relators for G, one per line; press Enter when finished:\n> ";
+  getvecstringword (rel, NGENS, fin);
+  if (fin == cin)
+    cout <<
+      "Enter the generators of H, one per line; press Enter when finished:\n> ";
+  getvecstringword (gen_H, NGENS, fin);
 }
 
 // Get a valid filename for output and return true, or return false if
-// user enters ".".
+// user enters an empty line.  Read newline.
 bool
 getfout (ofstream& fout)
 {
-  cout << "Enter file name for output or . to exit:\n> ";
+  cout << "Enter file name for output, or press Enter to quit:\n> ";
   bool gotfout = false;
   while (!gotfout)
     {
       string s;
-      cin >> s;
-      if (s == ".")
+      getline (cin, s);
+      if (s.empty ())
 	return false;
       fout.open (s.c_str ());
       gotfout = fout.is_open ();

@@ -1,3 +1,35 @@
+2011-05-14  Ken Brown  <kbrown@cornell.edu>
+
+	* tc.cc (main): Move functionality of tc+ and tcf here.  Use blank
+	line instead of . in all input routines.
+	(get_method): New function.
+	* tc+.cc: Delete file.
+	* tcf.cc: Delete file.
+	* coset.h (Coset): Remove 'using' declaration.  Adjust other
+	declarations to compensate.
+	* cosettable.h (CosetTable): Ditto.  Change return type of
+	set_threshold to void.  Remove threshold as parameter of
+	constructor.  Declare new member set_threshold().
+	* gens_and_words.h (CosetTable): Ditto.
+	* gens_and_words.cc: Adjust input routines to new blank line
+	convention.
+	* coset.cc: Add 'using' declaration.
+	* cosettable.cc: Ditto.  Adjust all input routines to use blank
+	line instead of . for default or end of input.
+	(CosetTable::set_threshold): New member function.
+	* Makefile.cygwin: Update.
+	* Makefile.cygwin-mingw: Ditto.
+	* Makefile.cygwin-linux: Ditto.
+	* TODO: Ditto.
+	* examples/F27.in: Replace . by blank line.
+	* examples/G8723.in: Ditto.
+	* examples/HNO_1.in: Ditto.
+	* examples/HNO_8.in: Ditto.
+	* examples/M12.in: Ditto.
+	* examples/SL2_13.in: Ditto.
+	* examples/G8723.in: Ditto.
+	* examples/G8723.in: Ditto.
+
 2011-05-07  Ken Brown  <kbrown@cornell.edu>
 
 	* Version 0.2 released.

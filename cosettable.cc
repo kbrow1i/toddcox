@@ -27,24 +27,15 @@
 #include <set>
 #include <exception>
 
-// Constructor
+using namespace std;
+
+// Constructor for HLT and Felsch
 CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
-			int t, bool felsch) : NGENS (NG), threshold (t)
+			bool felsch) : NGENS (NG)
 {
   Coset c (NGENS);
   tab.push_back (c);
   p.push_back (0);		// p[0] = 0
-  if (t > 0)
-    {
-      try
-	{
-	  tab.reserve (1.1 * t);
-	}
-      catch (exception& e)
-	{
-	  threshold = -1;
-	}
-    }
   for (int i = 0; i < gen_H.size (); i++)
     {
       word w;
@@ -82,6 +73,22 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
       string_to_word (w, *it, NGENS);
       relator_grouped[w[0]].push_back (w);
     }
+}
+
+// Try to reserve space for a table slightly bigger than t to avoid
+// the overhead of reallocation.
+void
+CosetTable::set_threshold (int t)
+{
+  try
+    {
+      tab.reserve (1.001 * t);
+    }
+  catch (exception& e)
+    {
+      ;	 // No harm if it fails; just means threshold will be useless.
+    }
+  threshold = t;
 }
 
 // Define coset k acted on by x to be new coset; return false if can't

@@ -26,17 +26,15 @@
 #include <vector>
 #include <iostream>
 
-using namespace std;
-
 class Coset
 {
 public:
   Coset (int NG);
   int get_act (int x) const { return row[x]; };
   void set_act (int x, int k) { row[x] = k; } ;
-  void print (ostream& fout = cout) const;
+  void print (std::ostream& fout = std::cout) const;
 private:
-  vector<int> row;		/* row[x] is index of coset acted on by x */
+  std::vector<int> row;		/* row[x] is index of coset acted on by x */
   int NGENS;			/* including inverses */
 };
 

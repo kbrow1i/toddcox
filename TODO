@@ -3,6 +3,15 @@ Toddcox TODO list
 Copyright 2011 Kenneth S. Brown.
 See the end of the file for license conditions.
 
+* Fix Makefiles and documentation (including html)
+
+* Fix types for vectors
+
+Should be of same type as vector.size() returns; i.p., must be
+unsigned.
+
+* See if some bool functions ought to be returning istream&.
+
 
 This file is part of Toddcox.
 

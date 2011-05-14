@@ -1,4 +1,4 @@
-/* tc.cc: A driver for the Todd-Coxeter (HLT) routines.
+/* tc.cc: A driver for the Todd-Coxeter routines.
 
    Copyright 2011 Kenneth S. Brown.
 
@@ -33,6 +33,8 @@
 
 using namespace std;
 
+int getmethod ();
+
 int
 main (int argc, char * argv[])
 {
@@ -55,12 +57,15 @@ main (int argc, char * argv[])
 	  exit (EXIT_FAILURE);
 	}
     }
-  const string instruct =
-    "\nThis program uses the HLT version of the Todd-Coxeter procedure to\n"
-    "compute the index in a finitely presented group G of a subgroup H.\n"
-    "You will be prompted to enter the number of generators of G, the\n"
-    "defining relators of G, and the generators of H.  Use a,b,... for\n"
-    "the generators of G and A,B,... for their inverses.\n\n";
+const string instruct =
+    "\nThis program uses the Todd-Coxeter procedure to compute the\n"
+    "index in a finitely presented group G of a subgroup H.  You\n"
+    "will be prompted to enter the number of generators of G, the\n"
+    "defining relators of G, and the generators of H.  Use\n"
+    "a,b,... for the generators of G and A,B,... for their\n"
+    "inverses.  By default, the HLT method is used.  You may\n"
+    "choose to use the HLT+lookahead method or the Felsch method\n"
+    "instead.\n\n";
   int NGENS;
   vector<string> rel, gen_H;
   if (!interactive)
@@ -73,9 +78,31 @@ main (int argc, char * argv[])
       cout << instruct;
       getgroup (NGENS, rel, gen_H);
     }
-  CosetTable C (NGENS, rel, gen_H);
-  if (!C.hlt ())
-    return 1;
+  int t = getmethod ();
+  bool felsch = (t == -1);
+  CosetTable C (NGENS, rel, gen_H, felsch);
+  if (t > 0)
+    if (!C.set_threshold (t))
+      {
+	cout << "\nSorry, threshold is too big; please try again.\n";
+	return 2;
+      }
+  if (felsch)
+    {
+      if (!C.felsch ())
+	return 1;
+    }
+  else if (t > 0)		// HLT+lookahead
+    {
+      if (!C.hlt_plus ())
+	{
+	  cout << "Sorry, please try again with a bigger threshold.\n\n";
+	  return 1;
+	}
+    }
+  else				// HLT
+    if (!C.hlt ())
+      return 1;
   cout << "\nThe index of H in G is " << C.get_nlive ()
        << ".\nThe coset table had size " << C.get_size ()
        << " before compression.\n\n";
@@ -96,4 +123,47 @@ main (int argc, char * argv[])
 	}
     }
   return 0;
+}
+
+// Get enumeration method.  -1 means Felsch, 0 means HLT, a positive
+// number is a threshold for HLT+.
+int
+getmethod ()
+{
+  cout <<
+    "\nPress Enter to use the default HLT enumeration method, or\n"
+    "enter + for HLT+lookahead or f for Felsch: ";
+  string s;
+  getline (cin, s);
+  if (s.empty ())
+    {
+      cout << "\nUsing HLT.\n";
+      return 0;
+    }
+  if (s == "f" || s == "F")
+    {
+      cout << "\nUsing Felsch.\n";
+      return -1;
+    }
+  if (s == "+")
+    {
+      cout <<
+	"\nUsing HLT+lookahead.  If an HLT step causes the size of the\n"
+	"coset table to exceed a specified threshold, the program\n"
+	"will use lookahead to try to shrink the table.\n\n"
+	"Enter threshold: ";
+      int threshold; bool gotthresh = false;
+      while (!gotthresh)
+	{
+	  string errprompt = "Please enter a positive integer.\n> ";
+	  threshold = getnum (errprompt);
+	  gotthresh = (threshold > 0);
+	  if (!gotthresh)
+	    cout << errprompt;
+	}
+      return threshold;
+    }
+  // The user entered something else.
+  cout << "\nInvalid choice; using default HLT method.\n";
+  return 0;    
 }

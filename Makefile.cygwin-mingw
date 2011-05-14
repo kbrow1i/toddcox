@@ -28,27 +28,15 @@ PLATFORM = windows
 BIN = bin/$(PLATFORM)
 VERSION = 0.2
 
-.PHONY: all clean install pkg
+.PHONY: all clean install
 
-all: tc$(EXEEXT) tc+$(EXEEXT) tcf$(EXEEXT)
+all: tc$(EXEEXT)
 
 tc$(EXEEXT): tc.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
 	$(CXX) -o tc$(EXEEXT) tc.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
 
-tc+$(EXEEXT): tc+.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT)
-	$(CXX) -o tc+$(EXEEXT) tc+.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
-
-tcf$(EXEEXT): tcf.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
-	$(CXX) -o tcf$(EXEEXT) tcf.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
-
 tc.$(OBJEXT): tc.cc cosettable.h gens_and_words.h coset.h
 	$(CXX) -c tc.cc
-
-tc+.$(OBJEXT): tc+.cc cosettable.h gens_and_words.h coset.h
-	$(CXX) -c tc+.cc
-
-tcf.$(OBJEXT): tcf.cc cosettable.h gens_and_words.h coset.h stack.h
-	$(CXX) -c tcf.cc
 
 coset.$(OBJEXT): coset.cc coset.h gens_and_words.h
 	$(CXX) -c coset.cc
@@ -65,10 +53,8 @@ gens_and_words.$(OBJEXT): gens_and_words.cc gens_and_words.h
 clean:
 	-rm -f *.$(OBJEXT)
 	-rm -f tc$(EXEEXT)
-	-rm -f tc+$(EXEEXT)
-	-rm -f tcf$(EXEEXT)
 
 install:
-	cp tc$(EXEEXT) tc+$(EXEEXT) tcf$(EXEEXT) $(BIN)
-	cd $(BIN); $(STRIP) tc$(EXEEXT) tc+$(EXEEXT) tcf$(EXEEXT)
-	cd $(BIN); tar -czvf toddcox-$(VERSION).$(PLATFORM)-bin.tar.gz tc*
+	mkdir -p $(BIN)
+	cp tc$(EXEEXT) $(BIN)
+	$(STRIP) $(BIN)/tc$(EXEEXT)

@@ -30,8 +30,6 @@
 #include <map>
 #include <iostream>
 
-using namespace std;
-
 /* The CosetTable class provides a toy implementation of the HLT,
    HLT+lookahead, and Felsch algorithms for coset enumeration.  I have
    followed fairly closely the pseudocode in Holt's book, Handbook of
@@ -41,8 +39,9 @@ using namespace std;
 class CosetTable
 {
 public:
-  CosetTable (int NG, vector<string> rel, vector<string> gen_H,
-	      int t = 0, bool felsch = false);
+  CosetTable (int NG, std::vector<std::string> rel,
+	      std::vector<std::string> gen_H,
+	      bool felsch = false);
   bool hlt ();			/* HLT algorithm... */
   bool hlt_plus ();		/* ...with lookahead */
   bool felsch ();		 /* Felsch algorithm */
@@ -50,17 +49,17 @@ public:
   void standardize ();
   int get_nlive () const;
   int get_size () const { return tab.size (); };
-  void print (ostream& fout = cout) const;
-  bool threshold_is_bad () const { return threshold < 0; };
+  void print (std::ostream& fout = std::cout) const;
+  void set_threshold (int t);
 private:
   int NGENS;
-  vector<Coset> tab;
-  vector<int> p;	/* for generating equivalence classes; p[k] <= k */
-  queue<int> q;			/* dead cosets to be processed */
-  vector<word> relator;
-  vector<word> generator_of_H;
+  std::vector<Coset> tab;
+  std::vector<int> p;	/* for generating equivalence classes; p[k] <= k */
+  std::queue<int> q;			/* dead cosets to be processed */
+  std::vector<word> relator;
+  std::vector<word> generator_of_H;
   int threshold;			    /* for hlt+ */
-  map< int, vector<word> > relator_grouped; /* for Felsch */
+  std::map< int, std::vector<word> > relator_grouped; /* for Felsch */
   Stack deduction_stack;		    /* ditto */
   void lookahead (int start = 0);
   void process_deductions ();

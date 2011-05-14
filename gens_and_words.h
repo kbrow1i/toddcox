@@ -26,25 +26,23 @@
 #include <string>
 #include <iostream>
 
-using namespace std;
-
 const int NOTAGEN = -1;
 
 /* generators (including inverses); they will be represented
    internally by their index in the string gen */
-const string gen = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
+const std::string gen = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
 
 int inv (int x);
-typedef vector<int> word;
+typedef std::vector<int> word;
 
 int char_to_gen (char c, int NGENS);
-bool string_to_word (word& w, const string& s, int NGENS);
-int getnum (const string errprompt);
-void getgroup (int& NGENS, vector<string>& rel,
-	       vector<string>& gen_H, istream& fin = cin);
-bool getfout (ofstream& fout);
+bool string_to_word (word& w, const std::string& s, int NGENS);
+int getnum (const std::string errprompt);
+void getgroup (int& NGENS, std::vector<std::string>& rel,
+	       std::vector<std::string>& gen_H, std::istream& fin = std::cin);
+bool getfout (std::ofstream& fout);
 
-void rotate (string& s);
+void rotate (std::string& s);
 
 
 
