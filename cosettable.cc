@@ -29,13 +29,12 @@
 
 using namespace std;
 
-// Constructor for HLT and Felsch
+// Constructor
 CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
 			bool felsch) : NGENS (NG)
 {
   Coset c (NGENS);
   tab.push_back (c);
-  p.push_back (0);		// p[0] = 0
   for (int i = 0; i < gen_H.size (); i++)
     {
       word w;
@@ -75,45 +74,29 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
     }
 }
 
-// Try to reserve space for a table slightly bigger than t to avoid
-// the overhead of reallocation.
-void
-CosetTable::set_threshold (int t)
-{
-  try
-    {
-      tab.reserve (1.001 * t);
-    }
-  catch (exception& e)
-    {
-      ;	 // No harm if it fails; just means threshold will be useless.
-    }
-  threshold = t;
-}
-
-// Define coset k acted on by x to be new coset; return false if can't
-// allocate memory.
+// Define coset k acted on by x to be new coset; return false if
+// can't allocate memory.
 bool
 CosetTable::define (int k, int x, bool save)
 {
-  int l = tab.size ();		// index of new coset
-  tab[k].set_act(x, l);
-  Coset c (NGENS);
-  c.set_act(inv (x), k);
+  int l = tab.size ();		// index and name of new coset
+  tab[k].setact(x, l);
+  Coset c (NGENS, l, l);
+  c.setact(inv (x), k);
   try
     {
       tab.push_back (c);
-      p.push_back (l);		// p[l] = l
     }
   catch (exception& e)
     {
-      cout << "\n\nCoset table has size " << get_size () << "; can't allocate more memory.\n";
+      cout << "\n\nCoset table has size " << tab.size ()
+	   << "; can't allocate more memory.\n";
       return false;
     }
   if (save)
     {
-      deduction d = {k, x};
-      deduction_stack.push (d);
+      deduction ded = {k, x};
+      deduction_stack.push (ded);
     }
   return true;
 }
@@ -125,14 +108,9 @@ CosetTable::print (ostream& fout) const
   for (int x = 0; x < NGENS; x++)
     fout << setw (4) << gen[x];
   fout << endl;
-  for (int k = 0; k < tab.size (); k++)
-    if (is_alive (k))
-      {
-	fout << setw (2) << k + 1 << ": ";
-	tab[k].print (fout);
-	fout << endl;
-      }
-  return;
+  for (ctab_iter it = tab.begin (); it != tab.end (); it++)
+    if (it->isalive ())
+      it->print (fout);
 }
 
 #if 0
@@ -153,29 +131,32 @@ CosetTable::debug_print () const
 }
 #endif
 
-// Return minimal element of equivalence class, simplify p along the way
+// Return name (= index) of minimal element of equivalence class of
+// coset with index k; simplify names of dead cosets encountered on
+// the way.
 int
 CosetTable::rep (int k)
 {
   int l, m, n;
-  l = k; m = p[l];
+  l = k; m = tab[l].getname ();
   while (m < l)
     {
       l = m;
-      m = p[l];
+      m = tab[l].getname ();
     } // Now l is the minimal element.
-  m = k; n = p[m];
+  m = k; n = tab[m].getname ();
   while (n < m)
     {
-      p[m] = l;
+      tab[m].setname (l);
       m = n;
-      n = p[m];
+      n = tab[m].getname ();
     }
   return l;
 }
 
 // Merge two equivalence classes; put larger one in queue for
-// processing (copy definitions)
+// processing (copy definitions).  k and l are the indices of
+// (possibly dead) cosets in the classes to be merged.
 void
 CosetTable::merge(int k, int l)
 {
@@ -183,16 +164,19 @@ CosetTable::merge(int k, int l)
   l = rep (l);
   if (k == l)
     return;
+  int min, max;
   if (k < l)
     {
-      p[l] = k;
-      q.push (l);
+      min = k;
+      max = l;
     }
   else
     {
-      p[k] = l;
-      q.push (k);
+      min = l;
+      max = k;
     }
+  tab[max].setname (min);
+  q.push (max);
 }
 
 void
@@ -206,26 +190,26 @@ CosetTable::coincidence (int k, int l, bool save)
       // Transfer all info about e
       for (int x = 0; x < NGENS; x++)
 	{
-	  if (!is_defined (e, x))
+	  if (!isdefined (e, x))
 	    continue;
-	  int f = tab[e].get_act(x);	// x: e --> f, x^-1: f --> e
-	  tab[f].set_act(inv (x), -1);	// remove arrow f --> e
+	  int f = tab[e].getact(x);	// x: e --> f, x^-1: f --> e
+	  tab[f].setact(inv (x), -1);	// remove arrow f --> e
 	  int e1 = rep (e);
 	  int f1 = rep (f);
 	  // insert arrows x: e1 --> f1 and y: f1 --> e1, where...
 	  int y = inv (x);
-	  if (is_defined (e1, x))
-	    merge (f1, tab[e1].get_act (x));
-	  else if (is_defined (f1, y))
-	    merge (e1, tab[f1].get_act (y));
+	  if (isdefined (e1, x))
+	    merge (f1, tab[e1].getact (x));
+	  else if (isdefined (f1, y))
+	    merge (e1, tab[f1].getact (y));
 	  else
 	    {
-	      tab[e1].set_act (x, f1);
-	      tab[f1].set_act (y, e1);
+	      tab[e1].setact (x, f1);
+	      tab[f1].setact (y, e1);
 	      if (save)
 		{
-		  deduction d = {e1, x};
-		  deduction_stack.push (d);
+		  deduction ded = {e1, x};
+		  deduction_stack.push (ded);
 		}
 	    }
 	}
@@ -241,8 +225,8 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
   for (;;)
     {
       // Scan forward
-      while (i <= j && is_defined (f, w[i]))
-	f = tab[f].get_act(w[i++]);
+      while (i <= j && isdefined (f, w[i]))
+	f = tab[f].getact(w[i++]);
       if (i > j)		// Scan completed, possibly with coincidence
 	{
 	  if (f != b)
@@ -250,8 +234,8 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 	  return true;
 	}
       // Scan backward
-      while (j >= i && is_defined (b, inv (w[j])))
-	b = tab[b].get_act (inv (w[j--]));
+      while (j >= i && isdefined (b, inv (w[j])))
+	b = tab[b].getact (inv (w[j--]));
       if (j < i)		// Scan completed with coincidence
 	{
 	  coincidence (f, b, save);
@@ -259,8 +243,8 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 	}
       if (j == i)		// Scan completed with deduction
 	{
-	  tab[f].set_act (w[i], b);
-	  tab[b].set_act (inv (w[i]), f);
+	  tab[f].setact (w[i], b);
+	  tab[b].setact (inv (w[i]), f);
 	  if (save)
 	    {
 	      deduction d = {f, w[i]};
@@ -281,123 +265,144 @@ CosetTable::scan (int k, const word& w, bool save)
   int i = 0, j = w.size () - 1;	// Starting pos for forward and backward scans
   int f = k, b = k;		// Starting coset indices for scans
   // Scan forward
-  while (i <= j && is_defined (f, w[i]))
-    f = tab[f].get_act(w[i++]);
+  while (i <= j && isdefined (f, w[i]))
+    f = tab[f].getact(w[i++]);
   if (i > j)		// Scan completed, possibly with coincidence
     {
       if (f != b)
-	{
-	  coincidence (f, b, save);
-	}
+	coincidence (f, b, save);
       return;
     }
   // Scan backward
-  while (j >= i && is_defined (b, inv (w[j])))
-    b = tab[b].get_act (inv (w[j--]));
+  while (j >= i && isdefined (b, inv (w[j])))
+    b = tab[b].getact (inv (w[j--]));
   if (j < i)		// Scan completed with coincidence
+    coincidence (f, b, save);
+  else if (j == i)		// Scan completed with deduction
     {
-      coincidence (f, b, save);
-      return;
-    }
-  if (j == i)		// Scan completed with deduction
-    {
-      tab[f].set_act (w[i], b);
-      tab[b].set_act (inv (w[i]), f);
+      tab[f].setact (w[i], b);
+      tab[b].setact (inv (w[i]), f);
       if (save)
 	{
 	  deduction d = {f, w[i]};
 	  deduction_stack.push (d);
 	}
-      return;
     }
-  // Scan is incomplete and yields no information
-  return;
+  // else scan is incomplete and yields no information
 }
 
-// HLT algorithm; return false if can't allocate enough memory.
-bool
+coset_enum_result
+CosetTable::enumerate (int method)
+{
+  if (method > 0)
+    return (hlt_plus (method));
+  if (method == 0)
+    return (hlt ());
+  return felsch ();
+}
+
+// HLT algorithm
+coset_enum_result
 CosetTable::hlt ()
 {
   for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i]);
-  for (int k = 0; k < get_size (); k++)
+  // Must recompute tab.size() after each iteration.  Note that an
+  // iterator wouldn't work well here because elements keep getting
+  // added to tab.
+  for (int k = 0; k < tab.size (); k++)
     {
-      for (int i = 0; i < relator.size () && is_alive (k); i++)
+      for (int i = 0; i < relator.size () && tab[k].isalive (); i++)
 	{
 	  bool alloc = scan_and_fill (k, relator[i]);
 	  if (!alloc)
-	    return false;
+	    return COSET_ENUM_OUT_OF_MEMORY;
 	}
-      if (is_alive (k))
+      if (tab[k].isalive ())
 	for (int x = 0; x < NGENS; x++)
-	  if (!is_defined (k, x))
+	  if (!tab[k].isdefined (x))
 	    {
 	      bool alloc = define (k, x);
 	      if (!alloc)
-		return false;
+		return COSET_ENUM_OUT_OF_MEMORY;
 	    }
     }
-  return true;
+  return COSET_ENUM_SUCCESS;
 }
 
-// HLT algorithm with lookahead
-bool
-CosetTable::hlt_plus ()
+// HLT algorithm with lookahead.
+coset_enum_result
+CosetTable::hlt_plus (int threshold)
 {
+// Try to reserve space for a table of size threshold to avoid the
+// overhead of reallocation.
+  try
+    {
+      tab.reserve (threshold);
+    }
+  catch (exception& e)
+    {
+      ;	 // No harm if it fails; just means threshold will be useless.
+    }
   for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i]);
-  for (int k = 0; k < get_size (); k++)
+  for (int k = 0; k < tab.size (); k++)
     {
-      if (!is_alive (k))
+      if (!tab[k].isalive ())
 	continue;
-      if (get_size () > threshold)
+      if (tab.size () > threshold)
 	{
-	  int n = get_size ();
-	  cout << "\nThreshold exceeded; table size is " << n << ".  Looking ahead...\n";
+	  int n = tab.size ();
+	  cout << "\nThreshold exceeded; table size is "
+	       << n << ".  Looking ahead...\n";
 	  lookahead (k);
 	  // Move to next live coset, in case k died
-	  while (k < n && !is_alive (k))
+	  while (k < n && !tab[k].isalive ())
 	    k++;
 	  if (k == n)
-	    return true;
+	    return COSET_ENUM_SUCCESS;
 	  k = compress (k);
 	  cout << "Table size is now " << tab.size () << ".";
 	  if (tab.size () > threshold)
 	    {
 	      cout << endl;
-	      return false;
+	      return COSET_ENUM_THRESHOLD_EXCEEDED;
 	    }
 	  cout << "  Continuing.\n";
 	}
-      for (int i = 0; i < relator.size () && is_alive (k); i++)
+      for (int i = 0; i < relator.size () && tab[k].isalive (); i++)
 	scan_and_fill (k, relator[i]);
-      if (is_alive (k))
+      if (tab[k].isalive ())
 	for (int x = 0; x < NGENS; x++)
-	  if (!is_defined (k, x))
-	    define (k, x);	// Threshold means we won't run out of memory.
+	  if (!isdefined (k, x))
+	    {
+	      bool alloc = define (k, x);
+	      if (!alloc)
+		return COSET_ENUM_OUT_OF_MEMORY;
+	    }
     }
-  return true;
+  return COSET_ENUM_SUCCESS;
 }
 
-// Felsch algorithm; return false if can't allocate enough memory.
-bool
+// Felsch algorithm
+coset_enum_result
 CosetTable::felsch ()
 {
   for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i], true);
   process_deductions ();
-  for (int k = 0; k < get_size (); k++)
+  for (int k = 0; k < tab.size (); k++)
     {
-      for (int x = 0; x < NGENS && is_alive (k); x++)
-	if (!is_defined (k, x))
+      for (int x = 0; x < NGENS && tab[k].isalive (); x++)
+	if (!isdefined (k, x))
 	  {
 	    bool alloc = define (k, x, true);
 	    if (!alloc)
-	      return false;
+	      return COSET_ENUM_OUT_OF_MEMORY;
 	    process_deductions ();
 	  }
     }
-  return true;
+  return COSET_ENUM_SUCCESS;
 }
 
 void
@@ -417,22 +422,22 @@ CosetTable::process_deductions ()
       int x = d.gen;
       vector<word> relx = relator_grouped[x];
       int n = relx.size ();
-      for (int i = 0; i < n && is_alive (k); i++)
+      for (int i = 0; i < n && tab[k].isalive (); i++)
 	scan (k, relx[i], true);
-      k = tab[k].get_act (x);
+      k = tab[k].getact (x);
       x = inv (x);
       relx = relator_grouped[x];
-      for (int i = 0; i < n && is_alive (k); i++)
+      for (int i = 0; i < n && tab[k].isalive (); i++)
 	scan (k, relx[i], true);
     }
 }
 
 int
-CosetTable::get_nlive () const
+CosetTable::getnlive () const
 {
-  int count = 0, n = get_size ();
-  for (int k = 0; k < n; k++)
-    if (is_alive (k))
+  int count = 0;
+  for (ctab_iter it = tab.begin (); it != tab.end (); it++)
+    if (it->isalive ())
       count++;
   return count;
 }
@@ -440,11 +445,12 @@ CosetTable::get_nlive () const
 void
 CosetTable::lookahead (int start)
 {
-  int n = get_size ();
-  for (int k = start; k < n; k++)
-    for (int i = 0; i < relator.size () && is_alive (k); i++)
-      scan (k, relator[i]);
-  return;
+  for (tab_iter it = tab.begin () + start; it != tab.end () ; it++)
+    {
+      int k = it->getindex ();
+      for (int i = 0; i < relator.size () && it->isalive (); i++)
+	scan (k, relator[i]);
+    }
 }
 
 // When compress is called after lookahead in hlt_plus, we have some
@@ -455,35 +461,36 @@ CosetTable::lookahead (int start)
 int
 CosetTable::compress (int current)
 {
-  int l = 0, n = get_size (), ret = -1;
-  for (int k = 0; k < n; k++)
-    if (is_alive (k))
-      {
-	if (k == current)
-	  ret = l;
-	if (k > l)		// Replace k by l in table
-	  {
-	    for (int x = 0; x < NGENS; x++)
-	      {
-		int m = tab[k].get_act (x);
-		if (m == k)
-		  tab[l].set_act (x, l);
-		else
-		  {
-		    tab[l].set_act (x, m);
-		    if (m >= 0)
-		      tab[m].set_act(inv (x), l);
-		  }
-	      }
-	    p[l] = l;
-	  }
-	l++;
-      }
-  if (l < n)
+  int ret = -1;
+  tab_iter it1 = tab.begin ();  // Pointer to new position for *it
+  for (ctab_iter it = tab.begin (); it != tab.end (); it++)
     {
-      tab.erase (tab.begin () + l, tab.end ());
-      p.erase (p.begin () + l, p.end ());
+      if (!it->isalive ())
+	continue;
+      // Copy info from it to it1.
+      int old = it->getindex ();
+      int l = it1->getindex ();
+      if (old == current)
+	ret = l;
+      if (old > l)		// Replace old by l in table.
+	{
+	  for (int x = 0; x < NGENS; x++)
+	    {
+	      int m = it->getact (x);
+	      if (m == old)
+		it1->setact (x, l);
+	      else
+		{
+		  it1->setact (x, m);
+		  if (m >= 0)
+		    tab[m].setact(inv (x), l);
+		}
+	    }
+	  it1->setname (l);
+	}
+      it1++;
     }
+  tab.erase (it1, tab.end ());
   return ret;
 }
       
@@ -493,17 +500,17 @@ CosetTable::swap (int k, int l)
 {
   for (int x = 0; x < NGENS; x++)
     {
-      int temp = tab[k].get_act (x);
-      tab[k].set_act (x, tab[l].get_act (x));
-      tab[l].set_act (x, temp);
-      for (int m = 0; m < tab.size (); m++)
+      int temp = tab[k].getact (x);
+      tab[k].setact (x, tab[l].getact (x));
+      tab[l].setact (x, temp);
+      for (tab_iter it = tab.begin (); it != tab.end (); it++)
 	{
-	  if (!is_alive (m))
+	  if (!it->isalive ())
 	    continue;
-	  if (tab[m].get_act (x) == k)
-	    tab[m].set_act (x, l);
-	  else if (tab[m].get_act (x) == l)
-	    tab[m].set_act (x, k);
+	  if (it->getact (x) == k)
+	    it->setact (x, l);
+	  else if (it->getact (x) == l)
+	    it->setact (x, k);
 	}
     }
 }
@@ -516,10 +523,10 @@ CosetTable::standardize ()
   if (n <= 2)
     return;
   int goal = 1;			// next number we want to find in the table
-  for (int k = 0; k < n; k++)
+  for (tab_iter it = tab.begin (); it != tab.end (); it++)
     for (int x = 0; x < NGENS; x++)
       {
-	int l = tab[k].get_act (x);
+	int l = it->getact (x);
 	if (l >= goal)
 	  {
 	    if (l > goal)

@@ -1,3 +1,41 @@
+2011-05-16  Ken Brown  <kbrown@cornell.edu>
+
+	* TODO: Update.
+	* coset.h (Coset): Rename get_act and set_act to getact and
+	setact.  Declare new members getname(), setname(), getindex(),
+	setindex(), isalive(), isdefined(), name, index.  Add name and
+	index as parameters to constructor.
+	* coset.cc: Adapt constructor to changes above.
+	(print): Minor change.
+	* cosettable.h (coset_enum_result, tab_iter, ctab_iter): New
+	typedefs.
+	(p): Remove.
+	(hlt, hlt_plus, felsch): Make private.  Make threshold a parameter
+	to hlt_plus.  Change return types to coset_enum_result.
+	(enumerate): New public member function.
+	(set_threshold): Remove.
+	(threshold): Remove.
+	(is_alive): Remove.  (Will use the corresponding member of Coset
+	class instead.)
+	(is_defined): Rename to...
+	(isdefined): New member function, which uses the Coset class
+	function of the same name.
+	* cosettable.cc: Remove reference to p[] throughout; use Coset's
+	getname instead.  Accomodate the name changes in Coset.  Use
+	iterators instead of indexing to traverse coset table in several
+	functions.
+	(set_threshold): Remove.  Move functionality to hlt_plus.
+	(define): Accommodate changes to Coset constructor.  Remove
+	reference to p[].
+	(print): Accomodate changes to Coset's print function.
+	(scan): Minor change.
+	(enumerate): Implement.
+	(hlt, hlt_plus, felsch): Accommodate changes declared in header.
+	* toddcox.cc (main): Call CosetTable::enumerate instead of hlt,
+	hlt_plus, or felsch.  Compress and standardize small coset table.
+	Compress big table only if user asks for it to be written to a
+	file; don't standardize it (too slow).
+
 2011-05-14  Ken Brown  <kbrown@cornell.edu>
 
 	* tc.cc: Rename to...
@@ -6,7 +44,6 @@
 	* Makefile.cygwin: Adjust to name change.
 	* Makefile.cygwin-mingw: Ditto.
 	* Makefile.linux: Ditto.
-
 2011-05-14  Ken Brown  <kbrown@cornell.edu>
 
 	* tc.cc (main): Move functionality of tc+ and tcf here.  Use blank

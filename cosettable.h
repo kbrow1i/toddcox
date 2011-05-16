@@ -33,47 +33,58 @@
 /* The CosetTable class provides a toy implementation of the HLT,
    HLT+lookahead, and Felsch algorithms for coset enumeration.  I have
    followed fairly closely the pseudocode in Holt's book, Handbook of
-   Computational Group Theory, except that cosets are numbered
-   starting from 0. */
+   Computational Group Theory, except that cosets are (internally)
+   numbered starting from 0.
+
+   Holt's array p[] is given by tab[].getname().  Thus the name of a
+   live coset will always be its index in the coset table, whereas the
+   name of a dead coset will be the index of an earlier equivalent
+   coset.  */
+
+typedef enum
+  {
+    COSET_ENUM_SUCCESS,
+    COSET_ENUM_THRESHOLD_EXCEEDED,
+    COSET_ENUM_OUT_OF_MEMORY
+  } coset_enum_result;  
 
 class CosetTable
 {
+  typedef std::vector<Coset>::iterator tab_iter;
+  typedef std::vector<Coset>::const_iterator ctab_iter;
 public:
   CosetTable (int NG, std::vector<std::string> rel,
-	      std::vector<std::string> gen_H,
-	      bool felsch = false);
-  bool hlt ();			/* HLT algorithm... */
-  bool hlt_plus ();		/* ...with lookahead */
-  bool felsch ();		 /* Felsch algorithm */
+	      std::vector<std::string> gen_H, bool felsch);
+  /* method can be a positive integer (threshold for HLT+), 0 (for
+     ordinary HLT) or negative (for Felsch); negative value is
+     irrelevant. */
+  coset_enum_result enumerate (int method);
   int compress (int current = -1);
   void standardize ();
-  int get_nlive () const;
-  int get_size () const { return tab.size (); };
+  int getnlive () const;
+  int getsize () const { return tab.size (); };
   void print (std::ostream& fout = std::cout) const;
-  void set_threshold (int t);
 private:
   int NGENS;
   std::vector<Coset> tab;
-  std::vector<int> p;	/* for generating equivalence classes; p[k] <= k */
   std::queue<int> q;			/* dead cosets to be processed */
   std::vector<word> relator;
   std::vector<word> generator_of_H;
-  int threshold;			    /* for hlt+ */
   std::map< int, std::vector<word> > relator_grouped; /* for Felsch */
-  Stack deduction_stack;		    /* ditto */
+  coset_enum_result hlt ();			/* HLT algorithm... */
+  coset_enum_result hlt_plus (int threshold);	/* ...with lookahead */
+  coset_enum_result felsch ();			/* Felsch algorithm */
+  Stack deduction_stack;			/* for Felsch */
   void lookahead (int start = 0);
-  void process_deductions ();
+  void process_deductions ();	/* for Felsch */
   bool scan_and_fill (int k, const word& w, bool save = false);
   void scan (int k, const word& w, bool save = false);
-  bool is_alive (int k) const { return (p[k] == k); };
   bool define (int k, int x, bool save = false);
-  bool is_defined (int k, int x) const { return (tab[k].get_act (x) >= 0); };
+  bool isdefined (int k, int x) const { return tab[k].isdefined (x); };
   int rep (int c);
   void merge (int k, int l);
   void coincidence(int k, int l, bool save = false);
   void swap (int k, int l);
 };
-
-
 
 #endif	/* COSETTABLE_H */

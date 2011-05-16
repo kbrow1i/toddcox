@@ -78,32 +78,27 @@ const string instruct =
       cout << instruct;
       getgroup (NGENS, rel, gen_H);
     }
-  int t = getmethod ();
-  bool felsch = (t == -1);
+  int meth = getmethod ();
+  bool felsch = (meth == -1);
   CosetTable C (NGENS, rel, gen_H, felsch);
-  if (felsch)
+  coset_enum_result res = C.enumerate (meth);
+  if (res == COSET_ENUM_OUT_OF_MEMORY)
+    return 1;			// Out-of-memory message has already
+				// been written.
+  if (res == COSET_ENUM_THRESHOLD_EXCEEDED)
     {
-      if (!C.felsch ())
-	return 1;
-    }
-  else if (t > 0)		// HLT+lookahead
-    {
-      C.set_threshold (t);
-      if (!C.hlt_plus ())
-	{
-	  cout << "Sorry, please try again with a bigger threshold.\n\n";
-	  return 1;
-	}
-    }
-  else				// HLT
-    if (!C.hlt ())
+      cout << "Sorry, please try again with a bigger threshold.\n\n";
       return 1;
-  cout << "\nThe index of H in G is " << C.get_nlive ()
-       << ".\nThe coset table had size " << C.get_size ()
+    }
+  // Success
+  cout << "\nThe index of H in G is " << C.getnlive ()
+       << ".\nThe coset table had size " << C.getsize ()
        << " before compression.\n\n";
-  if (C.get_nlive () < 50)
+  if (C.getnlive () < 50)
     {
       cout << "Compressed and standardized coset table:\n\n";
+      C.compress ();
+      C.standardize ();
       C.print ();
     }
   else				// Offer to print table to file
@@ -111,8 +106,7 @@ const string instruct =
       ofstream fout;
       if (getfout (fout))
 	{
-	  C.compress ();
-	  C.standardize ();
+	  C.compress ();	// Don't standardize for big table.
 	  C.print (fout);
 	  fout.close ();
 	}

@@ -26,16 +26,29 @@
 #include <vector>
 #include <iostream>
 
+/* A Coset is intended to be used as a "row" in a CosetTable.  It has
+   an index, which represents its position in the table, and it has a
+   name.  The name equals the index as long as the coset is alive;
+   otherwise its the index of an earlier equivalent coset. */
+
 class Coset
 {
 public:
-  Coset (int NG);
-  int get_act (int x) const { return row[x]; };
-  void set_act (int x, int k) { row[x] = k; } ;
+  Coset (int NG, int nm = 0, int ind = 0);
+  int getact (int x) const { return row[x]; };
+  void setact (int x, int k) { row[x] = k; } ;
   void print (std::ostream& fout = std::cout) const;
+  int getname () const { return name; };
+  void setname (int k) { name = k; };
+  int getindex () const { return index; };
+  void setindex (int k) { index = k; };
+  bool isalive () const { return name == index; };
+  bool isdefined (int x) const { return row[x] >= 0; };
 private:
-  std::vector<int> row;		/* row[x] is index of coset acted on by x */
+  std::vector<int> row;		/* row[x] is name of this coset acted on by x */
   int NGENS;			/* including inverses */
+  int name;
+  int index;
 };
 
 #endif	/* COSET_H */
