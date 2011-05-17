@@ -1,3 +1,10 @@
+2011-05-17  Ken Brown  <kbrown@cornell.edu>
+
+	* toddcox.cc (main): Don't prompt for enumeration method.  Use HLT
+	unless a different method is specified on the command line.
+	(getmethod): Remove.
+	(usage): New function.
+
 2011-05-16  Ken Brown  <kbrown@cornell.edu>
 
 	* TODO: Update.

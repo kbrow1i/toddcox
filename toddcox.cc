@@ -33,39 +33,71 @@
 
 using namespace std;
 
-int getmethod ();
+void usage (bool help = false);
 
+// Default (HLT): toddcox [FILE]
+// HLT+lookahead: toddcox --threshold THRESHOLD [FILE]
+// Felsch: toddcox --felsch [FILE]
+// Here FILE contains the group info; otherwise the user is prompted
+// for the group info.
 int
 main (int argc, char * argv[])
 {
-  // If there's a command line argument, it should be the name of a
-  // file containing the group info; otherwise prompt the user for the
-  // group info.
-  bool interactive = (argc == 1);
-  ifstream fin;
-  if (!interactive)
+  // Check for option
+  bool felsch = false;
+  int threshold = 0;
+  if (--argc > 0 && (*++argv)[0] == '-')
     {
-      if (argc != 2)
+      string option = *argv;
+      if (option == "--help")
+	usage (true);
+      else if (option == "--felsch")
 	{
-	  cerr << "Too many arguments.  Usage: " << argv[0] << " [filename]\n";
-	  exit (EXIT_FAILURE);
+	  felsch = true;
+	  --argc;
+	  ++argv;
 	}
-      fin.open (argv[1]);
-      if (!fin.is_open ())
+      else if (option == "--threshold")
 	{
-	  cerr << "unable to open " << argv[1] << endl;
-	  exit (EXIT_FAILURE);
+	  if (--argc > 0 && (threshold = atoi (*++argv)) > 0)
+	    {
+	      --argc;
+	      ++argv;
+	    }
+	  else
+	    usage ();
+	}
+      else
+	{
+	  cerr << "\nInvalid option: " << option << endl;
+	  usage ();
 	}
     }
-const string instruct =
+  // Check for filename
+  bool interactive = true;
+  ifstream fin;
+  if (argc > 1)
+    {
+      cerr << "Too many arguments.\n";
+      usage ();
+    }
+  if (argc == 1)
+    {
+      interactive = false;
+      fin.open (*argv);
+      if (!fin.is_open ())
+	{
+	  cerr << "unable to open " << *argv << endl;
+	  return 1;
+	}
+    }
+  const string instruct =
     "\nThis program uses the Todd-Coxeter procedure to compute the\n"
     "index in a finitely presented group G of a subgroup H.  You\n"
     "will be prompted to enter the number of generators of G, the\n"
     "defining relators of G, and the generators of H.  Use\n"
     "a,b,... for the generators of G and A,B,... for their\n"
-    "inverses.  By default, the HLT method is used.  You may\n"
-    "choose to use the HLT+lookahead method or the Felsch method\n"
-    "instead.\n\n";
+    "inverses.\n\n";
   int NGENS;
   vector<string> rel, gen_H;
   if (!interactive)
@@ -78,10 +110,9 @@ const string instruct =
       cout << instruct;
       getgroup (NGENS, rel, gen_H);
     }
-  int meth = getmethod ();
-  bool felsch = (meth == -1);
   CosetTable C (NGENS, rel, gen_H, felsch);
-  coset_enum_result res = C.enumerate (meth);
+  int method = felsch ? -1 : threshold;
+  coset_enum_result res = C.enumerate (method);
   if (res == COSET_ENUM_OUT_OF_MEMORY)
     return 1;			// Out-of-memory message has already
 				// been written.
@@ -114,45 +145,37 @@ const string instruct =
   return 0;
 }
 
-// Get enumeration method.  -1 means Felsch, 0 means HLT, a positive
-// number is a threshold for HLT+.
-int
-getmethod ()
+void
+usage (bool help)
 {
-  cout <<
-    "\nPress Enter to use the default HLT enumeration method, or\n"
-    "enter + for HLT+lookahead or f for Felsch: ";
-  string s;
-  getline (cin, s);
-  if (s.empty ())
+  const string us =
+    "Usage:\n"
+    "  toddcox [FILE]\n"
+    "  toddcox --threshold THRESHOLD [FILE]\n"
+    "  toddcox --felsch [FILE]\n"
+    "Here FILE is an optional file name and THRESHOLD is a positive integer.\n\n";
+  const string us1 =
+    "For more information, give the command\n"
+    "  toddcox --help\n";
+  const string us2 =
+    "If FILE is specified, it should contain the information about\n"
+    "the group and subgroup.  If it is not specified, the user is\n"
+    "prompted for that information.\n\n"
+    "By default, the HLT coset enumeration method is used.  If the\n"
+    "'--threshold THRESHOLD' option is given, HLT+lookahead is used.\n"
+    "(This means that if an HLT step causes the coset table to get\n"
+    "bigger than THRESHOLD, processing will not continue unless the\n"
+    "table size can be reduced.)  If the '--felsch' option is given,\n"
+    "the Felsch enumeration method is used.\n";
+  cout << us;
+  if (help)
     {
-      cout << "\nUsing HLT.\n";
-      return 0;
+      cout << us2;
+      exit (EXIT_SUCCESS);
     }
-  if (s == "f" || s == "F")
+  else
     {
-      cout << "\nUsing Felsch.\n";
-      return -1;
+      cout << us1;
+      exit (EXIT_FAILURE);
     }
-  if (s == "+")
-    {
-      cout <<
-	"\nUsing HLT+lookahead.  If an HLT step causes the size of the\n"
-	"coset table to exceed a specified threshold, the program\n"
-	"will use lookahead to try to shrink the table.\n\n"
-	"Enter threshold: ";
-      int threshold; bool gotthresh = false;
-      while (!gotthresh)
-	{
-	  string errprompt = "Please enter a positive integer.\n> ";
-	  threshold = getnum (errprompt);
-	  gotthresh = (threshold > 0);
-	  if (!gotthresh)
-	    cout << errprompt;
-	}
-      return threshold;
-    }
-  // The user entered something else.
-  cout << "\nInvalid choice; using default HLT method.\n";
-  return 0;    
 }
