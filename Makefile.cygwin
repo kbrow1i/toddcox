@@ -27,7 +27,7 @@ PLATFORM = cygwin
 BIN = bin/$(PLATFORM)
 VERSION = 0.3
 
-.PHONY: all clean install
+.PHONY: all clean install pkg
 
 all: toddcox$(EXEEXT)
 
@@ -56,4 +56,11 @@ clean:
 install:
 	mkdir -p $(BIN)
 	cp toddcox$(EXEEXT) $(BIN)
-	cd $(BIN); $(STRIP) -o toddcox-$(VERSION).$(PLATFORM)$(EXEEXT) toddcox$(EXEEXT) 
+	$(STRIP) $(BIN)/toddcox$(EXEEXT)
+
+# The following is for maintainer use only.
+pkg:
+	cp -p $(BIN)/toddcox$(EXEEXT) ../releases/toddcox-$(VERSION).$(PLATFORM)$(EXEEXT)
+	mkdir -p ~/html/toddcox/$(BIN)
+	chmod 755 ~/html/toddcox/$(BIN)
+	cp -p $(BIN)/toddcox$(EXEEXT) ~/html/toddcox/$(BIN)

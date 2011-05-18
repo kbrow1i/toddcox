@@ -1,3 +1,9 @@
+2011-05-18  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: Tweak 'install' target.  Add 'pkg' target.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: Ditto.
+
 2011-05-17  Ken Brown  <kbrown@cornell.edu>
 
 	* INSTALL: Update.
