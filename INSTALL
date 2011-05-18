@@ -8,10 +8,10 @@ specifics:
 
 ** Linux
 
-Type 'make' at a shell prompt.  This should yield three executable
-programs, tc, tc+, and tcf, in the current directory.  You can
-optionally type 'make install' to create stripped executables in the
-'bin/linux' subdirectory.
+Type 'make' at a shell prompt.  This should yield an executable
+program called toddcox in the current directory.  You can optionally
+type 'make install' to create a stripped executable in the 'bin/linux'
+subdirectory.
 
 ** Cygwin
 
@@ -21,10 +21,10 @@ shell prompt:
 
   make -f Makefile.cygwin
 
-This should yield three executable programs, tc.exe, tc+.exe, and
-tcf.exe, in the current directory.  You can optionally type 'make -f
-Makefile.cygwin install' to create stripped executables in the
-'bin/cygwin' subdirectory.
+This should yield an executable program called toddcox.exe in the
+current directory.  You can optionally type 'make -f Makefile.cygwin
+install' to create a stripped executable in the 'bin/cygwin'
+subdirectory.
 
 ** Other Unix-like systems
 
@@ -46,7 +46,7 @@ following command at a Cygwin shell prompt:
   make -f Makefile.cygwin-mingw
 
 You can optionally type 'make -f Makefile.cygwin-mingw install' to
-create stripped executables in the 'bin/windows' subdirectory.
+create a stripped executable in the 'bin/windows' subdirectory.
 
 
 This file is part of Toddcox.

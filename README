@@ -1,30 +1,28 @@
 Copyright 2011 Kenneth S. Brown.
 See the end of the file for license conditions.
 
-If you have obtained prebuilt executables for your system, you can
-skip the first item and proceed directly to "Running the programs".
+If you have obtained a prebuilt executable for your system, you can
+skip the first item and proceed directly to "Running the program".
 
 * Building Toddcox
 
 See the INSTALL file in the source distribution for instructions.
-After following the instructions, you should have three executables:
-tc, tc+, and tcf (possibly with .exe appended).  The first program
-uses the HLT coset enumeration method, the second uses HLT+lookahead,
-and the third uses the Felsch method.
+After following the instructions, you should have an executable
+program called toddcox (possibly with .exe appended).
 
 * Running the programs
 
-Type 'tc' (or 'tc+' or 'tcf') at a command prompt.  Depending on how
-your path is set up, you may have to include a path specification.  On
-a typical unix-like system, for example, you would type
+Type 'toddcox' at a command prompt.  Depending on how your path is set
+up, you may have to include a path specification.  On a typical
+unix-like system, for example, you would type
 
-  ./tc
+  ./toddcox
 
-if the tc program is contained in your current directory.
+if the toddcox program is contained in your current directory.
 
-The programs will prompt you to enter the necessary information.  See
-<http://www.math.cornell.edu/~kbrown/toddcox/run.html> for a sample
-run of each program.
+The program will prompt you to enter the necessary information.  See
+<http://www.math.cornell.edu/~kbrown/toddcox/run.html> for some sample
+runs of the program.
 
 * Running from a script
 
@@ -32,13 +30,13 @@ Instead of responding to all the prompts interactively, you can enter
 them into a file and give the filename as a command-line argument.
 The Toddcox source distribution contains several sample input files in
 the 'examples' directory.  See the README file in that directory for a
-description of the examples.  To run 'tc' on the M12 example, for
+description of the examples.  To run toddcox on the M12 example, for
 instance, issue the following command:
 
-  ./tc examples/M12.in
+  ./toddcox examples/M12.in
 
-This assumes that the 'tc' executable is in the top-level directory of
-the Toddcox source distribution.
+This assumes that the 'toddcox' executable is in the top-level
+directory of the Toddcox source distribution.
 
 * Questions and comments
 

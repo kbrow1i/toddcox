@@ -25,7 +25,7 @@ CXX = g++
 STRIP = strip
 PLATFORM = cygwin
 BIN = bin/$(PLATFORM)
-VERSION = 0.2
+VERSION = 0.3
 
 .PHONY: all clean install
 
@@ -56,4 +56,4 @@ clean:
 install:
 	mkdir -p $(BIN)
 	cp toddcox$(EXEEXT) $(BIN)
-	$(STRIP) $(BIN)/toddcox$(EXEEXT)
+	cd $(BIN); $(STRIP) -o toddcox-$(VERSION).$(PLATFORM)$(EXEEXT) toddcox$(EXEEXT) 

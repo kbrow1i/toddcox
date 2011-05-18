@@ -1,5 +1,13 @@
 2011-05-17  Ken Brown  <kbrown@cornell.edu>
 
+	* INSTALL: Update.
+	* README: Update.
+	* Makefile.cygwin: Adapt 'install' target to changed executables.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: Ditto.
+
+2011-05-17  Ken Brown  <kbrown@cornell.edu>
+
 	* toddcox.cc (main): Don't prompt for enumeration method.  Use HLT
 	unless a different method is specified on the command line.
 	(getmethod): Remove.

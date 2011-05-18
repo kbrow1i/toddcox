@@ -26,7 +26,7 @@ CXX = i686-pc-mingw32-g++ -static
 STRIP = i686-pc-mingw32-strip
 PLATFORM = windows
 BIN = bin/$(PLATFORM)
-VERSION = 0.2
+VERSION = 0.3
 
 .PHONY: all clean install
 
@@ -57,4 +57,4 @@ clean:
 install:
 	mkdir -p $(BIN)
 	cp toddcox$(EXEEXT) $(BIN)
-	$(STRIP) $(BIN)/toddcox$(EXEEXT)
+	cd $(BIN); $(STRIP) -o toddcox-$(VERSION).$(PLATFORM)$(EXEEXT) toddcox$(EXEEXT) 
