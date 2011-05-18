@@ -21,8 +21,8 @@ unix-like system, for example, you would type
 if the toddcox program is contained in your current directory.
 
 The program will prompt you to enter the necessary information.  See
-<http://www.math.cornell.edu/~kbrown/toddcox/run.html> for some sample
-runs of the program.
+<http://www.math.cornell.edu/~kbrown/toddcox/doc.html> for
+documentation, including some sample runs of the program.
 
 * Running from a script
 

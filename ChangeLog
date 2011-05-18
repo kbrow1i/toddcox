@@ -1,5 +1,10 @@
 2011-05-18  Ken Brown  <kbrown@cornell.edu>
 
+	* README: Update documentation.
+	* examples/README: Ditto.
+
+2011-05-18  Ken Brown  <kbrown@cornell.edu>
+
 	* Makefile.cygwin: Tweak 'install' target.  Add 'pkg' target.
 	* Makefile.linux: Ditto.
 	* Makefile.cygwin-mingw: Ditto.

@@ -1,16 +1,15 @@
 Copyright 2011 Kenneth S. Brown.
 See the end of the file for license conditions.
 
-The files in this directory can be used as input files for the
-programs 'tc', 'tc+', and 'tcf'.  Assuming, for example, that one is
-working in the the top-level directory of the Toddcox distribution and
-that this directory contains the executables, one could give the
-command
+The files in this directory can be used as input files for toddcox.
+Assuming, for example, that one is working in the the top-level
+directory of the Toddcox distribution and that this directory contains
+the executables, one could give the command
 
-  ./tc+ examples/F27.in
+  ./toddcox examples/F27.in
 
-to run 'tc+' with F27.in as input file.  Here is a description of the
-groups that correspond to the input files in this directory.
+to run toddcox with F27.in as input file.  Here is a description of
+the groups that correspond to the input files in this directory.
 
 * F27.in
 
@@ -64,17 +63,17 @@ relations
 
   a^2 = (ab)^3,  (ab^4ab^7)^2b^7a^8 = 1.
 
-It has order 2184 = 12 x 13 x 14.  Enumeration by the HLT method
-('tc') uses almost 30 million cosets.  Using lookahead ('tc+'), one
-can cut the size of the coset table down to about 1.5 million, but not
-much smaller.  The Felsch method ('tcf') uses about 2.6 million
-cosets.
+It has order 2184 = 12 x 13 x 14.  Enumeration by the HLT method (the
+default for the toddcox program) uses almost 30 million cosets.  Using
+other methods one can cut the size of the coset table down to about
+1.5 million, but not much smaller.  See
+<http://www.math.cornell.edu/~kbrown/toddcox/run.html> for details.
 
 * HNO_1.in
 
-This is a 3-generator, 3-relator group of order 6561 = 3^8.  HLT uses
-about 200,000 cosets; this can be reduced to about 30,000 with
-lookahead.  Felsch uses about 35,000 cosets.
+This is a 3-generator, 3-relator group of order 6561 = 3^8.  The HLT
+method uses about 200,000 cosets; this can be reduced to about 30,000
+by using other methods.
 
 * HNO_8.in
 
