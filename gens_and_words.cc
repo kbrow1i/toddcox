@@ -63,6 +63,7 @@ string_to_word (word& w, const string& s, int NGENS)
   return true;
 }
 
+#if 0
 // Get an integer from standard input, prompting with errprompt if
 // something other than an integer is entered.  Read newline.
 int
@@ -74,13 +75,12 @@ getnum (const string errprompt)
       gotnum = (cin >> n);
       // Read newline after resetting cin (in case there was an error).
       cin.clear ();
-      while (cin.get () != '\n')
-	;
       if (!gotnum)
 	cout << errprompt;
     }
   return n;
 }
+#endif
 
 // Read a string representing a valid word from fin into s and return
 // true, or read an empty line and return false.  Always read the
@@ -133,27 +133,26 @@ getngens (istream& fin)
 {
   int n;
   if (fin == cin)
-    cout << "Number of generators: ";    
-  if (fin >> n && n >=1 && n <= 26) // Got valid n, move past newline.
-    {
-      while (fin.get () != '\n')
-	;
-      return n;
-    }
-  // n is invalid; give up if not interactive.
-  if (fin != cin)
+    cout << "Number of generators: ";
+  bool gotngens = (fin >> n && n >=1 && n <= 26);
+  if (fin != cin && !gotngens)
     {
       cerr << "Number of generators must be an integer between 1 and 26.\n";
       exit (EXIT_FAILURE);
     }
-  // We're working interactively; retry.
-  string errprompt = "Please enter an integer between 1 and 26: ";
-  do
+  // Now n is valid, or else we're working interactively and n is
+  // invalid; in that case we retry after clearing cin and any invalid
+  // input.
+  string junk;
+  while (!gotngens)
     {
-      cout << errprompt;
-      n = getnum (errprompt);
+      cin.clear ();
+      getline (cin, junk);
+      cout << "Please enter an integer between 1 and 26: ";
+      gotngens = (cin >> n && n >=1 && n <= 26);
     }
-  while (n < 1 || n > 26);
+  // Read newline.
+  getline (fin, junk);
   return n;
 }
 
@@ -177,19 +176,18 @@ getgroup (int& NGENS, vector<string>& rel, vector<string>& gen_H, istream& fin)
 bool
 getfout (ofstream& fout)
 {
-  cout << "Enter file name for output, or press Enter to quit:\n> ";
-  bool gotfout = false;
-  while (!gotfout)
+  do
     {
+      cout << "Enter file name for output, or press Enter to quit:\n> ";
       string s;
       getline (cin, s);
       if (s.empty ())
 	return false;
       fout.open (s.c_str ());
-      gotfout = fout.is_open ();
-      if (!gotfout)
+      if (!fout)
 	cout << "Unable to open " << s << "; please try again.\n> ";
     }
+  while (!fout);
   return true;
 }
 

@@ -85,9 +85,9 @@ main (int argc, char * argv[])
     {
       interactive = false;
       fin.open (*argv);
-      if (!fin.is_open ())
+      if (!fin)
 	{
-	  cerr << "unable to open " << *argv << endl;
+	  cerr << "Unable to open " << *argv << endl;
 	  return 1;
 	}
     }

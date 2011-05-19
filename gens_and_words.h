@@ -37,7 +37,7 @@ typedef std::vector<int> word;
 
 int char_to_gen (char c, int NGENS);
 bool string_to_word (word& w, const std::string& s, int NGENS);
-int getnum (const std::string errprompt);
+
 void getgroup (int& NGENS, std::vector<std::string>& rel,
 	       std::vector<std::string>& gen_H, std::istream& fin = std::cin);
 bool getfout (std::ofstream& fout);

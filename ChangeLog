@@ -1,3 +1,11 @@
+2011-05-19  Ken Brown  <kbrown@cornell.edu>
+
+	* gens_and_words.cc (getnum): Remove.
+	(getngens): Rewrite so doesn't call getnum.
+	* gens_and_words.h (getnum): Remove declaration.
+	* toddcox.cc (main): Minor tweak.
+	* gens_and_words.cc (getfout): Ditto.
+
 2011-05-18  Ken Brown  <kbrown@cornell.edu>
 
 	* Version 0.3 released.
