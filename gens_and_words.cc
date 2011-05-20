@@ -143,16 +143,19 @@ getngens (istream& fin)
   // Now n is valid, or else we're working interactively and n is
   // invalid; in that case we retry after clearing cin and any invalid
   // input.
-  string junk;
   while (!gotngens)
     {
       cin.clear ();
-      getline (cin, junk);
+      char c;
+      while (cin.get (c) && c != '\n')
+	;
       cout << "Please enter an integer between 1 and 26: ";
       gotngens = (cin >> n && n >=1 && n <= 26);
     }
   // Read newline.
-  getline (fin, junk);
+  char c;
+  while (fin.get (c) && c != '\n')
+    ;
   return n;
 }
 
