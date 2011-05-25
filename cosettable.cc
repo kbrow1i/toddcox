@@ -109,7 +109,7 @@ CosetTable::print (ostream& fout) const
     fout << setw (4) << gen[x];
   fout << endl;
   for (ctab_iter it = tab.begin (); it != tab.end (); it++)
-    if (it->isalive ())
+    if (*it)			// Only print live cosets
       it->print (fout);
 }
 
@@ -312,13 +312,14 @@ CosetTable::hlt ()
   // added to tab.
   for (int k = 0; k < tab.size (); k++)
     {
-      for (int i = 0; i < relator.size () && tab[k].isalive (); i++)
+      // Only scan relators while coset k remains alive.
+      for (int i = 0; i < relator.size () && tab[k]; i++)
 	{
 	  bool alloc = scan_and_fill (k, relator[i]);
 	  if (!alloc)
 	    return COSET_ENUM_OUT_OF_MEMORY;
 	}
-      if (tab[k].isalive ())
+      if (tab[k])
 	for (int x = 0; x < NGENS; x++)
 	  if (!tab[k].isdefined (x))
 	    {
@@ -348,7 +349,7 @@ CosetTable::hlt_plus (int threshold)
     scan_and_fill (0, generator_of_H[i]);
   for (int k = 0; k < tab.size (); k++)
     {
-      if (!tab[k].isalive ())
+      if (!tab[k])
 	continue;
       if (tab.size () > threshold)
 	{
@@ -357,7 +358,7 @@ CosetTable::hlt_plus (int threshold)
 	       << n << ".  Looking ahead...\n";
 	  lookahead (k);
 	  // Move to next live coset, in case k died
-	  while (k < n && !tab[k].isalive ())
+	  while (k < n && !tab[k])
 	    k++;
 	  if (k == n)
 	    return COSET_ENUM_SUCCESS;
@@ -370,9 +371,9 @@ CosetTable::hlt_plus (int threshold)
 	    }
 	  cout << "  Continuing.\n";
 	}
-      for (int i = 0; i < relator.size () && tab[k].isalive (); i++)
+      for (int i = 0; i < relator.size () && tab[k]; i++)
 	scan_and_fill (k, relator[i]);
-      if (tab[k].isalive ())
+      if (tab[k])
 	for (int x = 0; x < NGENS; x++)
 	  if (!isdefined (k, x))
 	    {
@@ -393,7 +394,7 @@ CosetTable::felsch ()
   process_deductions ();
   for (int k = 0; k < tab.size (); k++)
     {
-      for (int x = 0; x < NGENS && tab[k].isalive (); x++)
+      for (int x = 0; x < NGENS && tab[k]; x++)
 	if (!isdefined (k, x))
 	  {
 	    bool alloc = define (k, x, true);
@@ -422,12 +423,12 @@ CosetTable::process_deductions ()
       int x = d.gen;
       vector<word> relx = relator_grouped[x];
       int n = relx.size ();
-      for (int i = 0; i < n && tab[k].isalive (); i++)
+      for (int i = 0; i < n && tab[k]; i++)
 	scan (k, relx[i], true);
       k = tab[k].getact (x);
       x = inv (x);
       relx = relator_grouped[x];
-      for (int i = 0; i < n && tab[k].isalive (); i++)
+      for (int i = 0; i < n && tab[k]; i++)
 	scan (k, relx[i], true);
     }
 }
@@ -437,7 +438,7 @@ CosetTable::getnlive () const
 {
   int count = 0;
   for (ctab_iter it = tab.begin (); it != tab.end (); it++)
-    if (it->isalive ())
+    if (*it)
       count++;
   return count;
 }
@@ -448,7 +449,7 @@ CosetTable::lookahead (int start)
   for (tab_iter it = tab.begin () + start; it != tab.end () ; it++)
     {
       int k = it->getindex ();
-      for (int i = 0; i < relator.size () && it->isalive (); i++)
+      for (int i = 0; i < relator.size () && *it; i++)
 	scan (k, relator[i]);
     }
 }
@@ -465,7 +466,7 @@ CosetTable::compress (int current)
   tab_iter it1 = tab.begin ();  // Pointer to new position for *it
   for (ctab_iter it = tab.begin (); it != tab.end (); it++)
     {
-      if (!it->isalive ())
+      if (!*it)
 	continue;
       // Copy info from it to it1.
       int old = it->getindex ();
@@ -505,7 +506,7 @@ CosetTable::swap (int k, int l)
       tab[l].setact (x, temp);
       for (tab_iter it = tab.begin (); it != tab.end (); it++)
 	{
-	  if (!it->isalive ())
+	  if (!*it)
 	    continue;
 	  if (it->getact (x) == k)
 	    it->setact (x, l);

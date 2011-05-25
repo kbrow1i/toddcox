@@ -1,3 +1,10 @@
+2011-05-25  Ken Brown  <kbrown@cornell.edu>
+
+	* coset.h (Coset): Replace isalive() member by conversion to
+	bool.
+	* cosettable.cc: Replace all uses of isalive() by direct tests of
+	cosets.
+
 2011-05-20  Ken Brown  <kbrown@cornell.edu>
 
 	* gens_and_words.cc (getngens): Minor tweak to reading newline.
