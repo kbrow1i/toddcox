@@ -34,12 +34,7 @@
    HLT+lookahead, and Felsch algorithms for coset enumeration.  I have
    followed fairly closely the pseudocode in Holt's book, Handbook of
    Computational Group Theory, except that cosets are (internally)
-   numbered starting from 0.
-
-   Holt's array p[] is given by tab[].getname().  Thus the name of a
-   live coset will always be its index in the coset table, whereas the
-   name of a dead coset will be the index of an earlier equivalent
-   coset.  */
+   numbered starting from 0. */
 
 typedef enum
   {
@@ -67,6 +62,7 @@ public:
 private:
   int NGENS;
   std::vector<Coset> tab;
+  std::vector<int> p;	/* for generating equivalence classes; p[k] <= k */
   std::queue<int> q;			/* dead cosets to be processed */
   std::vector<word> relator;
   std::vector<word> generator_of_H;
@@ -79,8 +75,9 @@ private:
   void process_deductions ();	/* for Felsch */
   bool scan_and_fill (int k, const word& w, bool save = false);
   void scan (int k, const word& w, bool save = false);
+  bool isalive (int k) const { return (p[k] == k); };
   bool define (int k, int x, bool save = false);
-  bool isdefined (int k, int x) const { return tab[k].isdefined (x); };
+  bool isdefined (int k, int x) const { return (tab[k].getact (x) >= 0); };
   int rep (int c);
   void merge (int k, int l);
   void coincidence(int k, int l, bool save = false);

@@ -28,8 +28,7 @@
 using namespace std;
 
 // Constructor
-Coset::Coset (int NG, int nm, int ind) :
-  NGENS (NG), name (nm), index (ind)
+Coset::Coset (int NG) : NGENS (NG)
 {
   vector<int> r (NG);
   for (int i = 0; i < NGENS; i++)
@@ -41,8 +40,6 @@ Coset::Coset (int NG, int nm, int ind) :
 void
 Coset::print (ostream& fout) const
 {
-  fout << setw (2) << name + 1 << ": ";
   for (int x = 0; x < NGENS; x++)
     fout << setw (4) << row[x] + 1;
-  fout << endl;
 }

@@ -1,5 +1,21 @@
 2011-05-25  Ken Brown  <kbrown@cornell.edu>
 
+	Revert many of the 2011-05-16 changes so cosets require less
+	memory.
+
+	* coset.h (Coset::undefine): New member function.  Remove members
+	getname(), setname(), getindex(), setindex(), isalive(),
+	isdefined(), name, index.  Remove name and index as parameters to
+	constructor.
+	* coset.cc: Adapt constructor and print() to changes above.
+	* cosettable.h: Add back p[] and isalive() members; change
+	isdefined() to reflect changes to Coset class.
+	* cosettable.cc (coincidence): Use undefine().  Adapt many
+	functions to changes above.
+	(process_deductions): Eliminate unnecessary scans.
+
+2011-05-25  Ken Brown  <kbrown@cornell.edu>
+
 	* coset.h (Coset): Replace isalive() member by conversion to
 	bool.
 	* cosettable.cc: Replace all uses of isalive() by direct tests of

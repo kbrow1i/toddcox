@@ -35,6 +35,7 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
 {
   Coset c (NGENS);
   tab.push_back (c);
+  p.push_back (0);		// p[0] = 0
   for (int i = 0; i < gen_H.size (); i++)
     {
       word w;
@@ -79,13 +80,14 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
 bool
 CosetTable::define (int k, int x, bool save)
 {
-  int l = tab.size ();		// index and name of new coset
+  int l = tab.size ();		// index of new coset
   tab[k].setact(x, l);
-  Coset c (NGENS, l, l);
+  Coset c (NGENS);
   c.setact(inv (x), k);
   try
     {
       tab.push_back (c);
+      p.push_back (l);		// p[l] = l
     }
   catch (exception& e)
     {
@@ -108,9 +110,13 @@ CosetTable::print (ostream& fout) const
   for (int x = 0; x < NGENS; x++)
     fout << setw (4) << gen[x];
   fout << endl;
-  for (ctab_iter it = tab.begin (); it != tab.end (); it++)
-    if (*it)			// Only print live cosets
-      it->print (fout);
+  for (int k = 0; k < tab.size (); k++)
+    if (isalive (k))
+      {
+	fout << setw (2) << k + 1 << ": ";
+	tab[k].print (fout);
+	fout << endl;
+      }
 }
 
 #if 0
@@ -131,32 +137,29 @@ CosetTable::debug_print () const
 }
 #endif
 
-// Return name (= index) of minimal element of equivalence class of
-// coset with index k; simplify names of dead cosets encountered on
-// the way.
+// Return minimal element of equivalence class, simplify p along the way
 int
 CosetTable::rep (int k)
 {
   int l, m, n;
-  l = k; m = tab[l].getname ();
+  l = k; m = p[l];
   while (m < l)
     {
       l = m;
-      m = tab[l].getname ();
+      m = p[l];
     } // Now l is the minimal element.
-  m = k; n = tab[m].getname ();
+  m = k; n = p[m];
   while (n < m)
     {
-      tab[m].setname (l);
+      p[m] = l;
       m = n;
-      n = tab[m].getname ();
+      n = p[m];
     }
   return l;
 }
 
 // Merge two equivalence classes; put larger one in queue for
-// processing (copy definitions).  k and l are the indices of
-// (possibly dead) cosets in the classes to be merged.
+// processing (copy definitions)
 void
 CosetTable::merge(int k, int l)
 {
@@ -164,19 +167,16 @@ CosetTable::merge(int k, int l)
   l = rep (l);
   if (k == l)
     return;
-  int min, max;
   if (k < l)
     {
-      min = k;
-      max = l;
+      p[l] = k;
+      q.push (l);
     }
   else
     {
-      min = l;
-      max = k;
+      p[k] = l;
+      q.push (k);
     }
-  tab[max].setname (min);
-  q.push (max);
 }
 
 void
@@ -192,12 +192,12 @@ CosetTable::coincidence (int k, int l, bool save)
 	{
 	  if (!isdefined (e, x))
 	    continue;
-	  int f = tab[e].getact(x);	// x: e --> f, x^-1: f --> e
-	  tab[f].setact(inv (x), -1);	// remove arrow f --> e
+	  int y = inv (x);
+	  int f = tab[e].getact(x);	// x: e --> f, y: f --> e
+	  tab[f].undefine (y);	// remove arrow f --> e
 	  int e1 = rep (e);
 	  int f1 = rep (f);
-	  // insert arrows x: e1 --> f1 and y: f1 --> e1, where...
-	  int y = inv (x);
+	  // insert arrows x: e1 --> f1 and y: f1 --> e1
 	  if (isdefined (e1, x))
 	    merge (f1, tab[e1].getact (x));
 	  else if (isdefined (f1, y))
@@ -312,16 +312,15 @@ CosetTable::hlt ()
   // added to tab.
   for (int k = 0; k < tab.size (); k++)
     {
-      // Only scan relators while coset k remains alive.
-      for (int i = 0; i < relator.size () && tab[k]; i++)
+      for (int i = 0; i < relator.size () && isalive (k); i++)
 	{
 	  bool alloc = scan_and_fill (k, relator[i]);
 	  if (!alloc)
 	    return COSET_ENUM_OUT_OF_MEMORY;
 	}
-      if (tab[k])
+      if (isalive (k))
 	for (int x = 0; x < NGENS; x++)
-	  if (!tab[k].isdefined (x))
+	  if (!isdefined (k, x))
 	    {
 	      bool alloc = define (k, x);
 	      if (!alloc)
@@ -349,7 +348,7 @@ CosetTable::hlt_plus (int threshold)
     scan_and_fill (0, generator_of_H[i]);
   for (int k = 0; k < tab.size (); k++)
     {
-      if (!tab[k])
+      if (!isalive (k))
 	continue;
       if (tab.size () > threshold)
 	{
@@ -358,7 +357,7 @@ CosetTable::hlt_plus (int threshold)
 	       << n << ".  Looking ahead...\n";
 	  lookahead (k);
 	  // Move to next live coset, in case k died
-	  while (k < n && !tab[k])
+	  while (k < n && !isalive (k))
 	    k++;
 	  if (k == n)
 	    return COSET_ENUM_SUCCESS;
@@ -371,9 +370,9 @@ CosetTable::hlt_plus (int threshold)
 	    }
 	  cout << "  Continuing.\n";
 	}
-      for (int i = 0; i < relator.size () && tab[k]; i++)
+      for (int i = 0; i < relator.size () && isalive (k); i++)
 	scan_and_fill (k, relator[i]);
-      if (tab[k])
+      if (isalive (k))
 	for (int x = 0; x < NGENS; x++)
 	  if (!isdefined (k, x))
 	    {
@@ -394,7 +393,7 @@ CosetTable::felsch ()
   process_deductions ();
   for (int k = 0; k < tab.size (); k++)
     {
-      for (int x = 0; x < NGENS && tab[k]; x++)
+      for (int x = 0; x < NGENS && isalive (k); x++)
 	if (!isdefined (k, x))
 	  {
 	    bool alloc = define (k, x, true);
@@ -423,12 +422,15 @@ CosetTable::process_deductions ()
       int x = d.gen;
       vector<word> relx = relator_grouped[x];
       int n = relx.size ();
-      for (int i = 0; i < n && tab[k]; i++)
+      for (int i = 0; i < n && isalive (k); i++)
 	scan (k, relx[i], true);
+      // No need to continue with this deduction if k died.
+      if (!isalive (k))
+	continue;
       k = tab[k].getact (x);
       x = inv (x);
       relx = relator_grouped[x];
-      for (int i = 0; i < n && tab[k]; i++)
+      for (int i = 0; i < n && isalive (k); i++)
 	scan (k, relx[i], true);
     }
 }
@@ -436,9 +438,9 @@ CosetTable::process_deductions ()
 int
 CosetTable::getnlive () const
 {
-  int count = 0;
-  for (ctab_iter it = tab.begin (); it != tab.end (); it++)
-    if (*it)
+  int count = 0, n = tab.size ();
+  for (int k = 0; k < n; k++)
+    if (isalive (k))
       count++;
   return count;
 }
@@ -446,12 +448,10 @@ CosetTable::getnlive () const
 void
 CosetTable::lookahead (int start)
 {
-  for (tab_iter it = tab.begin () + start; it != tab.end () ; it++)
-    {
-      int k = it->getindex ();
-      for (int i = 0; i < relator.size () && *it; i++)
-	scan (k, relator[i]);
-    }
+  int n = tab.size ();
+  for (int k = start; k < n; k++)
+    for (int i = 0; i < relator.size () && isalive (k); i++)
+      scan (k, relator[i]);
 }
 
 // When compress is called after lookahead in hlt_plus, we have some
@@ -462,36 +462,35 @@ CosetTable::lookahead (int start)
 int
 CosetTable::compress (int current)
 {
-  int ret = -1;
-  tab_iter it1 = tab.begin ();  // Pointer to new position for *it
-  for (ctab_iter it = tab.begin (); it != tab.end (); it++)
+  int l = 0, n = tab.size (), ret = -1;
+  for (int k = 0; k < n; k++)
+    if (isalive (k))
+      {
+	if (k == current)
+	  ret = l;
+	if (k > l)		// Replace k by l in table
+	  {
+	    for (int x = 0; x < NGENS; x++)
+	      {
+		int m = tab[k].getact (x);
+		if (m == k)
+		  tab[l].setact (x, l);
+		else
+		  {
+		    tab[l].setact (x, m);
+		    if (m >= 0)
+		      tab[m].setact(inv (x), l);
+		  }
+	      }
+	    p[l] = l;
+	  }
+	l++;
+      }
+  if (l < n)
     {
-      if (!*it)
-	continue;
-      // Copy info from it to it1.
-      int old = it->getindex ();
-      int l = it1->getindex ();
-      if (old == current)
-	ret = l;
-      if (old > l)		// Replace old by l in table.
-	{
-	  for (int x = 0; x < NGENS; x++)
-	    {
-	      int m = it->getact (x);
-	      if (m == old)
-		it1->setact (x, l);
-	      else
-		{
-		  it1->setact (x, m);
-		  if (m >= 0)
-		    tab[m].setact(inv (x), l);
-		}
-	    }
-	  it1->setname (l);
-	}
-      it1++;
+      tab.erase (tab.begin () + l, tab.end ());
+      p.erase (p.begin () + l, p.end ());
     }
-  tab.erase (it1, tab.end ());
   return ret;
 }
       
@@ -504,14 +503,15 @@ CosetTable::swap (int k, int l)
       int temp = tab[k].getact (x);
       tab[k].setact (x, tab[l].getact (x));
       tab[l].setact (x, temp);
-      for (tab_iter it = tab.begin (); it != tab.end (); it++)
+      int n = tab.size ();
+      for (int m = 0; m < n; m++)
 	{
-	  if (!*it)
+	  if (!isalive (m))
 	    continue;
-	  if (it->getact (x) == k)
-	    it->setact (x, l);
-	  else if (it->getact (x) == l)
-	    it->setact (x, k);
+	  if (tab[m].getact (x) == k)
+	    tab[m].setact (x, l);
+	  else if (tab[m].getact (x) == l)
+	    tab[m].setact (x, k);
 	}
     }
 }
