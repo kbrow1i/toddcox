@@ -32,16 +32,19 @@ acted on by a generator x, or -1 if the action is not yet defined. */
 
 class Coset
 {
+  friend std::ostream& operator<< (std::ostream&, const Coset&);
 public:
-  Coset (int NG);
-  int getact (int x) const { return row[x]; };
-  void setact (int x, int k) { row[x] = k; } ;
-  void print (std::ostream& fout = std::cout) const;
-  bool isdefined (int x) const { return row[x] >= 0; };
-  void undefine (int x) { row[x] = -1; };
+  Coset (int NG) : NGENS (NG), row (NG, -1) {}
+  int& operator[](int x) { return row[x]; }
+  const int& operator[](int x) const { return row[x]; }
+  bool isdefined (int x) const { return row[x] >= 0; }
+  void undefine (int x) { row[x] = -1; }
 private:
-  std::vector<int> row;
   int NGENS;			/* including inverses */
+  std::vector<int> row;
 };
+
+std::ostream& operator<< (std::ostream&, const Coset&);
+
 
 #endif	/* COSET_H */

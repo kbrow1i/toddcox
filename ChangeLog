@@ -1,3 +1,19 @@
+2011-05-26  Ken Brown  <kbrown@cornell.edu>
+
+	* coset.cc (Coset): Make constructor more efficient and move it
+	to coset.h.
+	(print): Replace by operator<<.
+	* coset.h: Implement constructor.  Replace getact and setact by
+	operator[].  Declare operator<< as nonmember friend, replacing
+	'print'.
+	* cosettable.cc: Adapt to Coset class's getact/setact change and
+	print change.
+	(print): Replace by operator<<.
+	* cosettable.h: Adapt to Coset class's getact/setact change and
+	print change.  Declare operator<< as nonmember friend, replacing
+	'print'.
+	* toddcox.cc: Use << instead of print.
+
 2011-05-25  Ken Brown  <kbrown@cornell.edu>
 
 	Revert many of the 2011-05-16 changes so cosets require less

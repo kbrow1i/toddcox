@@ -47,6 +47,7 @@ class CosetTable
 {
   typedef std::vector<Coset>::iterator tab_iter;
   typedef std::vector<Coset>::const_iterator ctab_iter;
+  friend std::ostream& operator<< (std::ostream&, const CosetTable&);
 public:
   CosetTable (int NG, std::vector<std::string> rel,
 	      std::vector<std::string> gen_H, bool felsch);
@@ -58,7 +59,6 @@ public:
   void standardize ();
   int getnlive () const;
   int getsize () const { return tab.size (); };
-  void print (std::ostream& fout = std::cout) const;
 private:
   int NGENS;
   std::vector<Coset> tab;
@@ -77,11 +77,13 @@ private:
   void scan (int k, const word& w, bool save = false);
   bool isalive (int k) const { return (p[k] == k); };
   bool define (int k, int x, bool save = false);
-  bool isdefined (int k, int x) const { return (tab[k].getact (x) >= 0); };
+  bool isdefined (int k, int x) const { return (tab[k][x] >= 0); };
   int rep (int c);
   void merge (int k, int l);
   void coincidence(int k, int l, bool save = false);
   void swap (int k, int l);
 };
+
+std::ostream& operator<< (std::ostream&, const CosetTable&);
 
 #endif	/* COSETTABLE_H */

@@ -23,23 +23,14 @@
 #include "gens_and_words.h"
 #include <iostream>
 #include <iomanip>
-#include <vector>
 
 using namespace std;
 
-// Constructor
-Coset::Coset (int NG) : NGENS (NG)
-{
-  vector<int> r (NG);
-  for (int i = 0; i < NGENS; i++)
-    r[i] = -1;		// all actions initially undefined
-  row = r;
-}
-
 // Use standard numbering for coset tables, starting with 1 instead of 0.
-void
-Coset::print (ostream& fout) const
+ostream&
+operator<< (ostream& os, const Coset& c)
 {
-  for (int x = 0; x < NGENS; x++)
-    fout << setw (4) << row[x] + 1;
+  for (int x = 0; x < c.NGENS; x++)
+    os << setw (4) << c.row[x] + 1;
+  return os;
 }

@@ -81,9 +81,9 @@ bool
 CosetTable::define (int k, int x, bool save)
 {
   int l = tab.size ();		// index of new coset
-  tab[k].setact(x, l);
+  tab[k][x] = l;
   Coset c (NGENS);
-  c.setact(inv (x), k);
+  c[inv (x)] = k;
   try
     {
       tab.push_back (c);
@@ -103,20 +103,17 @@ CosetTable::define (int k, int x, bool save)
   return true;
 }
 
-void
-CosetTable::print (ostream& fout) const
+ostream&
+operator<< (ostream& os, const CosetTable& C)
 {
-  fout << "    ";
-  for (int x = 0; x < NGENS; x++)
-    fout << setw (4) << gen[x];
-  fout << endl;
-  for (int k = 0; k < tab.size (); k++)
-    if (isalive (k))
-      {
-	fout << setw (2) << k + 1 << ": ";
-	tab[k].print (fout);
-	fout << endl;
-      }
+  os << "    ";
+  for (int x = 0; x < C.NGENS; x++)
+    os << setw (4) << gen[x];
+  os << endl;
+  for (int k = 0; k < C.tab.size (); k++)
+    if (C.isalive (k))
+	os << setw (2) << k + 1 << ": " << C.tab[k] << endl;
+  return os;
 }
 
 #if 0
@@ -193,19 +190,19 @@ CosetTable::coincidence (int k, int l, bool save)
 	  if (!isdefined (e, x))
 	    continue;
 	  int y = inv (x);
-	  int f = tab[e].getact(x);	// x: e --> f, y: f --> e
+	  int f = tab[e][x];	// x: e --> f, y: f --> e
 	  tab[f].undefine (y);	// remove arrow f --> e
 	  int e1 = rep (e);
 	  int f1 = rep (f);
 	  // insert arrows x: e1 --> f1 and y: f1 --> e1
 	  if (isdefined (e1, x))
-	    merge (f1, tab[e1].getact (x));
+	    merge (f1, tab[e1][x]);
 	  else if (isdefined (f1, y))
-	    merge (e1, tab[f1].getact (y));
+	    merge (e1, tab[f1][y]);
 	  else
 	    {
-	      tab[e1].setact (x, f1);
-	      tab[f1].setact (y, e1);
+	      tab[e1][x] = f1;
+	      tab[f1][y] = e1;
 	      if (save)
 		{
 		  deduction ded = {e1, x};
@@ -226,7 +223,7 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
     {
       // Scan forward
       while (i <= j && isdefined (f, w[i]))
-	f = tab[f].getact(w[i++]);
+	f = tab[f][w[i++]];
       if (i > j)		// Scan completed, possibly with coincidence
 	{
 	  if (f != b)
@@ -235,7 +232,7 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 	}
       // Scan backward
       while (j >= i && isdefined (b, inv (w[j])))
-	b = tab[b].getact (inv (w[j--]));
+	b = tab[b][inv (w[j--])];
       if (j < i)		// Scan completed with coincidence
 	{
 	  coincidence (f, b, save);
@@ -243,8 +240,8 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 	}
       if (j == i)		// Scan completed with deduction
 	{
-	  tab[f].setact (w[i], b);
-	  tab[b].setact (inv (w[i]), f);
+	  tab[f][w[i]] = b;
+	  tab[b][inv (w[i])] = f;
 	  if (save)
 	    {
 	      deduction d = {f, w[i]};
@@ -266,7 +263,7 @@ CosetTable::scan (int k, const word& w, bool save)
   int f = k, b = k;		// Starting coset indices for scans
   // Scan forward
   while (i <= j && isdefined (f, w[i]))
-    f = tab[f].getact(w[i++]);
+    f = tab[f][w[i++]];
   if (i > j)		// Scan completed, possibly with coincidence
     {
       if (f != b)
@@ -275,13 +272,13 @@ CosetTable::scan (int k, const word& w, bool save)
     }
   // Scan backward
   while (j >= i && isdefined (b, inv (w[j])))
-    b = tab[b].getact (inv (w[j--]));
+    b = tab[b][inv (w[j--])];
   if (j < i)		// Scan completed with coincidence
     coincidence (f, b, save);
   else if (j == i)		// Scan completed with deduction
     {
-      tab[f].setact (w[i], b);
-      tab[b].setact (inv (w[i]), f);
+      tab[f][w[i]] = b;
+      tab[b][inv (w[i])] = f;
       if (save)
 	{
 	  deduction d = {f, w[i]};
@@ -427,7 +424,7 @@ CosetTable::process_deductions ()
       // No need to continue with this deduction if k died.
       if (!isalive (k))
 	continue;
-      k = tab[k].getact (x);
+      k = tab[k][x];
       x = inv (x);
       relx = relator_grouped[x];
       for (int i = 0; i < n && isalive (k); i++)
@@ -472,14 +469,14 @@ CosetTable::compress (int current)
 	  {
 	    for (int x = 0; x < NGENS; x++)
 	      {
-		int m = tab[k].getact (x);
+		int m = tab[k][x];
 		if (m == k)
-		  tab[l].setact (x, l);
+		  tab[l][x] = l;
 		else
 		  {
-		    tab[l].setact (x, m);
+		    tab[l][x] = m;
 		    if (m >= 0)
-		      tab[m].setact(inv (x), l);
+		      tab[m][inv (x)] = l;
 		  }
 	      }
 	    p[l] = l;
@@ -500,18 +497,18 @@ CosetTable::swap (int k, int l)
 {
   for (int x = 0; x < NGENS; x++)
     {
-      int temp = tab[k].getact (x);
-      tab[k].setact (x, tab[l].getact (x));
-      tab[l].setact (x, temp);
+      int temp = tab[k][x];
+      tab[k][x] = tab[l][x];
+      tab[l][x] = temp;
       int n = tab.size ();
       for (int m = 0; m < n; m++)
 	{
 	  if (!isalive (m))
 	    continue;
-	  if (tab[m].getact (x) == k)
-	    tab[m].setact (x, l);
-	  else if (tab[m].getact (x) == l)
-	    tab[m].setact (x, k);
+	  if (tab[m][x] == k)
+	    tab[m][x] = l;
+	  else if (tab[m][x] == l)
+	    tab[m][x] = k;
 	}
     }
 }
@@ -527,7 +524,7 @@ CosetTable::standardize ()
   for (tab_iter it = tab.begin (); it != tab.end (); it++)
     for (int x = 0; x < NGENS; x++)
       {
-	int l = it->getact (x);
+	int l = (*it)[x];
 	if (l >= goal)
 	  {
 	    if (l > goal)

@@ -130,7 +130,7 @@ main (int argc, char * argv[])
       cout << "Compressed and standardized coset table:\n\n";
       C.compress ();
       C.standardize ();
-      C.print ();
+      cout << C;
     }
   else				// Offer to print table to file
     {
@@ -138,7 +138,7 @@ main (int argc, char * argv[])
       if (getfout (fout))
 	{
 	  C.compress ();	// Don't standardize for big table.
-	  C.print (fout);
+	  fout << C;
 	  fout.close ();
 	}
     }
