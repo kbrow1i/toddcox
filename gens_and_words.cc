@@ -24,6 +24,7 @@
 #include <fstream>
 #include <vector>
 #include <cstdlib>
+#include <cctype>
 
 using namespace std;
 
@@ -32,6 +33,16 @@ inv (int x)
 {
   return x % 2 == 0 ? x + 1 : x - 1;
 }
+
+char
+switch_case (char c)
+{
+  if (isupper (c))
+    return tolower (c);
+  else
+    return toupper (c);
+}
+
 
 // NGENS is the number of allowed generators, including inverses.
 int

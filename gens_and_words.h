@@ -33,6 +33,8 @@ const int NOTAGEN = -1;
 const std::string gen = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
 
 int inv (int x);
+char switch_case (char);
+
 typedef std::vector<int> word;
 
 int char_to_gen (char c, int NGENS);

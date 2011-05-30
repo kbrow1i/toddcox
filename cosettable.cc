@@ -26,6 +26,7 @@
 #include <iomanip>
 #include <set>
 #include <exception>
+#include <algorithm>
 
 using namespace std;
 
@@ -55,8 +56,7 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
 	  generator_of_H.push_back (w);
 	  // Accumulate s, s^{-1}, and all cyclic conjugates
 	  string sinv;
-	  for (int i = s.size (); i > 0; i--)
-	    sinv += gen[inv (w[i - 1])];
+	  transform (s.rbegin (), s.rend (), back_inserter (sinv), switch_case);
 	  for (int i = 0; i < s.size (); i++)
 	    {
 	      S.insert (s);

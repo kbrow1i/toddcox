@@ -58,7 +58,7 @@ public:
   int compress (int current = -1);
   void standardize ();
   int getnlive () const;
-  int getsize () const { return tab.size (); };
+  int getsize () const { return tab.size (); }
 private:
   int NGENS;
   std::vector<Coset> tab;
@@ -75,9 +75,9 @@ private:
   void process_deductions ();	/* for Felsch */
   bool scan_and_fill (int k, const word& w, bool save = false);
   void scan (int k, const word& w, bool save = false);
-  bool isalive (int k) const { return (p[k] == k); };
+  bool isalive (int k) const { return (p[k] == k); }
   bool define (int k, int x, bool save = false);
-  bool isdefined (int k, int x) const { return (tab[k][x] >= 0); };
+  bool isdefined (int k, int x) const { return (tab[k][x] >= 0); }
   int rep (int c);
   void merge (int k, int l);
   void coincidence(int k, int l, bool save = false);

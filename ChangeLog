@@ -1,3 +1,15 @@
+2011-05-30  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: Simplify by using implicit rules.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: Ditto.
+
+	* gens_and_words.h (switch_case): Declare new function.
+	* gens_and_words.cc (switch_case): Implement.
+	* coset.h: Remove some unnecessary semicolons.
+	* cosettable.cc (CosetTable::CosetTable): Use 'switch_case' and
+	'transform' to invert a word.
+
 2011-05-26  Ken Brown  <kbrown@cornell.edu>
 
 	* coset.cc (Coset): Make constructor more efficient and move it

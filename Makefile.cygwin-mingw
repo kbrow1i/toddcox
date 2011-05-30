@@ -19,49 +19,40 @@
 
 #    Written by Ken Brown <kbrown@cornell.edu>.
 
-EXEEXT = .exe
-OBJEXT = o
-# CXX = g++-3 -mno-cygwin
 CXX = i686-pc-mingw32-g++ -static
+CC = i686-pc-mingw32-g++ -static
 STRIP = i686-pc-mingw32-strip
 PLATFORM = windows
 BIN = bin/$(PLATFORM)
-VERSION = 0.3
+VERSION = 0.4
 
 .PHONY: all clean install pkg
 
-all: toddcox$(EXEEXT)
+all: toddcox
 
-toddcox$(EXEEXT): toddcox.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
-	$(CXX) -o toddcox$(EXEEXT) toddcox.$(OBJEXT) coset.$(OBJEXT) cosettable.$(OBJEXT) gens_and_words.$(OBJEXT) stack.$(OBJEXT)
+toddcox: toddcox.o coset.o cosettable.o gens_and_words.o stack.o
 
-toddcox.$(OBJEXT): toddcox.cc cosettable.h gens_and_words.h coset.h
-	$(CXX) -c toddcox.cc
+toddcox.o: toddcox.cc cosettable.h gens_and_words.h coset.h
 
-coset.$(OBJEXT): coset.cc coset.h gens_and_words.h
-	$(CXX) -c coset.cc
+coset.o: coset.cc coset.h gens_and_words.h
 
-cosettable.$(OBJEXT): cosettable.cc cosettable.h gens_and_words.h coset.h stack.h
-	$(CXX) -c cosettable.cc
+cosettable.o: cosettable.cc cosettable.h gens_and_words.h coset.h stack.h
 
-stack.$(OBJEXT): stack.cc stack.h
-	$(CXX) -c stack.cc
+stack.o: stack.cc stack.h
 
-gens_and_words.$(OBJEXT): gens_and_words.cc gens_and_words.h
-	$(CXX) -c gens_and_words.cc
+gens_and_words.o: gens_and_words.cc gens_and_words.h
 
 clean:
-	-rm -f *.$(OBJEXT)
-	-rm -f toddcox$(EXEEXT)
+	-rm -f *.o *.exe toddcox
 
 install:
 	mkdir -p $(BIN)
-	cp toddcox$(EXEEXT) $(BIN)
-	$(STRIP) $(BIN)/toddcox$(EXEEXT)
+	cp toddcox $(BIN)
+	$(STRIP) $(BIN)/toddcox
 
 # The following is for maintainer use only.
 pkg:
-	cp -p $(BIN)/toddcox$(EXEEXT) ../releases/toddcox-$(VERSION).$(PLATFORM)$(EXEEXT)
+	cp -p $(BIN)/toddcox ../releases/toddcox-$(VERSION).$(PLATFORM)
 	mkdir -p ~/html/toddcox/$(BIN)
 	chmod 755 ~/html/toddcox/$(BIN)
-	cp -p $(BIN)/toddcox$(EXEEXT) ~/html/toddcox/$(BIN)
+	cp -p $(BIN)/toddcox ~/html/toddcox/$(BIN)
