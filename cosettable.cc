@@ -44,7 +44,7 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
       string_to_word (w, gen_H[i], NGENS);
       generator_of_H.push_back (w);
     }
-  set<string> S;
+  vector<string> R;
   for (int i = 0; i < rel.size (); i++)
     {
       word w;
@@ -59,19 +59,24 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
 	  transform (s.rbegin (), s.rend (), back_inserter (sinv), switch_case);
 	  for (int i = 0; i < s.size (); i++)
 	    {
-	      S.insert (s);
-	      S.insert (sinv);
+	      R.push_back (s);
+	      R.push_back (sinv);
 	      rotate (s);
 	      rotate (sinv);
 	    }
 	}
     }
-  // Group elements of S according to first letter
-  for (set<string>::iterator it = S.begin (); it != S.end (); it++)
+  // Group elements of R according to first letter after removing duplicates.
+  if (felsch)
     {
-      word w;
-      string_to_word (w, *it, NGENS);
-      relator_grouped[w[0]].push_back (w);
+      typedef vector<string>::const_iterator VI;
+      VI itu = unique (R.begin (), R.end ());
+      for (VI it = R.begin (); it != itu; it++)
+	{
+	  word w;
+	  string_to_word (w, *it, NGENS);
+	  relator_grouped[w[0]].push_back (w);
+	}
     }
 }
 
