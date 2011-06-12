@@ -1,3 +1,10 @@
+2011-06-12  Ken Brown  <kbrown@cornell.edu>
+
+	* gens_and_words.cc (getstringword, getvecstringword, getngens)
+	(getgroup):  Change parameter from istream& to istream*.
+	* gens_and_words.h (getgroup): Ditto.
+	* toddcox.cc (main): Accomodate parameter changes.
+
 2011-06-06  Ken Brown  <kbrown@cornell.edu>
 
 	* cosettable.cc (CosetTable::CosetTable): Tweak relator grouping

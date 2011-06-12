@@ -41,7 +41,7 @@ int char_to_gen (char c, int NGENS);
 bool string_to_word (word& w, const std::string& s, int NGENS);
 
 void getgroup (int& NGENS, std::vector<std::string>& rel,
-	       std::vector<std::string>& gen_H, std::istream& fin = std::cin);
+	       std::vector<std::string>& gen_H, std::istream* inp);
 bool getfout (std::ofstream& fout);
 
 void rotate (std::string& s);

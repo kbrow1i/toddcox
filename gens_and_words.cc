@@ -93,19 +93,19 @@ getnum (const string errprompt)
 }
 #endif
 
-// Read a string representing a valid word from fin into s and return
+// Read a string representing a valid word from *inp into s and return
 // true, or read an empty line and return false.  Always read the
 // terminating newline.
 bool
-getstringword (string& s, int NGENS, istream& fin)
+getstringword (string& s, int NGENS, istream* inp )
 {
-  if (!getline (fin, s) || s.empty ())
+  if (!getline (*inp, s) || s.empty ())
     return false;
   word w;
   if (string_to_word (w, s, NGENS))
     return true;
   // s is invalid; give up if not interactive
-  if (fin != cin)
+  if (inp != &cin)
     {
       cerr << "Invalid word: " << s << endl;
       exit (EXIT_FAILURE);
@@ -125,28 +125,28 @@ getstringword (string& s, int NGENS, istream& fin)
   return true;
 }
 
-// Accumulate valid strings from fin, one per line, in a vector.
+// Accumulate valid strings from *inp, one per line, in a vector.
 void
-getvecstringword (vector<string>& v, int NGENS, istream& fin = cin)
+getvecstringword (vector<string>& v, int NGENS, istream* inp)
 {
   string s;
-  while (getstringword (s, NGENS, fin))
+  while (getstringword (s, NGENS, inp))
     {
       v.push_back (s);
-      if (fin == cin)
+      if (inp == &cin)
 	cout << "> ";
     }
 }
 
-// Read an integer between 1 and 26 from fin; read newline.
+// Read an integer between 1 and 26 from *inp; read newline.
 int
-getngens (istream& fin)
+getngens (istream* inp)
 {
   int n;
-  if (fin == cin)
+  if (inp == &cin)
     cout << "Number of generators: ";
-  bool gotngens = (fin >> n && n >=1 && n <= 26);
-  if (fin != cin && !gotngens)
+  bool gotngens = (*inp >> n && n >=1 && n <= 26);
+  if (inp != &cin && !gotngens)
     {
       cerr << "Number of generators must be an integer between 1 and 26.\n";
       exit (EXIT_FAILURE);
@@ -165,24 +165,24 @@ getngens (istream& fin)
     }
   // Read newline.
   char c;
-  while (fin.get (c) && c != '\n')
+  while (inp->get (c) && c != '\n')
     ;
   return n;
 }
 
 // Prompt for number of generators and group and subgroup info.
 void
-getgroup (int& NGENS, vector<string>& rel, vector<string>& gen_H, istream& fin)
+getgroup (int& NGENS, vector<string>& rel, vector<string>& gen_H, istream* inp)
 {
-  NGENS = 2 * getngens (fin);		// NGENS counts inverses
-  if (fin == cin)
+  NGENS = 2 * getngens (inp);		// NGENS counts inverses
+  if (inp == &cin)
     cout <<
       "Enter the relators for G, one per line; press Enter when finished:\n> ";
-  getvecstringword (rel, NGENS, fin);
-  if (fin == cin)
+  getvecstringword (rel, NGENS, inp);
+  if (inp == &cin)
     cout <<
       "Enter the generators of H, one per line; press Enter when finished:\n> ";
-  getvecstringword (gen_H, NGENS, fin);
+  getvecstringword (gen_H, NGENS, inp);
 }
 
 // Get a valid filename for output and return true, or return false if

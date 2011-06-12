@@ -74,8 +74,8 @@ main (int argc, char * argv[])
 	}
     }
   // Check for filename
+  istream* input = &cin;
   bool interactive = true;
-  ifstream fin;
   if (argc > 1)
     {
       cerr << "Too many arguments.\n";
@@ -84,10 +84,11 @@ main (int argc, char * argv[])
   if (argc == 1)
     {
       interactive = false;
-      fin.open (*argv);
-      if (!fin)
+      input = new ifstream (*argv);
+      if (!*input)
 	{
 	  cerr << "Unable to open " << *argv << endl;
+	  delete input;
 	  return 1;
 	}
     }
@@ -100,16 +101,11 @@ main (int argc, char * argv[])
     "inverses.\n\n";
   int NGENS;
   vector<string> rel, gen_H;
-  if (!interactive)
-    {
-      getgroup (NGENS, rel, gen_H, fin);
-      fin.close ();
-    }
-  else
-    {
-      cout << instruct;
-      getgroup (NGENS, rel, gen_H);
-    }
+  if (interactive)
+    cout << instruct;
+  getgroup (NGENS, rel, gen_H, input);
+  if (input != &cin)
+    delete input;		// Does this close file?
   CosetTable C (NGENS, rel, gen_H, felsch);
   int method = felsch ? -1 : threshold;
   coset_enum_result res = C.enumerate (method);
