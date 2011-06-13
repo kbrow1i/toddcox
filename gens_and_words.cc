@@ -185,26 +185,6 @@ getgroup (int& NGENS, vector<string>& rel, vector<string>& gen_H, istream* inp)
   getvecstringword (gen_H, NGENS, inp);
 }
 
-// Get a valid filename for output and return true, or return false if
-// user enters an empty line.  Read newline.
-bool
-getfout (ofstream& fout)
-{
-  do
-    {
-      cout << "Enter file name for output, or press Enter to quit:\n> ";
-      string s;
-      getline (cin, s);
-      if (s.empty ())
-	return false;
-      fout.open (s.c_str ());
-      if (!fout)
-	cout << "Unable to open " << s << "; please try again.\n> ";
-    }
-  while (!fout);
-  return true;
-}
-
 void
 rotate (string& s)
 {

@@ -1,4 +1,4 @@
-/* gens_and_words.h: declarations for manipulating generators and words.
+/* tc.h: declarations for the TC class (interface).
 
    Copyright 2011 Kenneth S. Brown.
 
@@ -19,32 +19,28 @@
 
    Written by Ken Brown <kbrown@cornell.edu>. */
 
-#ifndef GENS_AND_WORDS_H
-#define GENS_AND_WORDS_H
+#ifndef TC_H
+#define TC_H
 
-#include <vector>
-#include <string>
 #include <iostream>
 
-const int NOTAGEN = -1;
+#include "gens_and_words.h"
+#include "cosettable.h"
 
-/* generators (including inverses); they will be represented
-   internally by their index in the string gen */
-const std::string gen = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
-
-int inv (int x);
-char switch_case (char);
-
-typedef std::vector<int> word;
-
-int char_to_gen (char c, int NGENS);
-bool string_to_word (word& w, const std::string& s, int NGENS);
-
-void getgroup (int& NGENS, std::vector<std::string>& rel,
-	       std::vector<std::string>& gen_H, std::istream* inp);
-
-void rotate (std::string& s);
-
+class TC
+{
+public:
+  TC (std::istream*, bool, int);
+  ~TC () { delete ctp; }
+  coset_enum_result enumerate () const { return ctp->enumerate (enum_method); }
+  int index () const { return ctp->getnlive (); }
+  int table_size () const { return ctp->getsize (); }
+  void display_table (std::ostream*, bool standardize = false);
+private:
+  std::istream* input;
+  int enum_method;		/* see cosettable.h */
+  CosetTable* ctp;
+};
 
 
-#endif	/* GENS_AND_WORDS_H */
+#endif	/* TC_H */

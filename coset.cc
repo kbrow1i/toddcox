@@ -30,7 +30,8 @@ using namespace std;
 ostream&
 operator<< (ostream& os, const Coset& c)
 {
-  for (int x = 0; x < c.NGENS; x++)
-    os << setw (4) << c.row[x] + 1;
+  os << setw (4) << c.row[0] + 1;
+  for (int x = 1; x < c.NGENS; x++)
+    os << " " << setw (3) << c.row[x] + 1;
   return os;
 }

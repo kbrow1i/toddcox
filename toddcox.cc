@@ -23,17 +23,20 @@
 // Todd--Coxeter procedure, based on Holt, Handbook of computational
 // group theory.
 
-#include "cosettable.h"
-#include "gens_and_words.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include "cosettable.h"
+#include "gens_and_words.h"
+#include "tc.h"
 
 using namespace std;
 
 void usage (bool help = false);
+
+ostream* getfout ();
 
 // Default (HLT): toddcox [FILE]
 // HLT+lookahead: toddcox --threshold THRESHOLD [FILE]
@@ -75,7 +78,6 @@ main (int argc, char * argv[])
     }
   // Check for filename
   istream* input = &cin;
-  bool interactive = true;
   if (argc > 1)
     {
       cerr << "Too many arguments.\n";
@@ -83,7 +85,6 @@ main (int argc, char * argv[])
     }
   if (argc == 1)
     {
-      interactive = false;
       input = new ifstream (*argv);
       if (!*input)
 	{
@@ -92,23 +93,8 @@ main (int argc, char * argv[])
 	  return 1;
 	}
     }
-  const string instruct =
-    "\nThis program uses the Todd-Coxeter procedure to compute the\n"
-    "index in a finitely presented group G of a subgroup H.  You\n"
-    "will be prompted to enter the number of generators of G, the\n"
-    "defining relators of G, and the generators of H.  Use\n"
-    "a,b,... for the generators of G and A,B,... for their\n"
-    "inverses.\n\n";
-  int NGENS;
-  vector<string> rel, gen_H;
-  if (interactive)
-    cout << instruct;
-  getgroup (NGENS, rel, gen_H, input);
-  if (input != &cin)
-    delete input;		// Does this close file?
-  CosetTable C (NGENS, rel, gen_H, felsch);
-  int method = felsch ? -1 : threshold;
-  coset_enum_result res = C.enumerate (method);
+  TC tc (input, felsch, threshold);
+  coset_enum_result res = tc.enumerate ();
   if (res == COSET_ENUM_OUT_OF_MEMORY)
     return 1;			// Out-of-memory message has already
 				// been written.
@@ -118,25 +104,25 @@ main (int argc, char * argv[])
       return 1;
     }
   // Success
-  cout << "\nThe index of H in G is " << C.getnlive ()
-       << ".\nThe coset table had size " << C.getsize ()
+  int index = tc.index ();
+  cout << "\nThe index of H in G is " << index
+       << ".\nThe coset table had size " << tc.table_size ()
        << " before compression.\n\n";
-  if (C.getnlive () < 50)
-    {
+  ostream* output = &cout;
+  bool standardize = true;
+  const int display_max = 50;
+  if (index < display_max)
       cout << "Compressed and standardized coset table:\n\n";
-      C.compress ();
-      C.standardize ();
-      cout << C;
-    }
-  else				// Offer to print table to file
+  else			// Offer to print table to file
     {
-      ofstream fout;
-      if (getfout (fout))
-	{
-	  C.compress ();	// Don't standardize for big table.
-	  fout << C;
-	  fout.close ();
-	}
+      standardize = false;
+      output = getfout ();
+    }
+  if (output)
+    {
+      tc.display_table (output, standardize);
+      if (output != &cout)
+	delete output;
     }
   return 0;
 }
@@ -174,4 +160,30 @@ usage (bool help)
       cout << us1;
       exit (EXIT_FAILURE);
     }
+}
+
+// Get a valid filename for output and return pointer to it, or return
+// 0 if user enters an empty line.  Read newline.  Caller is
+// responsible for deleting.  (Poor design.)
+ostream*
+getfout ()
+{
+  ostream* ret = 0;
+  do
+    {
+      cout << "Enter file name for output, or press Enter to quit:\n> ";
+      string s;
+      getline (cin, s);
+      if (s.empty ())
+	break;
+      ret = new ofstream (s.c_str ());
+      if (!*ret)
+	{
+	  cout << "Unable to open " << s << "; please try again.\n> ";
+	  delete ret;
+	  ret = 0;
+	}
+    }
+  while (!ret);
+  return ret;
 }

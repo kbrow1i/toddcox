@@ -1,3 +1,14 @@
+2011-06-13  Ken Brown  <kbrown@cornell.edu>
+
+	* coset.cc (<<): Fix printing of cosets with big entries.
+	* gens_and_words.cc (getfout): Move to toddcox.cc.
+	* gens_and_words.h (getfout): Remove declaration.
+	* tc.h: New file.  Declare class TC.
+	* tc.cc: New file.  Implement class TC.
+	* toddcox.cc (main): Move some functionality to the new class TC.
+	(getfout): Move from gens_and_words.cc.  Change parameter and
+	return type.
+
 2011-06-12  Ken Brown  <kbrown@cornell.edu>
 
 	* gens_and_words.cc (getstringword, getvecstringword, getngens)
