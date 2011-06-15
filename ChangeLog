@@ -1,3 +1,32 @@
+2011-06-15  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc (CosetTable::define): Change return type to void.
+	Exit instead of returning false if can't allocate memory.
+	(CosetTable::scan_and_fill): Change return type to void.
+	Accomodate change to return type of define.
+	(CosetTable::enumerate): Change return type to void.  Exit if
+	threhsold is exceeded in hlt_plus.  Accomodate changes to return
+	types of other functions.
+	(CosetTable::hlt): Change return type to void.  Accomodate changes
+	to return types of scan_and_fill and define.
+	(CosetTable::hlt_plus): Change return type to void.  Be more
+	specific in catching exceptions thrown by reserve().  Throw
+	exception if threshold is too small.  Accomodate changes to return
+	types of scan_and_fill and define.
+	(CosetTable::felsch): Change return type to void.  Accomodate
+	change to return type of define.
+	* cosettable.h (CosetTable): Change declarations to reflect new
+	return types.  Remove coset_enum_result typedef.  New exception
+	class Threshold_Exceeded.
+	* tc.h (TC): Change return type of enumerate to void.  Accomodate
+	change to return type of CosetTable::enumerate.
+	* toddcox.cc (main): Accomodate changed return types and error
+	handling in CosetTable and TC.
+
+2011-06-13  Ken Brown  <kbrown@cornell.edu>
+
+	* toddcox.cc: Remove unneeded #includes.
+
 2011-06-13  Ken Brown  <kbrown@cornell.edu>
 
 	* coset.cc (<<): Fix printing of cosets with big entries.

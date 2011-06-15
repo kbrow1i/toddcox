@@ -32,7 +32,7 @@ class TC
 public:
   TC (std::istream*, bool, int);
   ~TC () { delete ctp; }
-  coset_enum_result enumerate () const { return ctp->enumerate (enum_method); }
+  void enumerate () const { ctp->enumerate (enum_method); }
   int index () const { return ctp->getnlive (); }
   int table_size () const { return ctp->getsize (); }
   void display_table (std::ostream*, bool standardize = false);

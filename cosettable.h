@@ -36,13 +36,6 @@
    Computational Group Theory, except that cosets are (internally)
    numbered starting from 0. */
 
-typedef enum
-  {
-    COSET_ENUM_SUCCESS,
-    COSET_ENUM_THRESHOLD_EXCEEDED,
-    COSET_ENUM_OUT_OF_MEMORY
-  } coset_enum_result;  
-
 class CosetTable
 {
   typedef std::vector<Coset>::iterator tab_iter;
@@ -52,13 +45,13 @@ public:
   CosetTable (int NG, std::vector<std::string> rel,
 	      std::vector<std::string> gen_H, bool felsch);
   /* method can be a positive integer (threshold for HLT+), 0 (for
-     ordinary HLT) or negative (for Felsch); negative value is
-     irrelevant. */
-  coset_enum_result enumerate (int method);
+     ordinary HLT) or negative (for Felsch). */
+  void enumerate (int method);
   int compress (int current = -1);
   void standardize ();
   int getnlive () const;
   int getsize () const { return tab.size (); }
+  class Threshold_Exceeded {};	/* exception */
 private:
   int NGENS;
   std::vector<Coset> tab;
@@ -67,16 +60,16 @@ private:
   std::vector<word> relator;
   std::vector<word> generator_of_H;
   std::map< int, std::vector<word> > relator_grouped; /* for Felsch */
-  coset_enum_result hlt ();			/* HLT algorithm... */
-  coset_enum_result hlt_plus (int threshold);	/* ...with lookahead */
-  coset_enum_result felsch ();			/* Felsch algorithm */
-  Stack deduction_stack;			/* for Felsch */
+  void hlt ();
+  void hlt_plus (int threshold);
+  void felsch ();
+  Stack deduction_stack;	/* for Felsch */
   void lookahead (int start = 0);
   void process_deductions ();	/* for Felsch */
-  bool scan_and_fill (int k, const word& w, bool save = false);
+  void scan_and_fill (int k, const word& w, bool save = false);
   void scan (int k, const word& w, bool save = false);
   bool isalive (int k) const { return (p[k] == k); }
-  bool define (int k, int x, bool save = false);
+  void define (int k, int x, bool save = false);
   bool isdefined (int k, int x) const { return (tab[k][x] >= 0); }
   int rep (int c);
   void merge (int k, int l);

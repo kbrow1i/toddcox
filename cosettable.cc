@@ -19,14 +19,17 @@
 
    Written by Ken Brown <kbrown@cornell.edu>. */
 
-#include "cosettable.h"
-#include "gens_and_words.h"
-#include "stack.h"
 #include <iostream>
 #include <iomanip>
 #include <set>
 #include <exception>
+#include <stdexcept>
 #include <algorithm>
+#include <cstdlib>
+
+#include "cosettable.h"
+#include "gens_and_words.h"
+#include "stack.h"
 
 using namespace std;
 
@@ -80,9 +83,9 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
     }
 }
 
-// Define coset k acted on by x to be new coset; return false if
-// can't allocate memory.
-bool
+// Define coset k acted on by x to be new coset; exit if can't
+// allocate memory.
+void
 CosetTable::define (int k, int x, bool save)
 {
   int l = tab.size ();		// index of new coset
@@ -94,18 +97,17 @@ CosetTable::define (int k, int x, bool save)
       tab.push_back (c);
       p.push_back (l);		// p[l] = l
     }
-  catch (exception& e)
+  catch (bad_alloc)
     {
-      cout << "\n\nCoset table has size " << tab.size ()
-	   << "; can't allocate more memory.\n";
-      return false;
+      cerr << "\n\nCoset table has size " << tab.size ()
+	   << "; memory exhausted.\n";
+      exit (EXIT_FAILURE);
     }
   if (save)
     {
       deduction ded = {k, x};
       deduction_stack.push (ded);
     }
-  return true;
 }
 
 ostream&
@@ -218,8 +220,7 @@ CosetTable::coincidence (int k, int l, bool save)
     }
 }
 
-// Return false if can't allocate memory for definitions.
-bool
+void
 CosetTable::scan_and_fill (int k, const word& w, bool save)
 {
   int i = 0, j = w.size () - 1;	// Starting pos for forward and backward scans
@@ -233,7 +234,7 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 	{
 	  if (f != b)
 	    coincidence (f, b, save);
-	  return true;
+	  return;
 	}
       // Scan backward
       while (j >= i && isdefined (b, inv (w[j])))
@@ -241,7 +242,7 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
       if (j < i)		// Scan completed with coincidence
 	{
 	  coincidence (f, b, save);
-	  return true;
+	  return;
 	}
       if (j == i)		// Scan completed with deduction
 	{
@@ -252,12 +253,10 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 	      deduction d = {f, w[i]};
 	      deduction_stack.push (d);
 	    }
-	  return true;
+	  return;
 	}
       // Scan is incomplete; make a definition to allow it to get further.
-      bool alloc = define (f, w[i], save);
-      if (!alloc)
-	return false;
+      define (f, w[i], save);
     }
 }
 
@@ -293,18 +292,30 @@ CosetTable::scan (int k, const word& w, bool save)
   // else scan is incomplete and yields no information
 }
 
-coset_enum_result
+void
 CosetTable::enumerate (int method)
 {
-  if (method > 0)
-    return (hlt_plus (method));
   if (method == 0)
-    return (hlt ());
-  return felsch ();
+    hlt ();
+  else if (method < 0)
+    felsch ();
+  else
+    {
+      try
+	{
+	  hlt_plus (method);
+	}
+      catch (Threshold_Exceeded)
+	{
+	  cerr << "\nSorry, can't recover enough memory.\n"
+	       << "Please try again with a bigger threshold.\n";
+	  exit (EXIT_FAILURE);
+	}
+    }
 }
 
 // HLT algorithm
-coset_enum_result
+void
 CosetTable::hlt ()
 {
   for (int i = 0; i < generator_of_H.size (); i++)
@@ -315,25 +326,16 @@ CosetTable::hlt ()
   for (int k = 0; k < tab.size (); k++)
     {
       for (int i = 0; i < relator.size () && isalive (k); i++)
-	{
-	  bool alloc = scan_and_fill (k, relator[i]);
-	  if (!alloc)
-	    return COSET_ENUM_OUT_OF_MEMORY;
-	}
+	scan_and_fill (k, relator[i]);
       if (isalive (k))
 	for (int x = 0; x < NGENS; x++)
 	  if (!isdefined (k, x))
-	    {
-	      bool alloc = define (k, x);
-	      if (!alloc)
-		return COSET_ENUM_OUT_OF_MEMORY;
-	    }
+	    define (k, x);
     }
-  return COSET_ENUM_SUCCESS;
 }
 
 // HLT algorithm with lookahead.
-coset_enum_result
+void
 CosetTable::hlt_plus (int threshold)
 {
 // Try to reserve space for a table of size threshold to avoid the
@@ -342,9 +344,13 @@ CosetTable::hlt_plus (int threshold)
     {
       tab.reserve (threshold);
     }
-  catch (exception& e)
+  catch (bad_alloc)
     {
       ;	 // No harm if it fails; just means threshold will be useless.
+    }
+  catch (length_error)
+    {
+      ;				// ditto
     }
   for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i]);
@@ -362,14 +368,11 @@ CosetTable::hlt_plus (int threshold)
 	  while (k < n && !isalive (k))
 	    k++;
 	  if (k == n)
-	    return COSET_ENUM_SUCCESS;
+	    return;
 	  k = compress (k);
 	  cout << "Table size is now " << tab.size () << ".";
 	  if (tab.size () > threshold)
-	    {
-	      cout << endl;
-	      return COSET_ENUM_THRESHOLD_EXCEEDED;
-	    }
+	    throw Threshold_Exceeded ();
 	  cout << "  Continuing.\n";
 	}
       for (int i = 0; i < relator.size () && isalive (k); i++)
@@ -377,17 +380,12 @@ CosetTable::hlt_plus (int threshold)
       if (isalive (k))
 	for (int x = 0; x < NGENS; x++)
 	  if (!isdefined (k, x))
-	    {
-	      bool alloc = define (k, x);
-	      if (!alloc)
-		return COSET_ENUM_OUT_OF_MEMORY;
-	    }
+	    define (k, x);
     }
-  return COSET_ENUM_SUCCESS;
 }
 
 // Felsch algorithm
-coset_enum_result
+void
 CosetTable::felsch ()
 {
   for (int i = 0; i < generator_of_H.size (); i++)
@@ -398,13 +396,10 @@ CosetTable::felsch ()
       for (int x = 0; x < NGENS && isalive (k); x++)
 	if (!isdefined (k, x))
 	  {
-	    bool alloc = define (k, x, true);
-	    if (!alloc)
-	      return COSET_ENUM_OUT_OF_MEMORY;
+	    define (k, x, true);
 	    process_deductions ();
 	  }
     }
-  return COSET_ENUM_SUCCESS;
 }
 
 void

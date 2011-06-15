@@ -26,10 +26,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
 #include <cstdlib>
-#include "cosettable.h"
-#include "gens_and_words.h"
+
 #include "tc.h"
 
 using namespace std;
@@ -94,16 +92,7 @@ main (int argc, char * argv[])
 	}
     }
   TC tc (input, felsch, threshold);
-  coset_enum_result res = tc.enumerate ();
-  if (res == COSET_ENUM_OUT_OF_MEMORY)
-    return 1;			// Out-of-memory message has already
-				// been written.
-  if (res == COSET_ENUM_THRESHOLD_EXCEEDED)
-    {
-      cout << "Sorry, please try again with a bigger threshold.\n\n";
-      return 1;
-    }
-  // Success
+  tc.enumerate ();
   int index = tc.index ();
   cout << "\nThe index of H in G is " << index
        << ".\nThe coset table had size " << tc.table_size ()
