@@ -1,5 +1,11 @@
 2011-06-23  Ken Brown  <kbrown@cornell.edu>
 
+	* Makefile.cygwin: Accommodate removal of coset.h and coset.cc.
+	* Makefile.cygwin-mingw: Ditto.
+	* Makefile.linux: Ditto.
+
+2011-06-23  Ken Brown  <kbrown@cornell.edu>
+
 	* coset.cc: Delete file.
 	* coset.h: Ditto.
 	* cosettable.h: Accommodate removal of class Coset.  Make new
