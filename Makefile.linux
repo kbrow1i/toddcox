@@ -30,13 +30,11 @@ VERSION = 0.4
 
 all: toddcox
 
-toddcox: toddcox.o coset.o cosettable.o gens_and_words.o stack.o equivreln.o tc.o
+toddcox: toddcox.o cosettable.o gens_and_words.o stack.o equivreln.o tc.o
 
-toddcox.o: toddcox.cc cosettable.h gens_and_words.h coset.h equivreln.h tc.h
+toddcox.o: toddcox.cc cosettable.h gens_and_words.h equivreln.h tc.h
 
-coset.o: coset.cc coset.h gens_and_words.h
-
-cosettable.o: cosettable.cc cosettable.h gens_and_words.h coset.h stack.h equivreln.h
+cosettable.o: cosettable.cc cosettable.h gens_and_words.h stack.h equivreln.h
 
 stack.o: stack.cc stack.h
 
@@ -44,7 +42,7 @@ gens_and_words.o: gens_and_words.cc gens_and_words.h
 
 equivreln.o: equivreln.cc equivreln.h
 
-tc.o: tc.cc tc.h cosettable.h gens_and_words.h coset.h stack.h equivreln.h
+tc.o: tc.cc tc.h cosettable.h gens_and_words.h stack.h equivreln.h
 
 clean:
 	-rm -f *.o *.exe toddcox
