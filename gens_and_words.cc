@@ -48,7 +48,7 @@ switch_case (char c)
 int
 char_to_gen (char c, int NGENS = 4)
 {
-  size_t found = gen.find_first_of (c);
+  size_t found = gens.find_first_of (c);
   if (found != string::npos && found < NGENS)
     return found;
   else
@@ -58,7 +58,7 @@ char_to_gen (char c, int NGENS = 4)
 // char
 // gen_to_char (int x)
 // {
-//   return gen[x];
+//   return gens[x];
 // }
 
 bool
@@ -115,8 +115,8 @@ getstringword (string& s, int NGENS, istream* inp )
     {
       cout << "Invalid word; use alphabet ";
       for (int x = 0; x < NGENS - 1; x++)
-	cout << gen[x] << ",";
-      cout << gen[NGENS - 1] << ".\n> ";
+	cout << gens[x] << ",";
+      cout << gens[NGENS - 1] << ".\n> ";
       getline (cin, s);
       if (s.empty ())
 	return false;

@@ -1,5 +1,20 @@
 2011-06-23  Ken Brown  <kbrown@cornell.edu>
 
+	* coset.cc: Delete file.
+	* coset.h: Ditto.
+	* cosettable.h: Accommodate removal of class Coset.  Make new
+	typedefs row, coset, gen.
+	(CosetTable::undefine): New member function.
+	* cosettable.cc: Accommodate removal of class Coset.  Use new
+	typedefs for clarity.  Introduce const qualifiers where
+	appropriate.
+	(operator<<): New nonmember function to print row.
+	* gens_and_words.h: Rename gen[] to gens[].
+	* gens_and_words.cc: Accommodate.
+	* stack.h: Rename members of struct deduction.
+
+2011-06-23  Ken Brown  <kbrown@cornell.edu>
+
 	* equivreln.h: New file.  Declare class EquivReln.
 	* equivreln.cc: New file.  Implement class EquivReln.
 	* cosettable.h (CosetTable): Use new class EquivReln; delete rep,

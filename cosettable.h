@@ -27,7 +27,6 @@
 #include <map>
 #include <iostream>
 
-#include "coset.h"
 #include "gens_and_words.h"
 #include "stack.h"
 #include "equivreln.h"
@@ -40,42 +39,48 @@
 
 class CosetTable
 {
-  typedef std::vector<Coset>::iterator tab_iter;
-  typedef std::vector<Coset>::const_iterator ctab_iter;
+ public:
+  typedef std::vector<int> row;
+  typedef int coset;
+  typedef int gen;
+  typedef std::vector<row>::iterator tab_iter;
+  typedef std::vector<row>::const_iterator ctab_iter;
   friend std::ostream& operator<< (std::ostream&, const CosetTable&);
-public:
   CosetTable (int NG, std::vector<std::string> rel,
 	      std::vector<std::string> gen_H, bool felsch);
   /* method can be a positive integer (threshold for HLT+), 0 (for
      ordinary HLT) or negative (for Felsch). */
   void enumerate (int method);
-  int compress (int current = -1);
+  int compress (coset current = -1);
   void standardize ();
   int getnlive () const;
   int getsize () const { return tab.size (); }
   class Threshold_Exceeded {};	/* exception */
-private:
+  coset action (coset c, gen x) { return tab[c][x]; }
+ private:
   int NGENS;
-  std::vector<Coset> tab;
+  std::vector<row> tab;
   EquivReln p;
-  std::queue<int> q;			/* dead cosets to be processed */
+  std::queue<coset> q;			/* dead cosets to be processed */
   std::vector<word> relator;
   std::vector<word> generator_of_H;
-  std::map< int, std::vector<word> > relator_grouped; /* for Felsch */
+  std::map< gen, std::vector<word> > relator_grouped; /* for Felsch */
   void hlt ();
   void hlt_plus (int threshold);
   void felsch ();
   Stack deduction_stack;	/* for Felsch */
-  void lookahead (int start = 0);
+  void lookahead (coset start = 0);
   void process_deductions ();	/* for Felsch */
-  void scan_and_fill (int k, const word& w, bool save = false);
-  void scan (int k, const word& w, bool save = false);
-  bool isalive (int k) const { return (p (k) == k); }
-  void define (int k, int x, bool save = false);
-  bool isdefined (int k, int x) const { return (tab[k][x] >= 0); }
-  void merge (int k, int l) { int m = p.merge (k, l); if (m >= 0) q.push (m); }
-  void coincidence(int k, int l, bool save = false);
-  void swap (int k, int l);
+  void scan_and_fill (coset, const word&, bool save = false);
+  void scan (coset, const word&, bool save = false);
+  bool isalive (coset k) const { return (p (k) == k); }
+  void define (coset, gen, bool save = false);
+  bool isdefined (coset k, gen x) const { return (tab[k][x] >= 0); }
+  void undefine (coset k, gen x) { tab[k][x] = -1; }
+  void merge (coset k, coset l)
+  { int m = p.merge (k, l); if (m >= 0) q.push (m); }
+  void coincidence(coset, coset, bool save = false);
+  void swap (coset, coset l);
 };
 
 std::ostream& operator<< (std::ostream&, const CosetTable&);

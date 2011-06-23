@@ -38,8 +38,8 @@ using namespace std;
 CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
 			bool felsch) : NGENS (NG), p (EquivReln (1))
 {
-  Coset c (NGENS);
-  tab.push_back (c);
+  row r (NGENS, -1);
+  tab.push_back (r);
   for (int i = 0; i < gen_H.size (); i++)
     {
       word w;
@@ -86,15 +86,15 @@ CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
 // Define coset k acted on by x to be new coset; exit if can't
 // allocate memory.
 void
-CosetTable::define (int k, int x, bool save)
+CosetTable::define (coset k, gen x, bool save)
 {
-  int l = tab.size ();		// index of new coset
+  const int l = tab.size ();	// index of new coset
   tab[k][x] = l;
-  Coset c (NGENS);
-  c[inv (x)] = k;
+  row r (NGENS, -1);
+  r[inv (x)] = k;
   try
     {
-      tab.push_back (c);
+      tab.push_back (r);
       p.add ();		// p(l) = l
     }
   catch (bad_alloc)
@@ -110,14 +110,24 @@ CosetTable::define (int k, int x, bool save)
     }
 }
 
+// Use standard numbering for coset tables, starting with 1 instead of 0.
+ostream&
+operator<< (ostream& os, const CosetTable::row& r)
+{
+  os << setw (4) << r[0] + 1;
+  for (CosetTable::gen x = 1; x < r.size (); x++)
+    os << " " << setw (3) << r[x] + 1;
+  return os;
+}
+
 ostream&
 operator<< (ostream& os, const CosetTable& C)
 {
   os << "    ";
-  for (int x = 0; x < C.NGENS; x++)
-    os << setw (4) << gen[x];
+  for (CosetTable::gen x = 0; x < C.NGENS; x++)
+    os << setw (4) << gens[x];
   os << endl;
-  for (int k = 0; k < C.tab.size (); k++)
+  for (CosetTable::coset k = 0; k < C.tab.size (); k++)
     if (C.isalive (k))
 	os << setw (2) << k + 1 << ": " << C.tab[k] << endl;
   return os;
@@ -128,10 +138,10 @@ void
 CosetTable::debug_print () const
 {
   cout << "       ";
-  for (int x = 0; x < NGENS; x++)
-    cout << setw (4) << gen[x];
+  for (gen x = 0; x < NGENS; x++)
+    cout << setw (4) << gens[x];
   cout << endl;
-   for (int k = 0; k < tab.size (); k++)
+   for (CosetTable::coset k = 0; k < tab.size (); k++)
     {
       cout << setw (2) << k << setw (3) << p[k] << ": ";
       tab[k].print (false);	// Don't standardize coset numbering
@@ -142,23 +152,23 @@ CosetTable::debug_print () const
 #endif
 
 void
-CosetTable::coincidence (int k, int l, bool save)
+CosetTable::coincidence (coset k, coset l, bool save)
 {
   merge (k, l);
   while (!q.empty ())
     {
-      int e = q.front ();
+      coset e = q.front ();
       q.pop ();
       // Transfer all info about e
-      for (int x = 0; x < NGENS; x++)
+      for (gen x = 0; x < NGENS; x++)
 	{
 	  if (!isdefined (e, x))
 	    continue;
-	  int y = inv (x);
-	  int f = tab[e][x];	// x: e --> f, y: f --> e
-	  tab[f].undefine (y);	// remove arrow f --> e
-	  int e1 = p.rep (e);
-	  int f1 = p.rep (f);
+	  gen y = inv (x);
+	  coset f = tab[e][x];	// x: e --> f, y: f --> e
+	  undefine (f, y);	// remove arrow f --> e
+	  coset e1 = p.rep (e);
+	  coset f1 = p.rep (f);
 	  // insert arrows x: e1 --> f1 and y: f1 --> e1
 	  if (isdefined (e1, x))
 	    merge (f1, tab[e1][x]);
@@ -179,10 +189,10 @@ CosetTable::coincidence (int k, int l, bool save)
 }
 
 void
-CosetTable::scan_and_fill (int k, const word& w, bool save)
+CosetTable::scan_and_fill (coset k, const word& w, bool save)
 {
   int i = 0, j = w.size () - 1;	// Starting pos for forward and backward scans
-  int f = k, b = k;		// Starting coset indices for scans
+  coset f = k, b = k;		// Starting cosets for scans
   for (;;)
     {
       // Scan forward
@@ -219,10 +229,10 @@ CosetTable::scan_and_fill (int k, const word& w, bool save)
 }
 
 void
-CosetTable::scan (int k, const word& w, bool save)
+CosetTable::scan (coset k, const word& w, bool save)
 {
   int i = 0, j = w.size () - 1;	// Starting pos for forward and backward scans
-  int f = k, b = k;		// Starting coset indices for scans
+  coset f = k, b = k;		// Starting cosets for scans
   // Scan forward
   while (i <= j && isdefined (f, w[i]))
     f = tab[f][w[i++]];
@@ -281,12 +291,12 @@ CosetTable::hlt ()
   // Must recompute tab.size() after each iteration.  Note that an
   // iterator wouldn't work well here because elements keep getting
   // added to tab.
-  for (int k = 0; k < tab.size (); k++)
+  for (coset k = 0; k < tab.size (); k++)
     {
       for (int i = 0; i < relator.size () && isalive (k); i++)
 	scan_and_fill (k, relator[i]);
       if (isalive (k))
-	for (int x = 0; x < NGENS; x++)
+	for (gen x = 0; x < NGENS; x++)
 	  if (!isdefined (k, x))
 	    define (k, x);
     }
@@ -312,13 +322,13 @@ CosetTable::hlt_plus (int threshold)
     }
   for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i]);
-  for (int k = 0; k < tab.size (); k++)
+  for (coset k = 0; k < tab.size (); k++)
     {
       if (!isalive (k))
 	continue;
       if (tab.size () > threshold)
 	{
-	  int n = tab.size ();
+	  const int n = tab.size ();
 	  cout << "\nThreshold exceeded; table size is "
 	       << n << ".  Looking ahead...\n";
 	  lookahead (k);
@@ -336,7 +346,7 @@ CosetTable::hlt_plus (int threshold)
       for (int i = 0; i < relator.size () && isalive (k); i++)
 	scan_and_fill (k, relator[i]);
       if (isalive (k))
-	for (int x = 0; x < NGENS; x++)
+	for (gen x = 0; x < NGENS; x++)
 	  if (!isdefined (k, x))
 	    define (k, x);
     }
@@ -349,9 +359,9 @@ CosetTable::felsch ()
   for (int i = 0; i < generator_of_H.size (); i++)
     scan_and_fill (0, generator_of_H[i], true);
   process_deductions ();
-  for (int k = 0; k < tab.size (); k++)
+  for (coset k = 0; k < tab.size (); k++)
     {
-      for (int x = 0; x < NGENS && isalive (k); x++)
+      for (gen x = 0; x < NGENS && isalive (k); x++)
 	if (!isdefined (k, x))
 	  {
 	    define (k, x, true);
@@ -373,10 +383,10 @@ CosetTable::process_deductions ()
 	}
       deduction d;
       deduction_stack.pop (d);
-      int k = d.coset;
-      int x = d.gen;
+      coset k = d.c;
+      gen x = d.x;
       vector<word> relx = relator_grouped[x];
-      int n = relx.size ();
+      const int n = relx.size ();
       for (int i = 0; i < n && isalive (k); i++)
 	scan (k, relx[i], true);
       // No need to continue with this deduction if k died.
@@ -393,18 +403,19 @@ CosetTable::process_deductions ()
 int
 CosetTable::getnlive () const
 {
-  int count = 0, n = tab.size ();
-  for (int k = 0; k < n; k++)
+  int count = 0;
+  const int n = tab.size ();
+  for (coset k = 0; k < n; k++)
     if (isalive (k))
       count++;
   return count;
 }
 
 void
-CosetTable::lookahead (int start)
+CosetTable::lookahead (coset start)
 {
-  int n = tab.size ();
-  for (int k = start; k < n; k++)
+  const int n = tab.size ();
+  for (coset k = start; k < n; k++)
     for (int i = 0; i < relator.size () && isalive (k); i++)
       scan (k, relator[i]);
 }
@@ -414,20 +425,22 @@ CosetTable::lookahead (int start)
 // compression, we need to resume processing at the same coset, which
 // may have been renumbered; compress returns the new number (or -1 if
 // a current live coset wasn't specified).
-int
-CosetTable::compress (int current)
+CosetTable::coset
+CosetTable::compress (coset current)
 {
-  int l = 0, n = tab.size (), ret = -1;
-  for (int k = 0; k < n; k++)
+  coset l = 0;
+  const int n = tab.size ();
+  coset ret = -1;
+  for (coset k = 0; k < n; k++)
     if (isalive (k))
       {
 	if (k == current)
 	  ret = l;
 	if (k > l)		// Replace k by l in table
 	  {
-	    for (int x = 0; x < NGENS; x++)
+	    for (gen x = 0; x < NGENS; x++)
 	      {
-		int m = tab[k][x];
+		coset m = tab[k][x];
 		if (m == k)
 		  tab[l][x] = l;
 		else
@@ -448,15 +461,15 @@ CosetTable::compress (int current)
       
 // Swap two distinct live rows of the coset table
 void
-CosetTable::swap (int k, int l)
+CosetTable::swap (coset k, coset l)
 {
-  for (int x = 0; x < NGENS; x++)
+  for (gen x = 0; x < NGENS; x++)
     {
-      int temp = tab[k][x];
+      const coset temp = tab[k][x];
       tab[k][x] = tab[l][x];
       tab[l][x] = temp;
-      int n = tab.size ();
-      for (int m = 0; m < n; m++)
+      const int n = tab.size ();
+      for (coset m = 0; m < n; m++)
 	{
 	  if (!isalive (m))
 	    continue;
@@ -472,14 +485,14 @@ CosetTable::swap (int k, int l)
 void
 CosetTable::standardize ()
 {
-  int n = tab.size ();
+  const int n = tab.size ();
   if (n <= 2)
     return;
-  int goal = 1;			// next number we want to find in the table
+  coset goal = 1;	   // next coset number we want to find in the table
   for (tab_iter it = tab.begin (); it != tab.end (); it++)
-    for (int x = 0; x < NGENS; x++)
+    for (gen x = 0; x < NGENS; x++)
       {
-	int l = (*it)[x];
+	coset l = (*it)[x];
 	if (l >= goal)
 	  {
 	    if (l > goal)

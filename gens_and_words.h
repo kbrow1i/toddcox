@@ -30,7 +30,7 @@ const int NOTAGEN = -1;
 
 /* generators (including inverses); they will be represented
    internally by their index in the string gen */
-const std::string gen = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
+const std::string gens = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
 
 int inv (int x);
 char switch_case (char);

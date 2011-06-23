@@ -24,8 +24,8 @@
 
 typedef struct
 {
-  int coset;
-  int gen;
+  int c;			/* coset */
+  int x;			/* generator */
 } deduction;
 
 typedef deduction Item;
