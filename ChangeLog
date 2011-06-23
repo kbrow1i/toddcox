@@ -1,3 +1,16 @@
+2011-06-23  Ken Brown  <kbrown@cornell.edu>
+
+	* equivreln.h: New file.  Declare class EquivReln.
+	* equivreln.cc: New file.  Implement class EquivReln.
+	* cosettable.h (CosetTable): Use new class EquivReln; delete rep,
+	change merge to call EquivReln::merge.
+	* cosettable.cc: Use new class EquivReln; accommodate throughout.
+	Delete rep, call EquivReln::rep instead.
+	* Makefile.cygwin: Accommodate new files equivreln.{cc,h} and
+	tc.{cc,h}.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: Ditto.
+
 2011-06-15  Ken Brown  <kbrown@cornell.edu>
 
 	* cosettable.cc (CosetTable::define): Change return type to void.

@@ -30,16 +30,16 @@
 #include "cosettable.h"
 #include "gens_and_words.h"
 #include "stack.h"
+#include "equivreln.h"
 
 using namespace std;
 
 // Constructor
 CosetTable::CosetTable (int NG, vector<string> rel, vector<string> gen_H,
-			bool felsch) : NGENS (NG)
+			bool felsch) : NGENS (NG), p (EquivReln (1))
 {
   Coset c (NGENS);
   tab.push_back (c);
-  p.push_back (0);		// p[0] = 0
   for (int i = 0; i < gen_H.size (); i++)
     {
       word w;
@@ -95,7 +95,7 @@ CosetTable::define (int k, int x, bool save)
   try
     {
       tab.push_back (c);
-      p.push_back (l);		// p[l] = l
+      p.add ();		// p(l) = l
     }
   catch (bad_alloc)
     {
@@ -141,48 +141,6 @@ CosetTable::debug_print () const
 }
 #endif
 
-// Return minimal element of equivalence class, simplify p along the way
-int
-CosetTable::rep (int k)
-{
-  int l, m, n;
-  l = k; m = p[l];
-  while (m < l)
-    {
-      l = m;
-      m = p[l];
-    } // Now l is the minimal element.
-  m = k; n = p[m];
-  while (n < m)
-    {
-      p[m] = l;
-      m = n;
-      n = p[m];
-    }
-  return l;
-}
-
-// Merge two equivalence classes; put larger one in queue for
-// processing (copy definitions)
-void
-CosetTable::merge(int k, int l)
-{
-  k = rep (k);
-  l = rep (l);
-  if (k == l)
-    return;
-  if (k < l)
-    {
-      p[l] = k;
-      q.push (l);
-    }
-  else
-    {
-      p[k] = l;
-      q.push (k);
-    }
-}
-
 void
 CosetTable::coincidence (int k, int l, bool save)
 {
@@ -199,8 +157,8 @@ CosetTable::coincidence (int k, int l, bool save)
 	  int y = inv (x);
 	  int f = tab[e][x];	// x: e --> f, y: f --> e
 	  tab[f].undefine (y);	// remove arrow f --> e
-	  int e1 = rep (e);
-	  int f1 = rep (f);
+	  int e1 = p.rep (e);
+	  int f1 = p.rep (f);
 	  // insert arrows x: e1 --> f1 and y: f1 --> e1
 	  if (isdefined (e1, x))
 	    merge (f1, tab[e1][x]);
@@ -479,15 +437,12 @@ CosetTable::compress (int current)
 		      tab[m][inv (x)] = l;
 		  }
 	      }
-	    p[l] = l;
 	  }
 	l++;
       }
+  p = EquivReln (l);
   if (l < n)
-    {
-      tab.erase (tab.begin () + l, tab.end ());
-      p.erase (p.begin () + l, p.end ());
-    }
+    tab.erase (tab.begin () + l, tab.end ());
   return ret;
 }
       

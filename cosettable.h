@@ -22,13 +22,15 @@
 #ifndef COSETTABLE_H
 #define COSETTABLE_H
 
-#include "coset.h"
-#include "gens_and_words.h"
-#include "stack.h"
 #include <vector>
 #include <queue>
 #include <map>
 #include <iostream>
+
+#include "coset.h"
+#include "gens_and_words.h"
+#include "stack.h"
+#include "equivreln.h"
 
 /* The CosetTable class provides a toy implementation of the HLT,
    HLT+lookahead, and Felsch algorithms for coset enumeration.  I have
@@ -55,7 +57,7 @@ public:
 private:
   int NGENS;
   std::vector<Coset> tab;
-  std::vector<int> p;	/* for generating equivalence classes; p[k] <= k */
+  EquivReln p;
   std::queue<int> q;			/* dead cosets to be processed */
   std::vector<word> relator;
   std::vector<word> generator_of_H;
@@ -68,11 +70,10 @@ private:
   void process_deductions ();	/* for Felsch */
   void scan_and_fill (int k, const word& w, bool save = false);
   void scan (int k, const word& w, bool save = false);
-  bool isalive (int k) const { return (p[k] == k); }
+  bool isalive (int k) const { return (p (k) == k); }
   void define (int k, int x, bool save = false);
   bool isdefined (int k, int x) const { return (tab[k][x] >= 0); }
-  int rep (int c);
-  void merge (int k, int l);
+  void merge (int k, int l) { int m = p.merge (k, l); if (m >= 0) q.push (m); }
   void coincidence(int k, int l, bool save = false);
   void swap (int k, int l);
 };
