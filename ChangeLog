@@ -1,3 +1,7 @@
+2011-08-03  Ken Brown  <kbrown@cornell.edu>
+
+	* Version 0.4 released.
+
 2011-07-02  Ken Brown  <kbrown@cornell.edu>
 
 	* gens_and_words.cc: Move #include.
