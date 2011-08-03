@@ -19,12 +19,13 @@
 
    Written by Ken Brown <kbrown@cornell.edu>. */
 
-#include "gens_and_words.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <cstdlib>
 #include <cctype>
+
+#include "gens_and_words.h"
 
 using namespace std;
 
@@ -46,7 +47,7 @@ switch_case (char c)
 
 // NGENS is the number of allowed generators, including inverses.
 int
-char_to_gen (char c, int NGENS = 4)
+char_to_gen (char c, int NGENS)
 {
   size_t found = gens.find_first_of (c);
   if (found != string::npos && found < NGENS)

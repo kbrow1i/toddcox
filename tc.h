@@ -24,7 +24,6 @@
 
 #include <iostream>
 
-#include "gens_and_words.h"
 #include "cosettable.h"
 
 class TC

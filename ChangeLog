@@ -1,3 +1,9 @@
+2011-07-02  Ken Brown  <kbrown@cornell.edu>
+
+	* gens_and_words.cc: Move #include.
+	(char_to_gen): Remove default for NGENS argument.
+	* tc.h: Remove unneeded #include.
+
 2011-06-23  Ken Brown  <kbrown@cornell.edu>
 
 	* Makefile.cygwin: Accommodate removal of coset.h and coset.cc.
