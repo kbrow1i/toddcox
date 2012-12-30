@@ -1,6 +1,6 @@
-/* tc.cc: A driver for the Todd-Coxeter routines.
+/* toddcox.cc: A driver for the Todd-Coxeter routines.
 
-   Copyright 2011 Kenneth S. Brown.
+   Copyright 2011, 2012 Kenneth S. Brown.
 
    This file is part of Toddcox.
 
@@ -27,77 +27,51 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
+#include <getopt.h>
 
 #include "tc.h"
 
 using namespace std;
 
-void usage (bool help = false);
-
+void usage ();
+void help ();
+void parse_args (int, char **, int&, bool&, int&);
+void version ();
+void gen_progname (const string&);
 ostream* getfout ();
 
-// Default (HLT): toddcox [FILE]
-// HLT+lookahead: toddcox --threshold THRESHOLD [FILE]
-// Felsch: toddcox --felsch [FILE]
-// Here FILE contains the group info; otherwise the user is prompted
-// for the group info.
+static string progname;
+static const string VERSION = "0.5";
+
 int
-main (int argc, char * argv[])
+main (int argc, char *argv[])
 {
-  // Check for option
   bool felsch = false;
   int threshold = 0;
-  if (--argc > 0 && (*++argv)[0] == '-')
+  int fileind = 0;
+
+  gen_progname (argv[0]);
+  parse_args (argc, argv, fileind, felsch, threshold);
+
+  istream *input = &cin;
+  if (fileind > 0)
     {
-      string option = *argv;
-      if (option == "--help")
-	usage (true);
-      else if (option == "--felsch")
-	{
-	  felsch = true;
-	  --argc;
-	  ++argv;
-	}
-      else if (option == "--threshold")
-	{
-	  if (--argc > 0 && (threshold = atoi (*++argv)) > 0)
-	    {
-	      --argc;
-	      ++argv;
-	    }
-	  else
-	    usage ();
-	}
-      else
-	{
-	  cerr << "\nInvalid option: " << option << endl;
-	  usage ();
-	}
-    }
-  // Check for filename
-  istream* input = &cin;
-  if (argc > 1)
-    {
-      cerr << "Too many arguments.\n";
-      usage ();
-    }
-  if (argc == 1)
-    {
-      input = new ifstream (*argv);
+      input = new ifstream (argv[fileind]);
       if (!*input)
 	{
-	  cerr << "Unable to open " << *argv << endl;
+	  cerr << "Unable to open " << argv[fileind] << endl;
 	  delete input;
-	  return 1;
+	  exit (1);
 	}
     }
+
   TC tc (input, felsch, threshold);
   tc.enumerate ();
   int index = tc.index ();
   cout << "\nThe index of H in G is " << index
        << ".\nThe coset table had size " << tc.table_size ()
        << " before compression.\n\n";
-  ostream* output = &cout;
+  ostream *output = &cout;
   bool standardize = true;
   const int display_max = 50;
   if (index < display_max)
@@ -113,42 +87,113 @@ main (int argc, char * argv[])
       if (output != &cout)
 	delete output;
     }
-  return 0;
 }
 
 void
-usage (bool help)
+parse_args (int argc, char *argv[], int& fileind, bool& felsch,
+	    int& threshold)
 {
-  const string us =
-    "Usage:\n"
-    "  toddcox [FILE]\n"
-    "  toddcox --threshold THRESHOLD [FILE]\n"
-    "  toddcox --felsch [FILE]\n"
-    "Here FILE is an optional file name and THRESHOLD is a positive integer.\n\n";
-  const string us1 =
-    "For more information, give the command\n"
-    "  toddcox --help\n";
-  const string us2 =
-    "If FILE is specified, it should contain the information about\n"
-    "the group and subgroup.  If it is not specified, the user is\n"
-    "prompted for that information.\n\n"
-    "By default, the HLT coset enumeration method is used.  If the\n"
-    "'--threshold THRESHOLD' option is given, HLT+lookahead is used.\n"
-    "(This means that if an HLT step causes the coset table to get\n"
-    "bigger than THRESHOLD, processing will not continue unless the\n"
-    "table size can be reduced.)  If the '--felsch' option is given,\n"
-    "the Felsch enumeration method is used.\n";
-  cout << us;
-  if (help)
+  const struct option long_options[] =
     {
-      cout << us2;
-      exit (EXIT_SUCCESS);
-    }
-  else
+      {"felsch",    no_argument,       NULL, 'f'},
+      {"threshold", required_argument, NULL, 't'},
+      {"help",	    no_argument,       NULL, 'h'},
+      {"usage",	    no_argument,       NULL, 'u'},
+      {"version",   no_argument,       NULL, 'v'},
+      {NULL,	    no_argument,       NULL,  0 }
+    };
+
+  const char *short_options = "ft:hvu";
+
+  int opt;
+  while ((opt = getopt_long (argc, argv, short_options, long_options, NULL))
+	 != -1)
     {
-      cout << us1;
-      exit (EXIT_FAILURE);
+      switch (opt)
+	{
+	case 'f':
+	  felsch = true;
+	  break;
+	case 't':
+	  if ((threshold = atoi (optarg)) <= 0)
+	    {
+	      usage ();
+	      exit (1);
+	    }
+	  break;
+	case 'v':
+	  version ();
+	  exit (1);
+	  break;
+	case 'h':
+          help ();
+          exit (1);
+          break;
+	default:
+	  usage ();
+	  exit (1);
+	  break;
+	}
     }
+
+  if (felsch && (threshold > 0))
+    {
+      usage ();
+      exit (1);
+    }
+
+  if (optind < argc - 1)
+    {
+      usage ();
+      exit (1);
+    }
+  if (optind == argc - 1)
+    fileind = optind;
+}
+
+void
+usage ()
+{
+  cerr << "\
+Usage: " << progname << " [-t THRESHOLD | -f]  [FILE]\n\n\
+Try `" << progname << " --help' for more information.\n";
+}
+
+void
+help ()
+{
+  cerr <<"\
+Usage: " << progname << " [OPTIONS] [FILE]\n\
+Enumerate the cosets of a subgroup of a group.\n\n\
+If FILE is specified, it should contain the information about the\n\
+group and subgroup.  If it is not specified, the user is prompted\n\
+for that information.\n\n\
+The HLT coset enumeration method is used unless one of the (mutually\n\
+exclusive) options -t or -f is given.\n\n\
+Options:\n\n\
+  -f, --felsch               Use the Felsch enumeration method.\n\
+  -t, --threshold=THRESHOLD  Use the HLT+lookahead method.  This means\n\
+                             that if an HLT step causes the coset table\n\
+                             to get bigger than THRESHOLD, processing\n\
+                             will not continue unless the table size\n\
+                             can be reduced.  THRESHOLD must be a\n\
+                             positive integer.\n\
+  -v, --version              Print version information and exit.\n\
+  -u, --usage                Print a brief usage message and exit.\n\
+  -h, --help                 Print this help text and exit.\n";
+}
+
+void
+version ()
+{
+  cerr << "parse version " << VERSION << endl;
+}
+
+void
+gen_progname (const string& arg0)
+{
+  size_t found = arg0.find_last_of ('/');
+  progname = (found == string::npos) ? arg0 : arg0.substr (found + 1);
 }
 
 // Get a valid filename for output and return pointer to it, or return
