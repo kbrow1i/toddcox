@@ -1,3 +1,11 @@
+2012-12-30  Ken Brown  <kbrown@cornell.edu>
+
+	* toddcox.cc: Correct first line (file name).  Update copyright.
+	Include getopt.h and use it to parse arguments..
+	(usage): Rewrite.
+	(parse_args, help, version, gen_progname): New functions.
+	(progname, VERSION): New static variables.
+
 2011-08-03  Ken Brown  <kbrown@cornell.edu>
 
 	* Version 0.4 released.
