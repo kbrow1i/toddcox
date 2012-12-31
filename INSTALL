@@ -1,52 +1,43 @@
-Copyright 2011 Kenneth S. Brown.
+Copyright 2011, 2012 Kenneth S. Brown.
 See the end of the file for license conditions.
 
 * Unix-like systems
 
-Toddcox should build easily on any Unix-like system.  Here are some
-specifics:
+Toddcox follows the conventions of the GNU build system.  It should
+build easily on any Unix-like system that has a C++ compiler and the
+`make' program.  Here are the steps, starting in the top-level source
+directory:
 
-** Linux
+  ./configure
+  make
 
-Type 'make' at a shell prompt.  This should yield an executable
-program called toddcox in the current directory.  You can optionally
-type 'make install' to create a stripped executable in the 'bin/linux'
-subdirectory.
+This should yield an executable program called `toddcox' (or
+`toddcox.exe') in the current directory.  You can optionally give the
+command
 
-** Cygwin
+  make install
 
-Install the 'make' package and a package containing a C++ compiler,
-such as 'gcc4-g++'.  Then issue the following command at a Cygwin
-shell prompt:
+to install the program and documentation to standard places on your
+system (assuming you are logged in as a user with sufficient
+privileges).  By default, the executable program will be in
+/usr/local/bin, the documentation will be in
+/usr/local/share/doc/toddcox, and the sample scripts will be in
+/usr/local/share/toddcox/examples.
 
-  make -f Makefile.cygwin
-
-This should yield an executable program called toddcox.exe in the
-current directory.  You can optionally type 'make -f Makefile.cygwin
-install' to create a stripped executable in the 'bin/cygwin'
-subdirectory.
-
-** Other Unix-like systems
-
-The Linux instructions may very well work without change.  If not, you
-might have to make minor changes at the beginning of the Makefile to
-specify your compiler, for instance.  If anyone who makes such a
-change sends me the resulting Makefile, I will include it in future
-releases.
+If you want different behavior, pass suitable options to the
+`configure' command; type `configure --help' for details.
 
 * Windows
 
 The build procedure on Windows is similar to the build on Unix-like
 systems, provided one has a suitable build environment that includes a
-C++ compiler.  For example, one can build native Windows executables
-in the Cygwin environment by using the cygwin-mingw cross compiler
-provided by Cygwin's mingw-gcc-g++ package.  To do this, issue the
-following command at a Cygwin shell prompt:
+C++ compiler.  For example, one can build a native (32-bit) Windows
+executable `toddcox.exe' in the Cygwin environment by using the
+cygwin-mingw32 cross compiler provided by Cygwin's mingw-gcc-g++
+package.  To do this, replace the `configure' command above by the
+following command:
 
-  make -f Makefile.cygwin-mingw
-
-You can optionally type 'make -f Makefile.cygwin-mingw install' to
-create a stripped executable in the 'bin/windows' subdirectory.
+  ./configure --build=i686-pc-cygwin --host=i686-pc-mingw32 CXXFLAGS=-static
 
 
 This file is part of Toddcox.

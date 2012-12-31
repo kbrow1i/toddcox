@@ -1,10 +1,10 @@
-Copyright 2011 Kenneth S. Brown.
+Copyright 2011, 2012 Kenneth S. Brown.
 See the end of the file for license conditions.
 
-The files in this directory can be used as input files for toddcox.
+The files in this directory can be used as input files for Toddcox.
 Assuming, for example, that one is working in the the top-level
 directory of the Toddcox distribution and that this directory contains
-the executables, one could give the command
+the executable, one could give the command
 
   ./toddcox examples/F27.in
 

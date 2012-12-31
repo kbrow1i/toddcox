@@ -1,4 +1,4 @@
-Copyright 2011 Kenneth S. Brown.
+Copyright 2011, 2012 Kenneth S. Brown.
 See the end of the file for license conditions.
 
 If you have obtained a prebuilt executable for your system, you can
@@ -6,45 +6,59 @@ skip the first item and proceed directly to "Running the program".
 
 * Building Toddcox
 
-See the INSTALL file in the source distribution for instructions.
+See the `INSTALL' file in the source distribution for instructions.
 After following the instructions, you should have an executable
-program called toddcox (possibly with .exe appended).
+program called `toddcox' possibly with `.exe' appended, either in your
+current directory or somewhere in your path.
 
-* Running the programs
+* Running the program
 
 Type 'toddcox' at a command prompt.  Depending on how your path is set
 up, you may have to include a path specification.  On a typical
-unix-like system, for example, you would type
+Unix-like system, for example, you would type
 
   ./toddcox
 
-if the toddcox program is contained in your current directory.
+if the `toddcox' program is contained in your current directory but
+not in your path.
 
 The program will prompt you to enter the necessary information.  See
 <http://www.math.cornell.edu/~kbrown/toddcox/doc.html> for
-documentation, including some sample runs of the program.
+documentation, including some sample runs of the program.  A copy of
+this file will be in your system documentation directory
+(/usr/local/share/doc/toddcox by default) if you are working on a
+Unix-like system and have run `make install' after building Toddcox.
 
 * Running from a script
 
 Instead of responding to all the prompts interactively, you can enter
 them into a file and give the filename as a command-line argument.
 The Toddcox source distribution contains several sample input files in
-the 'examples' directory.  See the README file in that directory for a
-description of the examples.  To run toddcox on the M12 example, for
-instance, issue the following command:
+the `examples' directory.  Those files have been installed on your
+system (in /usr/local/share/toddcox/examples by default) if you are
+working on a Unix-like system and have run `make install' after
+building Toddcox.  See the README file in that directory for a
+description of the examples.
+
+To run toddcox on the M12 example, for instance, issue the following
+command:
 
   ./toddcox examples/M12.in
 
-This assumes that the 'toddcox' executable is in the top-level
-directory of the Toddcox source distribution.
+This assumes that your current directory is the top-level directory of
+the Toddcox source distribution and that the `toddcox' executable is
+in that directory.  Alternatively, if you have installed Toddcox on
+your Unix-like system, the command might be
 
-* Questions and comments
+  toddcox /usr/local/share/toddcox/examples/M12.in
+
+* Questions, comments, and bug reports
 
 The project website is
 
   <http://www.math.cornell.edu/~kbrown/toddcox/>
 
-Questions and comments should be sent to
+Questions, comments and bug reports should be sent to
 
   Ken Brown <kbrown@cornell.edu>
 
