@@ -1,0 +1,590 @@
+2012-12-30  Ken Brown  <kbrown@cornell.edu>
+
+	* toddcox.cc: Correct first line (file name).  Update copyright.
+	Include getopt.h and use it to parse arguments..
+	(usage): Rewrite.
+	(parse_args, help, version, gen_progname): New functions.
+	(progname, VERSION): New static variables.
+
+2011-08-03  Ken Brown  <kbrown@cornell.edu>
+
+	* Version 0.4 released.
+
+2011-07-02  Ken Brown  <kbrown@cornell.edu>
+
+	* gens_and_words.cc: Move #include.
+	(char_to_gen): Remove default for NGENS argument.
+	* tc.h: Remove unneeded #include.
+
+2011-06-23  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: Accommodate removal of coset.h and coset.cc.
+	* Makefile.cygwin-mingw: Ditto.
+	* Makefile.linux: Ditto.
+
+2011-06-23  Ken Brown  <kbrown@cornell.edu>
+
+	* coset.cc: Delete file.
+	* coset.h: Ditto.
+	* cosettable.h: Accommodate removal of class Coset.  Make new
+	typedefs row, coset, gen.
+	(CosetTable::undefine): New member function.
+	* cosettable.cc: Accommodate removal of class Coset.  Use new
+	typedefs for clarity.  Introduce const qualifiers where
+	appropriate.
+	(operator<<): New nonmember function to print row.
+	* gens_and_words.h: Rename gen[] to gens[].
+	* gens_and_words.cc: Accommodate.
+	* stack.h: Rename members of struct deduction.
+
+2011-06-23  Ken Brown  <kbrown@cornell.edu>
+
+	* equivreln.h: New file.  Declare class EquivReln.
+	* equivreln.cc: New file.  Implement class EquivReln.
+	* cosettable.h (CosetTable): Use new class EquivReln; delete rep,
+	change merge to call EquivReln::merge.
+	* cosettable.cc: Use new class EquivReln; accommodate throughout.
+	Delete rep, call EquivReln::rep instead.
+	* Makefile.cygwin: Accommodate new files equivreln.{cc,h} and
+	tc.{cc,h}.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: Ditto.
+
+2011-06-15  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc (CosetTable::define): Change return type to void.
+	Exit instead of returning false if can't allocate memory.
+	(CosetTable::scan_and_fill): Change return type to void.
+	Accomodate change to return type of define.
+	(CosetTable::enumerate): Change return type to void.  Exit if
+	threhsold is exceeded in hlt_plus.  Accomodate changes to return
+	types of other functions.
+	(CosetTable::hlt): Change return type to void.  Accomodate changes
+	to return types of scan_and_fill and define.
+	(CosetTable::hlt_plus): Change return type to void.  Be more
+	specific in catching exceptions thrown by reserve().  Throw
+	exception if threshold is too small.  Accomodate changes to return
+	types of scan_and_fill and define.
+	(CosetTable::felsch): Change return type to void.  Accomodate
+	change to return type of define.
+	* cosettable.h (CosetTable): Change declarations to reflect new
+	return types.  Remove coset_enum_result typedef.  New exception
+	class Threshold_Exceeded.
+	* tc.h (TC): Change return type of enumerate to void.  Accomodate
+	change to return type of CosetTable::enumerate.
+	* toddcox.cc (main): Accomodate changed return types and error
+	handling in CosetTable and TC.
+
+2011-06-13  Ken Brown  <kbrown@cornell.edu>
+
+	* toddcox.cc: Remove unneeded #includes.
+
+2011-06-13  Ken Brown  <kbrown@cornell.edu>
+
+	* coset.cc (<<): Fix printing of cosets with big entries.
+	* gens_and_words.cc (getfout): Move to toddcox.cc.
+	* gens_and_words.h (getfout): Remove declaration.
+	* tc.h: New file.  Declare class TC.
+	* tc.cc: New file.  Implement class TC.
+	* toddcox.cc (main): Move some functionality to the new class TC.
+	(getfout): Move from gens_and_words.cc.  Change parameter and
+	return type.
+
+2011-06-12  Ken Brown  <kbrown@cornell.edu>
+
+	* gens_and_words.cc (getstringword, getvecstringword, getngens)
+	(getgroup):  Change parameter from istream& to istream*.
+	* gens_and_words.h (getgroup): Ditto.
+	* toddcox.cc (main): Accomodate parameter changes.
+
+2011-06-06  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc (CosetTable::CosetTable): Tweak relator grouping
+	for Felsch.
+
+2011-05-30  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: Simplify by using implicit rules.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: Ditto.
+
+	* gens_and_words.h (switch_case): Declare new function.
+	* gens_and_words.cc (switch_case): Implement.
+	* coset.h: Remove some unnecessary semicolons.
+	* cosettable.cc (CosetTable::CosetTable): Use 'switch_case' and
+	'transform' to invert a word.
+
+2011-05-26  Ken Brown  <kbrown@cornell.edu>
+
+	* coset.cc (Coset): Make constructor more efficient and move it
+	to coset.h.
+	(print): Replace by operator<<.
+	* coset.h: Implement constructor.  Replace getact and setact by
+	operator[].  Declare operator<< as nonmember friend, replacing
+	'print'.
+	* cosettable.cc: Adapt to Coset class's getact/setact change and
+	print change.
+	(print): Replace by operator<<.
+	* cosettable.h: Adapt to Coset class's getact/setact change and
+	print change.  Declare operator<< as nonmember friend, replacing
+	'print'.
+	* toddcox.cc: Use << instead of print.
+
+2011-05-25  Ken Brown  <kbrown@cornell.edu>
+
+	Revert many of the 2011-05-16 changes so cosets require less
+	memory.
+
+	* coset.h (Coset::undefine): New member function.  Remove members
+	getname(), setname(), getindex(), setindex(), isalive(),
+	isdefined(), name, index.  Remove name and index as parameters to
+	constructor.
+	* coset.cc: Adapt constructor and print() to changes above.
+	* cosettable.h: Add back p[] and isalive() members; change
+	isdefined() to reflect changes to Coset class.
+	* cosettable.cc (coincidence): Use undefine().  Adapt many
+	functions to changes above.
+	(process_deductions): Eliminate unnecessary scans.
+
+2011-05-25  Ken Brown  <kbrown@cornell.edu>
+
+	* coset.h (Coset): Replace isalive() member by conversion to
+	bool.
+	* cosettable.cc: Replace all uses of isalive() by direct tests of
+	cosets.
+
+2011-05-20  Ken Brown  <kbrown@cornell.edu>
+
+	* gens_and_words.cc (getngens): Minor tweak to reading newline.
+
+2011-05-19  Ken Brown  <kbrown@cornell.edu>
+
+	* gens_and_words.cc (getnum): Remove.
+	(getngens): Rewrite so doesn't call getnum.
+	* gens_and_words.h (getnum): Remove declaration.
+	* toddcox.cc (main): Minor tweak.
+	* gens_and_words.cc (getfout): Ditto.
+
+2011-05-18  Ken Brown  <kbrown@cornell.edu>
+
+	* Version 0.3 released.
+
+2011-05-18  Ken Brown  <kbrown@cornell.edu>
+
+	* README: Update documentation.
+	* examples/README: Ditto.
+
+2011-05-18  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: Tweak 'install' target.  Add 'pkg' target.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: Ditto.
+
+2011-05-17  Ken Brown  <kbrown@cornell.edu>
+
+	* INSTALL: Update.
+	* README: Update.
+	* Makefile.cygwin: Adapt 'install' target to changed executables.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: Ditto.
+
+2011-05-17  Ken Brown  <kbrown@cornell.edu>
+
+	* toddcox.cc (main): Don't prompt for enumeration method.  Use HLT
+	unless a different method is specified on the command line.
+	(getmethod): Remove.
+	(usage): New function.
+
+2011-05-16  Ken Brown  <kbrown@cornell.edu>
+
+	* TODO: Update.
+	* coset.h (Coset): Rename get_act and set_act to getact and
+	setact.  Declare new members getname(), setname(), getindex(),
+	setindex(), isalive(), isdefined(), name, index.  Add name and
+	index as parameters to constructor.
+	* coset.cc: Adapt constructor to changes above.
+	(print): Minor change.
+	* cosettable.h (coset_enum_result, tab_iter, ctab_iter): New
+	typedefs.
+	(p): Remove.
+	(hlt, hlt_plus, felsch): Make private.  Make threshold a parameter
+	to hlt_plus.  Change return types to coset_enum_result.
+	(enumerate): New public member function.
+	(set_threshold): Remove.
+	(threshold): Remove.
+	(is_alive): Remove.  (Will use the corresponding member of Coset
+	class instead.)
+	(is_defined): Rename to...
+	(isdefined): New member function, which uses the Coset class
+	function of the same name.
+	* cosettable.cc: Remove reference to p[] throughout; use Coset's
+	getname instead.  Accomodate the name changes in Coset.  Use
+	iterators instead of indexing to traverse coset table in several
+	functions.
+	(set_threshold): Remove.  Move functionality to hlt_plus.
+	(define): Accommodate changes to Coset constructor.  Remove
+	reference to p[].
+	(print): Accomodate changes to Coset's print function.
+	(scan): Minor change.
+	(enumerate): Implement.
+	(hlt, hlt_plus, felsch): Accommodate changes declared in header.
+	* toddcox.cc (main): Call CosetTable::enumerate instead of hlt,
+	hlt_plus, or felsch.  Compress and standardize small coset table.
+	Compress big table only if user asks for it to be written to a
+	file; don't standardize it (too slow).
+
+2011-05-14  Ken Brown  <kbrown@cornell.edu>
+
+	* tc.cc: Rename to...
+	* toddcox.cc: New file.
+	(main): Fix use of set_threshold.
+	* Makefile.cygwin: Adjust to name change.
+	* Makefile.cygwin-mingw: Ditto.
+	* Makefile.linux: Ditto.
+2011-05-14  Ken Brown  <kbrown@cornell.edu>
+
+	* tc.cc (main): Move functionality of tc+ and tcf here.  Use blank
+	line instead of . in all input routines.
+	(get_method): New function.
+	* tc+.cc: Delete file.
+	* tcf.cc: Delete file.
+	* coset.h (Coset): Remove 'using' declaration.  Adjust other
+	declarations to compensate.
+	* cosettable.h (CosetTable): Ditto.  Change return type of
+	set_threshold to void.  Remove threshold as parameter of
+	constructor.  Declare new member set_threshold().
+	* gens_and_words.h (CosetTable): Ditto.
+	* gens_and_words.cc: Adjust input routines to new blank line
+	convention.
+	* coset.cc: Add 'using' declaration.
+	* cosettable.cc: Ditto.  Adjust all input routines to use blank
+	line instead of . for default or end of input.
+	(CosetTable::set_threshold): New member function.
+	* Makefile.cygwin: Update.
+	* Makefile.cygwin-mingw: Ditto.
+	* Makefile.cygwin-linux: Ditto.
+	* TODO: Ditto.
+	* examples/F27.in: Replace . by blank line.
+	* examples/G8723.in: Ditto.
+	* examples/HNO_1.in: Ditto.
+	* examples/HNO_8.in: Ditto.
+	* examples/M12.in: Ditto.
+	* examples/SL2_13.in: Ditto.
+	* examples/G8723.in: Ditto.
+	* examples/G8723.in: Ditto.
+
+2011-05-07  Ken Brown  <kbrown@cornell.edu>
+
+	* Version 0.2 released.
+	* examples/README: Update.
+	* INSTALL: Ditto.
+
+2011-05-07  Ken Brown  <kbrown@cornell.edu>
+
+	* tc.cc (main): Allow input file to be specified as command-line
+	argument.
+	* tc+.cc (main): Ditto.
+	* tcf.cc (main): Ditto.
+	* gens_and_words.cc (getstringword, getvecstringword, getgroup):
+	New parameter 'fin'.
+	* gens_and_words.h: Declare new parameter in getgroup.
+	* examples/README: Update.
+	* README: Ditto.
+	* TODO: Ditto.
+	* examples/M12.in: Remove final dot.
+	* examples/SL2_13.in: Ditto.
+	* examples/HNO_8.in: Ditto.
+	* examples/HNO_1.in: Ditto.
+	* examples/G8723.in: Ditto.
+	* examples/F27+.in: Delete.
+	* examples/G8723+.in: Ditto.
+	* examples/HNO_1+.in: Ditto.
+	* examples/HNO_8+.in: Ditto.
+	* examples/M12+.in: Ditto.
+	* examples/SL2_13+.in: Ditto.
+
+2011-05-06  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: Fix 'install' target.
+	* Makefile.cygwin-mingw: Ditto.
+	* Makefile.linux: Ditto.
+	* tc.cc (getgroup, getfout): Move from here...
+	* gens_and_words.cc: ...to here.  Use new helper functions...
+	(getnum, getstringword, getvecstringword): New helper functions.
+	* gens_and_words.h: Declare getgroup and getfout.
+	* tcf.cc (getgroup, getfout): Remove.
+	* tc+.cc (getgroup, getfout): Ditto.
+	(main): Use getnum to get threshold.
+	* TODO: Update.
+
+2011-05-05  Ken Brown  <kbrown@cornell.edu>
+
+	* TODO: Update.
+	* tc.cc (main): Offer to write coset table to a file if too big
+	for screen.
+	(getfout): New function.
+	* tc+.cc (main): Ditto.
+	* tcf.cc (main): Ditto.
+	* coset.h: Remove parameter 'standard' from print().  Declare
+	parameter 'fout'.
+	* coset.cc (print): Adapt to parameter changes.
+	* cosettable.h (CosetTable): Remove method debug_print().  Remove
+	parameter 'standard' from print().  Declare parameter 'fout'.
+	* cosettable.cc (print): Adapt to parameter changes.
+	(debug_print): Comment out.
+	* examples/M12.in: Add final . to suppress printing coset table.
+	* examples/M12+.in: Ditto.
+	* examples/SL2_13.in: Ditto.
+	* examples/SL2_13+.in: Ditto.
+	* examples/HNO_1.in: Ditto.
+	* examples/HNO_1+.in: Ditto.
+	* examples/HNO_8.in: Ditto.
+	* examples/HNO_8+.in: Ditto.
+	* examples/G8723.in: Ditto.
+	* examples/G8723+.in: Ditto.
+
+2011-05-05  Ken Brown  <kbrown@cornell.edu>
+
+	* examples/M12+.in: Change threshold.
+	* Makefile.cygwin: Add 'install' target.  Improve portability.
+	* Makefile.linux: Ditto.
+	* Makefile.cygwin-mingw: New file
+	* TODO: Update.
+	* README: Ditto.
+	* INSTALL: Ditto.
+	* cosettable.cc: Add/change some comments.
+	* cosettable.h: Ditto.
+	* coset.h (Coset): Trivial change.
+
+2011-05-04  Ken Brown  <kbrown@cornell.edu>
+
+	* TODO: Update.
+	* cosettable.cc (define): Tweak output.
+	(scan_and_fill, felsch): Make code more readable.
+	(hlt): Ditto.  Also, add check for allocation failure after
+	scan_and_fill.
+	* examples/README: New file.
+
+2011-05-03  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc (CosetTable): Catch bad_alloc exception if
+	threshold is too big.
+	(define): Change return type to boolean; catch bad_alloc exception
+	if can't make a new definition.
+	(scan_and_fill, hlt, felsch): Change return type to boolean;
+	return false if can't make a new definition.
+	* cosettable.h: Declare new return types.
+	(threshold_is_bad): New public function.
+	* tc.cc: Adapt to changes above.
+	* tcf.cc: Ditto.
+	* tc+.cc: Ditto.
+	* TODO: Update.
+	* examples/F27.in: New file.
+	* examples/F27+.in: Ditto.
+	* examples/G8723.in: Ditto.
+	* examples/G8723+.in: Ditto.
+
+2011-05-03  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc (hlt_plus): Fix bug in which processing cosets
+	resumed at the wrong place after lookahead.
+	(lookahead): Add parameter 'start'.
+	(compress): Add parameter 'current'; make function return 'int'.
+	* cosettable.h: Adapt declarations to changes above.
+	* examples/HNO_1.in: New file.
+	* examples/HNO_1+.in: Ditto.
+	* examples/HNO_8.in: Ditto.
+	* examples/HNO_8+.in: Ditto.
+	* examples/SL2_13.in: Ditto.
+	* examples/SL2_13+.in: Ditto.
+
+2011-05-02  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.h (CosetTable): Declare new member 'threshold'.
+	* cosettable.cc (CosetTable): Change constructor accordingly;
+	reserve space in cosettable.
+	* tc+.cc: Adapt to changed constructor.
+	* tcf.cc: Ditto.
+
+2011-04-30  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: Add 'clean' target.
+	* Makefile.linux: Ditto.
+	* TODO: Update.
+	* cosettable.h: Change constructor parameters to vectors of
+	strings instead of words.
+	* cossettable.cc: Change constructor accordingly.  Move string
+	manipulations for Felsch to here from tcf.cc.  For Felsch, add
+	[original] relators to generators of H.
+	* tcf.cc:  Move 'rotate' from here to gens_and_words.
+	(getgroup): Remove string manipulations.
+	* gens_and_words.cc: Move 'rotate' here.
+	* gens_and_words.h: Declare it.
+	* tc.cc: Accommodate changed CosetTable constructor.
+	* tc+.cc: Ditto.
+
+2011-04-28  Ken Brown  <kbrown@cornell.edu>
+
+	* examples/M12.in: Fix whitespace.
+	* examples/M12+.in: New file; input for tc+.
+	* tcf.cc: New file (for Felsch).
+	* cosettable.h (CosetTable): Add member 'relator_grouped', used by
+	Felsch algorithm.  Add corresponding parameter to constructor.
+	* cosettable.cc: Adapt constructor to change above.
+	* stack.cc: New file; implementation of deduction stack for
+	Felsch.
+	* stack.h: New file; declarations for deduction stack.
+	* main.cc: Rename to...
+	* tc.cc: New file.
+	* main+.cc: Rename to...
+	* tc+.cc: New file.
+	* Makefile.cygwin: Adapt to name changes; add rules for tcf and
+	stack.
+	* Makefile.linux: Ditto.
+
+2011-04-27  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc (lookahead): Remove comment.
+
+2011-04-25  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.cc: Clean up some comments.
+	(get_nlive, lookahead): Compute get_size() before starting loop.
+	* TODO: Update.
+
+2011-04-23  Ken Brown  <kbrown@cornell.edu>
+
+	* Version 0.1 released.
+
+2011-04-23  Ken Brown  <kbrown@cornell.edu>
+
+	* README: New file.
+	* INSTALL: Ditto.
+	* main.cc (main): Tweak output.
+	* main+.cc (main): Ditto.
+	* TODO: Update
+
+2011-04-22  Ken Brown  <kbrown@cornell.edu>
+
+	* TODO: Update.
+	* main.cc (main): Fix test for whether to print table.
+	* main+.cc (main): Ditto.
+
+2011-04-22  Ken Brown  <kbrown@cornell.edu>
+
+	* coset.cc: Tweak license info.
+	* coset.h: Ditto.
+	* cosettable.cc: Ditto.
+	* cosettable.h: Ditto.
+	* gens_and_words.cc: Ditto.
+	* gens_and_words.h: Ditto.
+	* main.cc (main): Tweak copyright and license info.  Remove
+	lookahead option and put it in...
+	* main+.cc: New file.
+	* Makefile.cygwin: Make both tc and tc+ (for HLT plus lookahead).
+	Add copyright and license info.
+	* Makefile.linux: Ditto.
+	* examples/M12.in: New file.
+	* TODO: Update and add copyright and license.
+
+2011-04-21  Ken Brown  <kbrown@cornell.edu>
+
+	* main.cc (getgroup): Prompt for number of generators.
+	(main): Only print coset table if it's small.  Fix output.
+	* gens_and_words.h: Remove gen_to_char.  Remove global constant
+	NGENS.  Accommodate throughout.
+	* gens_and_words.cc: Remove gen_to_char.  Allow arbitrary number
+	of generators.
+	* cosettable.h (CosetTable): New member NGENS.
+	* cosettable.cc (CosetTable): Adapt constructor to changes to
+	Coset and CosetTable.
+	(print): Allow arbitrary number of generators.
+	(debug_print): Ditto.
+	* coset.h (Coset): New member NGENS.  Change 'row' from array to
+	vector.
+	* coset.cc (Coset): Adapt constructor to changes.
+
+2011-04-20  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.h (CosetTable): Rearrange members.
+	* TODO: New file.
+
+2011-04-20  Ken Brown  <kbrown@cornell.edu>
+
+	* COPYING: New file.
+	* coset.cc: Add copyright and licensing information.
+	* coset.h: Ditto.
+	* cosettable.cc: Ditto.
+	* cosettable.h: Ditto.
+	* gens_and_words.cc: Ditto.
+	* gens_and_words.h: Ditto.
+	* main.cc: Ditto.
+
+2011-04-20  Ken Brown  <kbrown@cornell.edu>
+
+	* main.cc (main): Remove unnecessary printing.
+	* coset.cc (print): Add optional argument for standard printing
+	[numbered from 1 instead of 0].  Improve formatting.
+	* coset.h (print): Declare optional argument.
+	* cosettable.h (print): Declare similar optional argument.
+	* cosettable.cc (print, debug_print): Use standard printing except
+	in debug_print().  Improve formatting.
+
+2011-04-19  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.h (standardize): Declare new function.
+	* cosettable.cc (standardize): Implement.
+	* main.cc (main): Standardize final coset table.
+
+2011-04-19  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.h (hlt_plus): Declare new function.
+	* cosettable.cc (hlt_plus): Implement.
+	* main.cc (main): Give user the option to use hlt_plus().
+
+2011-04-19  Ken Brown  <kbrown@cornell.edu>
+
+	* cosettable.h (scan, lookahead, compress): Declare new functions.
+	* cosettable.cc (scan, lookahead, compress): Implement.
+	* main.cc (main): Compress coset table.
+
+2011-04-17  Ken Brown  <kbrown@cornell.edu>
+
+	* main.cc (main): Clean up output.
+	* cosettable.h (get_nlive): Declare new function.
+	* cosettable.cc (scan_and_fill): Remove debugging output.
+	(print) Use new print method of Coset class.
+	(debug_print): Ditto.
+	(get_nlive): Implement.
+	* coset.h (print): Declare new function.
+	* coset.cc (print): Implement.
+
+2011-04-17  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile (main.o, cosettable.o): Add dependency on coset.h.
+	* Makefile.cygwin (main.o, cosettable.o): Ditto.
+	* Makefile.linux (main.o, cosettable.o): Ditto.
+	* main.cc (main): Move main functionality into two new functions...
+	(getgroup):  New function.
+	* cosettable.h (hlt): Declare new function.
+	(relator, generator_of_H): Declare new members.
+	* cosettable.cc (hlt): Implement.
+	(CosetTable): Initialize 'relator' and 'generator_of_H'.
+
+2011-04-16  Ken Brown  <kbrown@cornell.edu>
+
+	* Makefile.cygwin: New file.
+	* Makefile: Ditto.
+	* Makefile.linux: Ditto.
+
+2011-04-16  Ken Brown  <kbrown@cornell.edu>
+
+	* toddcox.cc: Delete file, split functionality into the following
+	separate files.  Change 'inv' from array to function.
+	* coset.cc: New file.
+	* coset.h: Ditto.
+	* cosettable.cc: Ditto.
+	* cosettable.h: Ditto.
+	* gens_and_words.cc: Ditto.
+	* gens_and_words.h: Ditto.
+	* main.cc: Ditto.
