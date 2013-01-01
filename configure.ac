@@ -1,6 +1,6 @@
 AC_INIT(toddcox, 0.5, [kbrown@cornell.edu])
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.63])
 
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
