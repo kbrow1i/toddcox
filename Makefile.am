@@ -22,6 +22,9 @@ examples_DATA =			\
 	examples/SL2_13.in	\
 	examples/README
 
+htmldir = $(docdir)/html
+html_DATA = html/doc.html html/index.html
+
 EXTRA_DIST =			\
 	AUTHORS			\
 	COPYING			\
@@ -30,7 +33,8 @@ EXTRA_DIST =			\
 	TODO			\
 	ChangeLog		\
 	ChangeLog.1		\
-	$(examples_DATA)
+	$(examples_DATA)	\
+	$(html_DATA)
 
 dist-hook:
 	@if test -d "$(srcdir)/.git"; \

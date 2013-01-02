@@ -1,0 +1,94 @@
+<html>
+<head>
+
+<style type="text/css">
+ <!-- 
+ a {text-decoration:none;}
+ a:hover {text-decoration:underline;}
+ -->
+</style>
+
+<title>Toddcox</title>
+</head>
+
+<body>
+
+<h2>The Todd&ndash;Coxeter procedure</h2>
+
+<p>
+Many computer algebra systems, such
+as <a href="http://www.gap-system.org/">GAP</a>, provide
+implementations of the Todd&ndash;Coxeter coset enumeration procedure.
+There are also sophisticated standalone implementations, such as
+<a href="http://itee.uq.edu.au/~cram/ce.html">ACE</a> (which is also
+available as a 
+<a href="http://www.gap-system.org/Packages/ace.html">GAP
+package</a>).  In spite of this, I have written yet another
+implementation, called <tt>Toddcox</tt>.  It is a toy version,
+intended for pedagogical use.
+</p>
+
+<p>
+I have used <tt>Toddcox</tt> in
+my <a href="http://www.math.cornell.edu/~kbrown/6310/">graduate
+algebra course</a>.  I have also written
+a <a href="http://www.math.cornell.edu/~kbrown/6310/toddcox.pdf">brief
+introduction</a> to the Todd&ndash;Coxeter procedure for that course.
+</p>
+
+<p>
+My goals in writing <tt>Toddcox</tt> were the following:
+<ul>
+  <li>A student should be able to learn how to use it in a few
+  minutes.</li>
+  <li>It should work reasonably quickly on small examples.</li>
+  <li>
+    The code should be transparent; anyone who is familiar with the
+    language (<tt>C++</tt>) should be able to read the code and see
+    how it relates to standard treatments of coset enumeration (such
+    as the one in <em>Handbook of Computational Group Theory</em> by
+    Holt et al).
+  </li>
+</ul>
+I did <em>not</em> worry about efficiency.  If you want to do a
+time-consuming or memory-intensive coset enumeration, you should use
+one of the standard implementations of the Todd&ndash;Coxeter
+procedure.
+</p>
+
+<p>
+To obtain Toddcox, visit
+the <a href="http://www.math.cornell.edu/~kbrown/toddcox/download.html">download</a>
+page.  More information, including sample runs of the program, can be
+found on the <a href="doc.html">documentation</a> page.
+</p>
+
+<p>
+I do not expect to spend a lot of time developing the program further,
+since it suffices for my purposes.  But I will certainly try to fix
+any bugs that are reported, and I will try to implement suggestions
+for improvement if they're not too difficult and they don't detract
+from the goals stated above.  I would appreciate hearing from anyone
+who uses the program, and I would especially appreciate hearing about
+any improvements that you make.
+</p>
+
+<hr />
+
+<p>
+<tt>Toddcox</tt> is free software, licensed under the GNU General
+Public License <a href="http://www.gnu.org/licenses/gpl.html">GPLv3</a>.
+</p>
+
+<p>
+<a href="http://www.math.cornell.edu/~kbrown/">Ken Brown</a><br />
+Department of Mathematics<br />
+Cornell University<br />
+Ithaca, NY 14853<br />
+Email: <a href="mailto:kbrown@cornell.edu">kbrown@cornell.edu</a><br />
+</p>
+
+
+
+</body>
+</html>

@@ -10,7 +10,10 @@ autom4te.cache/
 config.*
 configure
 depcomp
+inst/
+inst-w32/
 install-sh
 missing
 stamp-h1
 toddcox-*.tar.gz
+toddcox
