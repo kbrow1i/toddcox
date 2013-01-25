@@ -22,12 +22,8 @@ Unix-like system, for example, you would type
 if the `toddcox' program is contained in your current directory but
 not in your path.
 
-The program will prompt you to enter the necessary information.  See
-<http://www.math.cornell.edu/~kbrown/toddcox/doc.html> for
-documentation, including some sample runs of the program.  A copy of
-this file will be in your system documentation directory
-(/usr/local/share/doc/toddcox by default) if you are working on a
-Unix-like system and have run `make install' after building Toddcox.
+The program will prompt you to enter the necessary information.  The
+documentation (see below) gives several examples.
 
 * Running from a script
 
@@ -51,6 +47,14 @@ in that directory.  Alternatively, if you have installed Toddcox on
 your Unix-like system, the command might be
 
   toddcox /usr/local/share/toddcox/examples/M12.in
+
+* Documentation
+
+Documentation for Toddcox, including some sample runs of the program,
+can be found in the `html' subdirectory of the source distribution.
+This will be installed in your system documentation directory
+(/usr/local/share/doc/toddcox by default) if you are working on a
+Unix-like system and have run `make install' after building Toddcox.
 
 * Questions, comments, and bug reports
 
